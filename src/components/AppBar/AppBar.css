@@ -1,0 +1,36 @@
+.nav_app_bar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 44px;
+}
+
+.nav_moment {
+  margin-left: auto;
+  padding-right: 40px;
+}
+
+.nav_weather {
+  border-left: solid 2px rgb(235,236,236,.22);
+  border-right: solid 2px rgb(235,236,236,.22);
+}
+
+.nav_weather, .nav_location {
+  padding-left: 40px;
+  padding-right: 40px;
+}
+
+.nav_btn_login {
+  width: 110px !important;
+  height: 44px !important;
+  border-radius: 20px !important;
+  border: solid 1px #9e9ea5 !important;
+  background-color: transparent !important;
+  color: white !important;
+}
+
+.nav_btn_notification {
+  height: 44px;
+  width: 44px;
+  margin-left: 10px;
+}

@@ -1,0 +1,23 @@
+.m_ev_value_unit{
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  align-content: center;
+}
+
+.m_ev_value{
+  height: 19px;
+  font-size: 23px;
+  padding-bottom: 6px;
+  color: #ffffff;
+}
+
+.m_ev_unit {
+  height: 8px;
+  padding-left: 2px;
+}
+
+.m_ev_separator {
+  width: calc(100% - 30px);
+}
+

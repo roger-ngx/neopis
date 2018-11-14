@@ -1,0 +1,26 @@
+.db_card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 5px;
+  background-color: #18161a;
+  padding: 40px;
+}
+
+.db_card_title {
+  width: 100%;
+}
+
+.db_card_middle {
+  width: 100%;
+  margin-top: 19px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.db_card_bottom {
+  margin-top: 42px;
+  height: 160px;
+  margin-bottom: 40px;
+}

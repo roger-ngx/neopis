@@ -1,0 +1,51 @@
+.battery{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  min-width: 160px;
+}
+
+.battery_info{
+  display: flex;
+  flex-direction: column;
+  margin-left: auto;
+  align-items: center;
+}
+
+.battery_image{
+  width: 100px;
+  height: 41px;
+  border-radius: 2px;
+  background-color: #2e2d2f;
+}
+
+.battery_volumn{
+  height: 100%;
+  width: 67px;
+  background-image: repeating-linear-gradient(
+    to right,
+    /* from 0 ~ 7px transparent */
+    transparent,
+    transparent 7px,
+    /* from 7 ~ 10px #2e2d2f */
+    #2e2d2f 7px,
+    #2e2d2f 10px
+  ),
+  linear-gradient(to right, #338fff, #42e27f 52%, #ffea9a);
+}
+
+.battery_value{
+  font-family: HiraKakuProN-W3;
+  font-size: 20px;
+  color: #ebecec;
+}
+
+.battery_label{
+  margin-top: auto;
+  opacity: 0.7;
+  font-family: HiraKakuProN-W3;
+  font-size: 12px;
+  font-weight: 300;
+  letter-spacing: -0.5px;
+  color: #b8b8c2;
+}

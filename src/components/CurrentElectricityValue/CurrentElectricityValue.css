@@ -1,0 +1,12 @@
+.d_ev_value{
+  font-size: 28px;
+  color: #ffffff;
+}
+
+.d_ev_unit {
+  padding-top: 8px;
+}
+
+.d_ev_separator {
+  width: calc(100% - 40px);
+}

@@ -1,0 +1,15 @@
+.np_dashboard {
+  padding: 20px;
+}
+
+.gbg_source {
+  background-image: linear-gradient(to right, #ffae33, #ff009e);
+}
+
+.gbg_battery {
+  background-image: linear-gradient(to right, #338fff, #42e27f 52%, #ffea9a);
+}
+
+.gbg_electricity {
+  background-image: linear-gradient(93deg, #3023ae, #c86dd7);
+}

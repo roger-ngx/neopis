@@ -1,0 +1,32 @@
+.m_db_card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 5px;
+  background-color: #18161a;
+  margin: 10px 40px 0;
+  padding: 25px;
+}
+
+.m_db_card_title {
+  width: 100%;
+}
+
+.m_db_card_body {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.db_card_body_left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.db_card_body_right {
+
+}

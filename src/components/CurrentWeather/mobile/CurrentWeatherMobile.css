@@ -1,0 +1,31 @@
+.m_weather {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.m_weather_icon {
+  width: 36px;
+  height: 23px;
+  object-fit: contain;
+}
+
+.m_weather_temperature {
+  line-height: 1;
+  margin-top: 14px;
+  font-family: HiraKakuProN-W3;
+  font-size: 16px;
+  letter-spacing: -0.5px;
+  text-align: center;
+  color: #ffffff;
+}
+
+.m_weather_humidity {
+  margin-top: 4px;
+  line-height: 1;
+  font-family: HiraKakuProN-W3;
+  font-size: 10px;
+  letter-spacing: -0.3px;
+  text-align: center;
+  color: #9e9ea5;
+}

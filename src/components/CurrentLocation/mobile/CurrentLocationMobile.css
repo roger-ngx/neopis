@@ -1,0 +1,21 @@
+.m_location {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.m_location_icon {
+  width: 23px;
+  height: 32px;
+  object-fit: contain;
+}
+
+.m_location_address {
+  font-family: HiraKakuProN-W3;
+  font-size: 12px;
+  margin-top: 8px;
+  line-height: 1.25;
+  letter-spacing: -1px;
+  color: #9e9ea5;
+  text-align: center;
+}

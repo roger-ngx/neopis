@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32" height="27" viewBox="0 0 32 27">
+    <defs>
+        <path id="a" d="M0 0h59v24.655H0z"/>
+    </defs>
+    <g fill="none" fill-rule="evenodd" opacity=".7">
+        <g transform="translate(-11 -9)">
+            <mask id="b" fill="#fff">
+                <use xlink:href="#a"/>
+            </mask>
+            <g stroke="#B8B8C2" mask="url(#b)">
+                <g transform="translate(13.245 9.862)">
+                    <ellipse cx="14.449" cy="14.747" rx="7.224" ry="7.351"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M0 14.177h4.216M24.684 14.177H28.9M14.449 0v4.223M14.449 25.272v4.223M24.833 4.931l-3.16 2.714M6.772 21.573l-3.16 2.715M4.214 4.315L6.866 7.55M21.673 22.19l2.652 3.235"/>
+                </g>
+            </g>
+        </g>
+        <path stroke="#B8B8C2" d="M4.799 19.5l-3.943 7H6.2l3.943-7H4.8zM13.799 19.5l-3.943 7H15.2l3.943-7H13.8zM23.799 19.5l-3.943 7H25.2l3.943-7H23.8z"/>
+    </g>
+</svg>

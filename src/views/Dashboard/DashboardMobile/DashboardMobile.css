@@ -1,0 +1,29 @@
+.m_db {
+  max-width: 100%;
+}
+
+.m_db_header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin: 30px 40px 25px 40px;
+}
+
+.slick-dots {
+  top: -20px;
+  bottom: 100% !important;
+}
+
+.slick-next {
+  right: 10px !important;
+}
+
+.slick-prev {
+  left: 10px !important;
+  z-index: 1000 !important;
+}
+
+.db_slider{
+  max-width: 100%;
+}

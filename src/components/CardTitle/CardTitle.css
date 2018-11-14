@@ -1,0 +1,23 @@
+.card_title {
+  height: 40px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border-bottom: solid 1px rgb(184, 184, 194, .3)
+}
+
+.title_name {
+  color: #ebecec;
+  font-family: HiraKakuProN-W3;
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 1.06;
+  letter-spacing: -0.5px;
+  text-align: center;
+}
+
+.title_icon {
+  margin-left: auto;
+  object-fit: contain;
+  opacity: 0.8;
+}
