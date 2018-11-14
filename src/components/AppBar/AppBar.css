@@ -11,8 +11,8 @@
 }
 
 .nav_weather {
-  border-left: solid 2px rgb(235,236,236,.22);
-  border-right: solid 2px rgb(235,236,236,.22);
+  border-left: solid 2px rgba(235,236,236,.22);
+  border-right: solid 2px rgba(235,236,236,.22);
 }
 
 .nav_weather, .nav_location {

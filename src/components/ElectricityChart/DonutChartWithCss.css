@@ -1,0 +1,40 @@
+.outer_pie {
+  position: relative;
+  border-radius: 50%;
+  width: 128px;
+  height: 128px;
+  /*background-image: conic-gradient(#338fff, #42e27f 52%, #fac600, #338fff, #18161a 92%);*/
+}
+
+.inner_pie {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  border-radius: 50%;
+  width: 108px;
+  height: 108px;
+  background-color: #18161a;
+}
+
+.pie_data {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.pie_value {
+  font-family: HiraKakuProN-W3;
+  font-size: 26px;
+  text-align: center;
+  color: #ffffff;
+}
+
+.pie_unit {
+  opacity: 0.5;
+  font-family: HiraKakuProN-W3;
+  font-size: 12px;
+  text-align: center;
+  color: #b8b8c2;
+}

@@ -1,5 +1,5 @@
 body {
-  width: 100vw;
+  width: 100%;
   height: 100vh;
   background-blend-mode: multiply;
   background-image: radial-gradient(circle at 51% 36%, #656773, #0e0d0f);

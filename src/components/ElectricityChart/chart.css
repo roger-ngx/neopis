@@ -1,0 +1,11 @@
+.arc text {
+  text-anchor: middle;
+  font-family: HiraKakuProN-W3;
+  font-size: 26px;
+  line-height: 2.19;
+  fill: #ffffff;
+}
+
+.arc path {
+  stroke: #fff;
+}

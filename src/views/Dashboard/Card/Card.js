@@ -3,6 +3,8 @@ import './Card.css';
 import CardTitle from '../../../components/CardTitle/CardTitle';
 import { CurrentElectricityValue } from '../../../components/CurrentElectricityValue/CurrentElectricityValue';
 import CurrentBatteryPercentage from '../../../components/CurrentBatteryPercentage/CurrentBatteryPercentage';
+import DonutChart from '../../../components/ElectricityChart/DonutChart';
+import DonutChartWithCss from '../../../components/ElectricityChart/DonutChartWithCss';
 
 const Card = props => {
   return <div className='db_card'>
@@ -14,7 +16,8 @@ const Card = props => {
       <CurrentElectricityValue type='2' value="29.3" unit="kWh" description="Daily Total" />
     </div>
     <div className="db_card_bottom">
-      <CurrentBatteryPercentage />
+      {/* <CurrentBatteryPercentage /> */}
+      <DonutChartWithCss percentage='92%' electricity='851kW' />
     </div>
   </div>
 }
