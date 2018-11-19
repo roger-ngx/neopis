@@ -1,5 +1,15 @@
 .np_dashboard {
-  padding: 20px;
+  padding: 20px 10%;
+  /* min-width: 1200px; */
+}
+
+.db_chart {
+  width: 100%;
+  height: calc(100vh - 630px);
+  background-color: #18161a;
+  border-radius: 5px;
+  margin-top: 8px;
+  min-height: 300px;
 }
 
 .gbg_source {

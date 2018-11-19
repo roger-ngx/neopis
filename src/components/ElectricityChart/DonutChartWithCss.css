@@ -3,7 +3,7 @@
   border-radius: 50%;
   width: 128px;
   height: 128px;
-  /*background-image: conic-gradient(#338fff, #42e27f 52%, #fac600, #338fff, #18161a 92%);*/
+  /* background-image: conic-gradient(#fac600, #42e27f 52%, #338fff 92%, #18161a 0); */
 }
 
 .inner_pie {

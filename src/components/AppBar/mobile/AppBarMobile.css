@@ -1,0 +1,43 @@
+.m_nav_app_bar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 36px;
+}
+
+.m_nav_logo {
+  width: 92px;
+  height: 34px;
+}
+
+.m_nav_div_login {
+  margin-left: auto;
+}
+
+.m_nav_btn_login {
+  width: 80px !important;
+  height: 32px !important;
+  border-radius: 20px !important;
+  border: solid 1px #9e9ea5 !important;
+  background-color: transparent !important;
+  color: white !important;
+}
+
+.m_nav_login_font {
+  font-family: HiraKakuProN-W6;
+  font-size: 11px;
+  text-align: center;
+  color: #ffffff;
+}
+
+.m_nav_btn_notification {
+  height: 36px;
+  width: 36px;
+  margin-left: 10px !important;
+  padding: 0 !important;
+}
+
+.m_nav_notification_icon{
+  width: 22px;
+  height: 22px;
+}

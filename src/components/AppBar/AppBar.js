@@ -20,9 +20,11 @@ const AppBar = props => {
     <div className='nav_location'>
       <CurrentLocation location='강원도 고성군 간성읍 금수리 산 40-4' />
     </div>
-    <Button className='nav_btn_login' variant="extendedFab" aria-label="Log in">
-      <span>Log in</span>
-    </Button>
+    <div className='nav_login_div'>
+      <Button className='nav_btn_login' variant="extendedFab" aria-label="Log in">
+        <span>Log in</span>
+      </Button>
+    </div>
 
     <IconButton className='nav_btn_notification' aria-label="Notification">
       <img src={notification} className='nav_logo' alt='logo' />

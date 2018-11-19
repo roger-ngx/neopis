@@ -33,4 +33,15 @@
   height: 44px;
   width: 44px;
   margin-left: 10px;
+  padding: 0 !important;
+}
+
+@media only screen and (max-width: 1300px) {
+  .nav_weather, .nav_location, .nav_moment {
+    display: none;
+  }
+
+  .nav_login_div {
+    margin-left: auto;
+  }
 }

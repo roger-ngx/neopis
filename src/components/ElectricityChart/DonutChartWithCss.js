@@ -3,7 +3,7 @@ import './DonutChartWithCss.css'
 
 const DonutChartWithCss = (props) => {
   const backgroundColor = {
-    backgroundImage: `conic-gradient(#fac600, #42e27f 52%, #338fff ${props.percentage}, #18161a 0)`
+    backgroundImage: `conic-gradient(#fac600, #42e27f, #338fff ${props.percentage}, #2e2d2f 0)`
   };
 
   return <div>

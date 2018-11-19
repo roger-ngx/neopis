@@ -1,16 +1,16 @@
 import React from 'react';
 import './style.css';
 import './CurrentElectricityValue.css';
-import classNames from 'classnames'
+import classnames from 'classnames'
 
-export const CurrentElectricityValue = (props) =>{
+const CurrentElectricityValue = (props) =>{
 
-  const separatorClass = classNames({
+  const separatorClass = classnames({
     'ev_separator': true,
     'd_ev_separator': true,
-    'gbg_source': props.type == 1, 
-    'gbg_battery': props.type == 2, 
-    'gbg_electricity': props.type == 3
+    'gbg_source': +props.type === 1, 
+    'gbg_battery': +props.type === 2, 
+    'gbg_electricity': +props.type === 3
   })
 
   return <div className='electricity_value'>
@@ -26,3 +26,5 @@ export const CurrentElectricityValue = (props) =>{
     </span>
   </div>
 }
+
+export default CurrentElectricityValue;

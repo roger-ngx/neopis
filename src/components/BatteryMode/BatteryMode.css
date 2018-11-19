@@ -1,0 +1,17 @@
+.bm_container {
+  width: 87px;
+  height: 30px;
+  border-radius: 15px;
+  border: solid 1px #7ed321;
+  text-align: center;
+  margin: 9px;
+}
+
+.bm_content {
+  opacity: 0.7;
+  font-family: HiraKakuProN-W6;
+  font-size: 12px;
+  line-height: 1.42;
+  letter-spacing: -0.5px;
+  color: #7ed321;
+}

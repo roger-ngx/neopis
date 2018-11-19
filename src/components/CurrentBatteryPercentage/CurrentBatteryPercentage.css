@@ -3,17 +3,25 @@
   flex-direction: row;
   align-items: center;
   min-width: 160px;
+  justify-content: space-between;
+}
+
+.m_battery{
+  display: flex;
+  flex-direction: column;
+  min-width: 100px;
+  align-items: center;
+
 }
 
 .battery_info{
   display: flex;
   flex-direction: column;
-  margin-left: auto;
   align-items: center;
 }
 
 .battery_image{
-  width: 100px;
+  width: 97px;
   height: 41px;
   border-radius: 2px;
   background-color: #2e2d2f;
@@ -21,7 +29,6 @@
 
 .battery_volumn{
   height: 100%;
-  width: 67px;
   background-image: repeating-linear-gradient(
     to right,
     /* from 0 ~ 7px transparent */
@@ -31,7 +38,7 @@
     #2e2d2f 7px,
     #2e2d2f 10px
   ),
-  linear-gradient(to right, #338fff, #42e27f 52%, #ffea9a);
+  linear-gradient(to right, #ffea9a, #42e27f 52%, #338fff);
 }
 
 .battery_value{

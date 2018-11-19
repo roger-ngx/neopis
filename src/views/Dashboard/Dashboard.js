@@ -19,13 +19,15 @@ import battery2 from '../../assets/images/battery-2.svg';
 import electricity from '../../assets/images/electricity.svg';
 import energy from '../../assets/images/energy.svg';
 import AppBar from '../../components/AppBar/AppBar';
+import { LineChart } from '../../components/ElectricityChart/LineChart/LineChart';
+import { LineChartCrs } from '../../components/ElectricityChart/LineChartWithCrossHairs/LineChartCrs';
 
 
 
 const styles = {
   root: {
     flexGrow: 1,
-    'margin-top': '60px'
+    'margin-top': '30px'
   },
   db_card_title: {
     'max-width': '300px',
@@ -50,23 +52,31 @@ class Dashboard extends React.Component {
         <AppBar />
       </div>
       <Grid container className={classes.root} spacing={8}>
-        <Grid item sm={12} md={3}>
+        <Grid item xs={12} md={3}>
           <Card titleName='태양광 발전량' titleImage={energy} />
         </Grid>
 
-        <Grid item sm={12} md={6}>
-          <Grid container sm={12} spacing={0}>
-            <Grid item sm={12} md={6}>
-              <Card titleName='ESS충전량' titleImage={battery1} />
+        <Grid item xs={12} md={6}>
+          <Grid container spacing={0}>
+            <Grid item xs={12} md={6}>
+              <Card type='1' titleName='ESS충전량' titleImage={battery1} />
             </Grid>
-            <Grid item sm={12} md={6}>
-              <Card titleName='ESS방전량' titleImage={battery2} />
+            <Grid item xs={12} md={6}>
+              <Card type='2' titleName='ESS방전량' titleImage={battery2} />
             </Grid>
           </Grid>
         </Grid>
 
-        <Grid item sm={12} md={3}>
+        <Grid item xs={12} md={3}>
           <Card titleName='계통 송수전 전력량' titleImage={electricity} />
+        </Grid>
+      </Grid>
+      {/* <div className='db_chart'>
+        <LineChartCrs />
+      </div> */}
+      <Grid container className='db_chart'>
+        <Grid item xs={12}>
+          <LineChartCrs />
         </Grid>
       </Grid>
     </div>

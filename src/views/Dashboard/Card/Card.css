@@ -16,11 +16,26 @@
   margin-top: 19px;
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: space-evenly;
 }
 
 .db_card_bottom {
   margin-top: 42px;
   height: 160px;
   margin-bottom: 40px;
+  text-align: center;
+  display: table;
+}
+
+.db_card_bottom .content{
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.l_card {
+  border-radius: 5px 0 0 5px;
+}
+
+.r_card {
+  border-radius: 0 5px 5px 0;
 }

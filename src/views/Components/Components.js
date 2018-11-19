@@ -1,7 +1,7 @@
 import React from 'react';
-import { CurrentElectricityValue } from '../../components/CurrentElectricityValue/CurrentElectricityValue';
+import CurrentElectricityValue from '../../components/CurrentElectricityValue/CurrentElectricityValue';
 import './Components.css';
-import { CurrentElectricityValueMobile } from '../../components/CurrentElectricityValue/mobile/CurrentElectricityValueMobile';
+import CurrentElectricityValueMobile from '../../components/CurrentElectricityValue/mobile/CurrentElectricityValueMobile';
 import CardTitle from '../../components/CardTitle/CardTitle';
 import withStyles from "@material-ui/core/styles/withStyles";
 import CurrentBatteryPercentage from '../../components/CurrentBatteryPercentage/CurrentBatteryPercentage';

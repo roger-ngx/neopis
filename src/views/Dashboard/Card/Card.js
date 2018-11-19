@@ -1,13 +1,31 @@
 import React from 'react';
 import './Card.css';
 import CardTitle from '../../../components/CardTitle/CardTitle';
-import { CurrentElectricityValue } from '../../../components/CurrentElectricityValue/CurrentElectricityValue';
+import CurrentElectricityValue from '../../../components/CurrentElectricityValue/CurrentElectricityValue';
 import CurrentBatteryPercentage from '../../../components/CurrentBatteryPercentage/CurrentBatteryPercentage';
-import DonutChart from '../../../components/ElectricityChart/DonutChart';
 import DonutChartWithCss from '../../../components/ElectricityChart/DonutChartWithCss';
+import classnames from 'classnames';
+import BatteryMode from '../../../components/BatteryMode/BatteryMode';
+
 
 const Card = props => {
-  return <div className='db_card'>
+
+  let cardClasses = classnames({
+    'db_card': true,
+    'l_card': +props.type === 1,
+    'r_card': +props.type === 2
+  });
+
+  let cardBottom;
+  if (+props.type === 2) {
+    cardBottom = <>
+      <BatteryMode status='Manual'/><CurrentBatteryPercentage value='45%'/>;
+      </>
+  } else {
+    cardBottom = <DonutChartWithCss percentage='42%' electricity='851kW' />;
+  }
+
+  return <div className={cardClasses}>
     <div className='db_card_title'>
       <CardTitle title={props.titleName} image={props.titleImage} />
     </div>
@@ -16,8 +34,9 @@ const Card = props => {
       <CurrentElectricityValue type='2' value="29.3" unit="kWh" description="Daily Total" />
     </div>
     <div className="db_card_bottom">
-      {/* <CurrentBatteryPercentage /> */}
-      <DonutChartWithCss percentage='92%' electricity='851kW' />
+      <div className="content">
+        {cardBottom}
+      </div>
     </div>
   </div>
 }

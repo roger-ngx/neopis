@@ -1,3 +1,7 @@
+.m_np_app_bar {
+  padding: 10px 10% 0;
+}
+
 .m_db {
   max-width: 100%;
 }
@@ -7,7 +11,7 @@
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  padding: 30px 40px 25px 40px;
+  padding: 20px 10% 20px;
 }
 
 .slick-dots {

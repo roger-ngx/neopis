@@ -8,8 +8,9 @@ import Grid from '@material-ui/core/Grid';
 import CardMobile from '../Card/mobile/CardMobile';
 import electricity from '../../../assets/images/electricity.svg';
 import Slider from "react-slick";
-import "slick-carousel/slick/slick.css"; 
+import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import AppBarMobile from '../../../components/AppBar/mobile/AppBarMobile';
 
 const styles = {
   root: {
@@ -18,7 +19,7 @@ const styles = {
   m_db_title: {
     textAlign: 'center',
   },
-  dotClass:  {
+  dotClass: {
     top: 0
   }
 }
@@ -37,6 +38,9 @@ class DashboardMobile extends React.Component {
     };
 
     return <div className='m_db'>
+      <div className="m_np_app_bar">
+        <AppBarMobile />
+      </div>
       <div className='m_db_header'>
         <Grid container sm={12} spacing={0} className={classes.root}>
           <Grid item xs={4} className={classes.m_db_title}>
@@ -52,10 +56,10 @@ class DashboardMobile extends React.Component {
       </div>
       <div className='db_slider'>
         <Slider {...settings}>
-          <CardMobile titleName='1' titleImage={electricity} />
-          <CardMobile titleName='2' titleImage={electricity} />
-          <CardMobile titleName='3' titleImage={electricity} />
-          <CardMobile titleName='4' titleImage={electricity} />
+          <CardMobile type='1' titleName='1' titleImage={electricity} />
+          <CardMobile type='1' titleName='2' titleImage={electricity} />
+          <CardMobile type='2' titleName='3' titleImage={electricity} />
+          <CardMobile type='1' titleName='4' titleImage={electricity} />
         </Slider>
       </div>
     </div>
