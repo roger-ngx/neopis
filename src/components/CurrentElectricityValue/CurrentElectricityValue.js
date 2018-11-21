@@ -2,15 +2,17 @@ import React from 'react';
 import './style.css';
 import './CurrentElectricityValue.css';
 import classnames from 'classnames'
+import { SOURCE, BATTERY_1, BATTERY_2, ELECTRICITY } from './mobile/CurrentElectricityValueMobile';
 
 const CurrentElectricityValue = (props) =>{
 
   const separatorClass = classnames({
     'ev_separator': true,
     'd_ev_separator': true,
-    'gbg_source': +props.type === 1, 
-    'gbg_battery': +props.type === 2, 
-    'gbg_electricity': +props.type === 3
+    'gbg_source': +props.type === SOURCE, 
+    'gbg_battery_1': +props.type === BATTERY_1, 
+    'gbg_battery_2': +props.type === BATTERY_2, 
+    'gbg_electricity': +props.type === ELECTRICITY
   })
 
   return <div className='electricity_value'>

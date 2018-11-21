@@ -6,6 +6,15 @@
   max-width: 100%;
 }
 
+
+.m_db_chart {
+  width: 100%;
+  height: calc(100vh - 400px);
+  background-color: transparent;
+  border-radius: 5px;
+  margin-top: -20px;
+}
+
 .m_db_header {
   display: flex;
   flex-direction: row;

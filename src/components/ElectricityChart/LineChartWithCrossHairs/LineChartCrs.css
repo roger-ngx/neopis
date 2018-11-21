@@ -9,13 +9,18 @@
 }
 
 .tick text {
-  fill: white
+  fill: #525252;
+  font-size: 14px;
+}
+
+.tick line{
+  stroke: #525252;
 }
 
 .line {
   fill: none;
   stroke: steelblue;
-  stroke-width: 1.5px;
+  stroke-width: 2.5px;
 }
 
 .chart {

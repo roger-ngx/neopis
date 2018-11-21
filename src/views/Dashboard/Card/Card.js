@@ -6,23 +6,25 @@ import CurrentBatteryPercentage from '../../../components/CurrentBatteryPercenta
 import DonutChartWithCss from '../../../components/ElectricityChart/DonutChartWithCss';
 import classnames from 'classnames';
 import BatteryMode from '../../../components/BatteryMode/BatteryMode';
+import { BATTERY_2, BATTERY_1 } from '../../../components/CurrentElectricityValue/mobile/CurrentElectricityValueMobile';
 
 
 const Card = props => {
 
   let cardClasses = classnames({
     'db_card': true,
-    'l_card': +props.type === 1,
-    'r_card': +props.type === 2
+    'l_card': +props.type === BATTERY_1,
+    'r_card': +props.type === BATTERY_2
   });
 
   let cardBottom;
-  if (+props.type === 2) {
+  if (+props.type === BATTERY_2) {
     cardBottom = <>
-      <BatteryMode status='Manual'/><CurrentBatteryPercentage value='45%'/>;
+      <BatteryMode status='Manual'/><CurrentBatteryPercentage value={props.data.percentage}/>;
       </>
   } else {
-    cardBottom = <DonutChartWithCss percentage='42%' electricity='851kW' />;
+    cardBottom = <DonutChartWithCss type={props.type} percentage={props.data.percentage}
+                                    size={128} description={props.description} electricity='851kW' />;
   }
 
   return <div className={cardClasses}>
@@ -30,8 +32,8 @@ const Card = props => {
       <CardTitle title={props.titleName} image={props.titleImage} />
     </div>
     <div className='db_card_middle'>
-      <CurrentElectricityValue type='1' value="912.9" unit="kWh" description="Monthly Total" />
-      <CurrentElectricityValue type='2' value="29.3" unit="kWh" description="Daily Total" />
+      <CurrentElectricityValue type={props.type} value={props.data.thisMonth} unit="kWh" description="This month" />
+      <CurrentElectricityValue type={props.type} value={props.data.today} unit="kWh" description="Today" />
     </div>
     <div className="db_card_bottom">
       <div className="content">

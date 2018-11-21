@@ -1,7 +1,7 @@
 import React from 'react';
 import './CurrentBatteryPercentage.css'
 import classnames from 'classnames';
-import PropTypes from 'prop-types';
+import { PropTypes } from 'prop-types';
 
 const CurrentBatteryPercentage = props => {
 
@@ -21,7 +21,7 @@ const CurrentBatteryPercentage = props => {
     </div>
     <div className='battery_info'>
       <div className='battery_value'>
-        <span>{props.value}</span>
+        <span>{props.value}%</span>
       </div>
       <div className='battery_label'>
         <span>배터리량</span>

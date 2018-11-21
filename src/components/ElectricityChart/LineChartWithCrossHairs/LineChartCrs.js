@@ -2,17 +2,17 @@ import React, { Component } from 'react';
 import './LineChartCrs.css';
 import * as d3 from 'd3';
 
-export class LineChartCrs extends Component {
+class LineChartCrs extends Component {
 
   constructor(props) {
     super(props);
     this.chartArea = React.createRef();
-    this.color = ['url(#electricity)', 'url(#energy)', 'url(#battery)'];
+    this.gradients = ['url(#electricity)', 'url(#energy)', 'url(#battery)'];
     this.margin = {
       top: 20,
-      right: 80,
-      bottom: 30,
-      left: 50
+      right: 30,
+      bottom: 20,
+      left: 30
     };
   }
 
@@ -30,9 +30,14 @@ export class LineChartCrs extends Component {
 
     let color = d3.scaleOrdinal(d3.schemeCategory10);
 
-    this.xAxis = d3.axisBottom(this.xScale);
+    this.xAxis = d3.axisBottom(this.xScale)
+      .ticks(Math.max(width / 75, 4))
+      .tickSize(-height);
 
-    this.yAxis = d3.axisLeft(this.yScale);
+    this.yAxis = d3.axisLeft(this.yScale)
+      .ticks(Math.max(height / 75, 4))
+      .tickSize(-width)
+      .tickFormat("");
 
     this.line = d3.line()
       .curve(d3.curveCatmullRomOpen)
@@ -47,7 +52,7 @@ export class LineChartCrs extends Component {
       .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
 
     d3.tsv('./temp.tsv').then(data => {
-      console.log(data);
+
       color.domain(d3.keys(data[0]).filter(function (key) {
         return key !== "date";
       }));
@@ -85,37 +90,41 @@ export class LineChartCrs extends Component {
         })
       ]);
 
-      let legend = this.svg.selectAll('g')
-        .data(cities)
-        .enter()
-        .append('g')
-        .attr('class', 'legend');
+      // let legend = this.svg.selectAll('g')
+      //   .data(cities)
+      //   .enter()
+      //   .append('g')
+      //   .attr('class', 'legend');
 
-      legend.append('rect')
-        .attr('x', width - 20)
-        .attr('y', function (d, i) {
-          return i * 20;
-        })
-        .attr('width', 10)
-        .attr('height', 10)
-        .style('fill', function (d) {
-          return color(d.name);
-        });
+      // legend.append('rect')
+      //   .attr('x', width - 20)
+      //   .attr('y', function (d, i) {
+      //     return i * 20;
+      //   })
+      //   .attr('width', 10)
+      //   .attr('height', 10)
+      //   .style('fill', function (d) {
+      //     return color(d.name);
+      //   });
 
-      legend.append('text')
-        .attr('x', width - 8)
-        .attr('y', function (d, i) {
-          return (i * 20) + 9;
-        })
-        .text(function (d) {
-          return d.name;
-        })
-        .attr('fill', 'white');
+      // legend.append('text')
+      //   .attr('x', width - 8)
+      //   .attr('y', function (d, i) {
+      //     return (i * 20) + 9;
+      //   })
+      //   .text(function (d) {
+      //     return d.name;
+      //   })
+      //   .attr('fill', 'white');
 
       this.svg.append("g")
         .attr("class", "x axis")
         .attr("transform", "translate(0," + height + ")")
         .call(this.xAxis);
+
+      this.svg.append("g")
+      .attr("class", "x axis")
+      .call(this.yAxis);
 
       let city = this.svg.selectAll(".city")
         .data(cities)
@@ -127,8 +136,9 @@ export class LineChartCrs extends Component {
         .attr("d", d => {
           return this.line(d.values);
         })
-        .style("stroke", function (d) {
-          return color(d.name);
+        .style("stroke", (d, index) => {
+          // return color(d.name);
+          return this.gradients[index]
         });
 
       var mouseG = this.svg.append("g")
@@ -154,7 +164,7 @@ export class LineChartCrs extends Component {
           return color(d.name);
         })
         .style("fill", "none")
-        .style("stroke-width", "1px")
+        .style("stroke-width", "2px")
         .style("opacity", "0");
 
       mousePerLine.append("text")
@@ -195,10 +205,10 @@ export class LineChartCrs extends Component {
             });
 
           d3.selectAll(".mouse-per-line")
-            .attr("transform", function(d, i) {
-              var xDate = ctx.xScale.invert(mouse[0]),
-                bisect = d3.bisector(function (d) { return d.date; }).right;
-              var index = bisect(d.values, xDate);
+            .attr("transform", function (d, i) {
+              // var xDate = ctx.xScale.invert(mouse[0]),
+              //   bisect = d3.bisector(function (d) { return d.date; }).right;
+              // var index = bisect(d.values, xDate);
 
               var beginning = 0,
                 end = lines[i].getTotalLength(),
@@ -217,7 +227,7 @@ export class LineChartCrs extends Component {
 
               d3.select(this).select('text')
                 .text(ctx.yScale.invert(pos.y).toFixed(2))
-                .attr('fill', 'white');
+                .attr("fill", 'white');
 
               return "translate(" + mouse[0] + "," + pos.y + ")";
             });
@@ -229,11 +239,20 @@ export class LineChartCrs extends Component {
 
   resize() {
     var width = this.chartArea.current.clientWidth - this.margin.left - this.margin.right,
-    height = this.chartArea.current.clientHeight - this.margin.top - this.margin.bottom;
+      height = this.chartArea.current.clientHeight - this.margin.top - this.margin.bottom;
 
     // Update the range of the scale with new width/height
     this.xScale.range([0, width]);
     this.yScale.range([height, 0]);
+
+    this.xAxis = d3.axisBottom(this.xScale)
+      .ticks(Math.max(width / 75, 4))
+      .tickSize(-height);
+
+    this.yAxis = d3.axisLeft(this.yScale)
+      .ticks(Math.max(height / 75, 4))
+      .tickSize(-width)
+      .tickFormat("");
 
     // Update the axis and text with the new scale
     this.svg.select('.x.axis')
@@ -248,27 +267,27 @@ export class LineChartCrs extends Component {
       .attr("d", d => { return this.line(d.values); });
 
     // Update the tick marks
-    this.xAxis.ticks(Math.max(width/75, 2));
+    this.xAxis.ticks(Math.max(width / 75, 2));
   };
 
   render() {
     return <svg width="100%" height="100%" ref={this.chartArea}>
       <defs>
         <linearGradient id="energy"
-          gradientUnits="userSpaceOnUse" x1="0" y1="228" x2="0" y2="0">
+          gradientUnits="userSpaceOnUse" x1="0%" y1="0%" x2="100%" y2="0%">
           <stop offset="0%" stopColor="#ffae33"></stop>
           <stop offset="66%" stopColor="#ff5742"></stop>
           <stop offset="100%" stopColor="#ff009e"></stop>
         </linearGradient>
 
         <linearGradient id="battery"
-          gradientUnits="userSpaceOnUse" x1="0" y1="228" x2="0" y2="0">
+          gradientUnits="userSpaceOnUse" x1="0%" y1="0%" x2="100%" y2="0%">
           <stop offset="0%" stopColor="#338fff"></stop>
-          <stop offset="66%" stopColor="#40ca88"></stop>
+          <stop offset="100%" stopColor="#40ca88"></stop>
         </linearGradient>
 
         <linearGradient id="electricity"
-          gradientUnits="userSpaceOnUse" x1="0" y1="228" x2="0" y2="0">
+          gradientUnits="userSpaceOnUse" x1="0%" y1="0%" x2="100%" y2="0%">
           <stop offset="0%" stopColor="#0051b2"></stop>
           <stop offset="100%" stopColor="#8828da"></stop>
         </linearGradient>
@@ -276,3 +295,5 @@ export class LineChartCrs extends Component {
     </svg>
   }
 }
+
+export default LineChartCrs;

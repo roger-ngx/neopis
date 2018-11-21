@@ -7,7 +7,7 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import CurrentBatteryPercentage from '../../components/CurrentBatteryPercentage/CurrentBatteryPercentage';
 import CurrentMoment from '../../components/CurrentMoment/CurrentMoment';
 import CurrentWeather from '../../components/CurrentWeather/CurrentWeather';
-import { CurrentLocation } from '../../components/CurrentLocation/CurrentLocation';
+import CurrentLocation from '../../components/CurrentLocation/CurrentLocation';
 import CurrentMomentMobile from '../../components/CurrentMoment/mobile/CurrentMomentMobile';
 import CurrentWeatherMobile from '../../components/CurrentWeather/mobile/CurrentWeatherMobile';
 import Grid from '@material-ui/core/Grid';
@@ -34,7 +34,7 @@ const styles = {
 class Components extends React.Component {
 
   render() {
-    const { classes, ...rest } = this.props;
+    const { classes } = this.props;
     return <div className="np_components">
 
       <Grid container className={classes.root} spacing={16}>

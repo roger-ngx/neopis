@@ -5,6 +5,7 @@
 }
 
 .m_current_icon{
+  margin-top: 3px;
   width: 27px;
   height: 28px;
   object-fit: contain;
@@ -22,7 +23,7 @@
 }
 
 .m_current_time{
-  margin-top: 17px;
+  margin-top: 11px;
   line-height: 1;
   font-family: HiraKakuProN-W3;
   font-size: 14px;

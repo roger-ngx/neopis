@@ -1,28 +1,21 @@
-import React from 'react';
-import { CurrentElectricityValue } from '../../components/CurrentElectricityValue/CurrentElectricityValue';
+import React, { Suspense } from 'react';
 import './Dashboard.css';
-import { CurrentElectricityValueMobile } from '../../components/CurrentElectricityValue/mobile/CurrentElectricityValueMobile';
-import { CardTitle } from '../../components/CardTitle/CardTitle';
 import withStyles from "@material-ui/core/styles/withStyles";
-import CurrentBatteryPercentage from '../../components/CurrentBatteryPercentage/CurrentBatteryPercentage';
-import CurrentMoment from '../../components/CurrentMoment/CurrentMoment';
-import CurrentWeather from '../../components/CurrentWeather/CurrentWeather';
-import { CurrentLocation } from '../../components/CurrentLocation/CurrentLocation';
-import CurrentMomentMobile from '../../components/CurrentMoment/mobile/CurrentMomentMobile';
-import CurrentWeatherMobile from '../../components/CurrentWeather/mobile/CurrentWeatherMobile';
 import Grid from '@material-ui/core/Grid';
-import { CurrentLocationMobile } from '../../components/CurrentLocation/mobile/CurrentLocationMobile';
 import Card from './Card/Card';
-
 import battery1 from '../../assets/images/battery-1.svg';
 import battery2 from '../../assets/images/battery-2.svg';
 import electricity from '../../assets/images/electricity.svg';
 import energy from '../../assets/images/energy.svg';
 import AppBar from '../../components/AppBar/AppBar';
-import { LineChart } from '../../components/ElectricityChart/LineChart/LineChart';
-import { LineChartCrs } from '../../components/ElectricityChart/LineChartWithCrossHairs/LineChartCrs';
+// import LineChart from '../../components/ElectricityChart/LineChartWithCrossHairs/LineChartCrs';
+import { connect } from 'react-redux';
+import { updateBatteryInfor } from '../../store/actionCreators';
+import { SOURCE, BATTERY_1, BATTERY_2, ELECTRICITY } from '../../components/CurrentElectricityValue/mobile/CurrentElectricityValueMobile';
+import socket from '../../services/wsServices';
+import userService from '../../services/userService'
 
-
+const LineChart = React.lazy(() => import('../../components/ElectricityChart/LineChartWithCrossHairs/LineChartCrs'));
 
 const styles = {
   root: {
@@ -45,42 +38,67 @@ const styles = {
 
 class Dashboard extends React.Component {
 
+  componentDidMount() {
+    //socket.initSocketChannel();
+    //userService.me().then(data => console.log(data));
+  }
+
   render() {
-    const { classes, ...rest } = this.props;
+    const { classes } = this.props;
     return <div className="np_dashboard">
-      <div className="np_app_bar">
+      <div className="np_app_bar" onClick={this.props.onUpdateBatteryInfo}>
         <AppBar />
       </div>
       <Grid container className={classes.root} spacing={8}>
         <Grid item xs={12} md={3}>
-          <Card titleName='태양광 발전량' titleImage={energy} />
+          <Card type={SOURCE} titleName='태양광 발전량' titleImage={energy}
+            description='현재 발전 전력' data={this.props.energyInfo} />
         </Grid>
 
         <Grid item xs={12} md={6}>
           <Grid container spacing={0}>
             <Grid item xs={12} md={6}>
-              <Card type='1' titleName='ESS충전량' titleImage={battery1} />
+              <Card type={BATTERY_1} titleName='ESS충전량' titleImage={battery1}
+                description='현재 ESS 방전 전력' data={this.props.batteryInfo} />
             </Grid>
             <Grid item xs={12} md={6}>
-              <Card type='2' titleName='ESS방전량' titleImage={battery2} />
+              <Card type={BATTERY_2} titleName='ESS방전량' titleImage={battery2} data={this.props.batteryInfo} />
             </Grid>
           </Grid>
         </Grid>
 
         <Grid item xs={12} md={3}>
-          <Card titleName='계통 송수전 전력량' titleImage={electricity} />
+          <Card type={ELECTRICITY} titleName='계통 송수전 전력량' titleImage={electricity}
+            description='현재 계통 송수전 전력' data={this.props.electricityInfo} />
         </Grid>
       </Grid>
-      {/* <div className='db_chart'>
-        <LineChartCrs />
-      </div> */}
       <Grid container className='db_chart'>
-        <Grid item xs={12}>
-          <LineChartCrs />
-        </Grid>
+        <Suspense fallback={<div className='db_chart_loading'>Loading...</div>}>
+          <Grid item xs={12}>
+            <LineChart />
+          </Grid>
+        </Suspense>
       </Grid>
     </div>
   }
 }
 
-export default withStyles(styles)(Dashboard);
+const mapStateToProps = state => ({
+  energyInfo: state.solarEnergy,
+  electricityInfo: state.generatedElectricity,
+  batteryInfo: state.batteryStorage
+});
+
+const mapDispatchToProps = dispatch => ({
+  onUpdateBatteryInfo: () => {
+    userService.me().then(data => console.log(data));
+
+    dispatch(updateBatteryInfor({
+      thisMonth: (Math.random() * 1000).toFixed(1),
+      today: (Math.random() * 100).toFixed(1),
+      percentage: Math.round(Math.random() * 100)
+    }))
+  }
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(Dashboard));

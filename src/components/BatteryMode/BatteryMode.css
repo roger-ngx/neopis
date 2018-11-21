@@ -5,6 +5,7 @@
   border: solid 1px #7ed321;
   text-align: center;
   margin: 9px;
+  display: table;
 }
 
 .bm_content {
@@ -14,4 +15,6 @@
   line-height: 1.42;
   letter-spacing: -0.5px;
   color: #7ed321;
+  display: table-cell;
+  vertical-align: middle;
 }

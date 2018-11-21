@@ -5,14 +5,14 @@
 }
 
 .m_weather_icon {
-  width: 36px;
-  height: 23px;
+  width: 37px;
+  height: 32px;
   object-fit: contain;
 }
 
 .m_weather_temperature {
   line-height: 1;
-  margin-top: 14px;
+  margin-top: 8px;
   font-family: HiraKakuProN-W3;
   font-size: 16px;
   letter-spacing: -0.5px;

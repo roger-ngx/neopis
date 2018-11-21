@@ -1,6 +1,7 @@
 import React from 'react';
 import './CurrentMoment.css';
 import image from '../../assets/images/time.svg'
+import { connect } from 'react-redux';
 
 const CurrentMoment = props => {
   return <div className='current_moment'>
@@ -14,4 +15,9 @@ const CurrentMoment = props => {
   </div>
 }
 
-export default CurrentMoment;
+const mapStateToProps = state => ({
+  date: state.dateTime.date,
+  time: state.dateTime.time
+});
+
+export default connect(mapStateToProps)(CurrentMoment);

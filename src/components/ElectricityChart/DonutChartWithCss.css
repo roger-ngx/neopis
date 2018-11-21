@@ -1,3 +1,7 @@
+.neopis_pie {
+  text-align: center;
+}
+
 .outer_pie {
   position: relative;
   border-radius: 50%;
@@ -37,4 +41,16 @@
   font-size: 12px;
   text-align: center;
   color: #b8b8c2;
+}
+
+
+.pie_description{
+  font-family: HiraKakuProN-W3;
+  font-size: 12px;
+  font-weight: 300;
+  line-height: 1.42;
+  letter-spacing: -0.5px;
+  text-align: center;
+  color: #b8b8c2;
+  margin-top: 11px;
 }
