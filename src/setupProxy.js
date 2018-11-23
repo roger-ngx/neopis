@@ -6,10 +6,10 @@ module.exports = function (app) {
     proxy(
       ['/api', '/asset', '/mqtt', '/socket.io', '/sockjs-node'],
       {
-        target: 'https://sfactory.testnt.thingbine.com',
+        target: 'https://systemadmin.testnt.thingbine.com',
         changeOrigin: true,
         onProxyReq: (proxyReq) => {
-          proxyReq.setHeader('Cookie', 'dwTPlus=s%3AKDt_Y9CRmMi013omEfrLpcr4r30ylbAW.SYAec8z3b1L19GRLwTrTLisO0yURT0ZWPBaY7oc3OXk');
+          proxyReq.setHeader('Cookie', 'dwTPlus=s%3ALdpAFA35WjfSCuPxqbTkdnAOGmNx254Y.aN6u07NATZ920kimzwvSfWUTK0pHA%2Fbx9CS2JGB8R1Q');
         },
         onProxyRes: (proxyRes) => {
           Object.keys(proxyRes.headers).forEach((key) => {

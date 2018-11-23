@@ -2,12 +2,16 @@ import React, { Component } from 'react';
 import './LineChartCrs.scss';
 import * as d3 from 'd3';
 
+export const ENERGY = 0;
+export const BATTERY = 1;
+export const ELECTRICITY = 2;
+
 class LineChartCrs extends Component {
 
   constructor(props) {
     super(props);
     this.chartArea = React.createRef();
-    this.gradients = ['url(#electricity)', 'url(#energy)', 'url(#battery)'];
+    this.gradients = ['url(#energy)', 'url(#battery)', 'url(#electricity)'];
     this.margin = {
       top: 20,
       right: 30,

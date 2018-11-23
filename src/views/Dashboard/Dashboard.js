@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+import React, { lazy, Suspense } from 'react';
 import './Dashboard.scss';
 import withStyles from "@material-ui/core/styles/withStyles";
 import Grid from '@material-ui/core/Grid';
@@ -13,9 +13,10 @@ import { connect } from 'react-redux';
 import { updateBatteryInfor, getUsersMe } from '../../store/actionCreators';
 import { SOURCE, BATTERY_1, BATTERY_2, ELECTRICITY } from '../../components/CurrentElectricityValue/mobile/CurrentElectricityValueMobile';
 import socket from '../../services/wsServices';
-import userService from '../../services/userService'
+import sensorService from '../../services/sensorService'
+import _ from 'lodash';
 
-const LineChart = React.lazy(() => import('../../components/ElectricityChart/LineChartWithCrossHairs/LineChartCrs'));
+const LineChart = lazy(() => import('../../components/ElectricityChart/LineChartWithCrossHairs/LineChartCrs'));
 
 const styles = {
   root: {
@@ -48,6 +49,46 @@ class Dashboard extends React.Component {
       owner: '0b842e22550d4919b8465b0f8c14acf1'
     }
     socket.subscribeSensor(sensor, data => console.log(data), data => console.log(data));
+
+    const currentTime = new Date();
+    const minTime = currentTime - 24 * 60 * 60 * 1000;
+
+    var query = {
+      embed: ['owner', 'series'],
+      'series[dataStart]': (new Date(minTime)).toISOString(),
+      'series[dataEnd]': (new Date(currentTime)).toISOString(),
+      'series[interval]': '5m'
+    };
+
+    sensorService.getSensorData('0b842e22550d4919b8465b0f8c14acf1', 
+    'temperature-0b842e22550d4919b8465b0f8c14acf1-2',
+    query);
+
+    this.getSensorsData('0b842e22550d4919b8465b0f8c14acf1', null, minTime, currentTime, '10m', 'temperature');
+  }
+
+  getSensorsData(gwId, sensorIds, startTime, endTime, interval = '0m', type) {
+    const query = {
+      embed: 'sensors',
+      'sensors[embed]': ['series', 'status', 'owner'],
+      'sensors[series][dataStart]': (new Date(startTime)).toISOString(),
+      'sensors[series][dataEnd]': (new Date(endTime)).toISOString(),
+      'sensors[series][interval]': interval
+    };
+
+    if (!_.isEmpty(sensorIds)) {
+      query['sensors[filter][id]'] = sensorIds
+    }
+
+    if (type) {
+      query['sensors[filter][type]'] = type;
+    }
+
+    sensorService.getSensorsData(gwId, query);
+  }
+
+  componentWillUnmount() {
+    socket.disconnectSocketChannel();
   }
 
   render() {

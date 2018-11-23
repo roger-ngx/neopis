@@ -11,7 +11,7 @@ const CurrentLocation = props =>
   </div>
 
 CurrentLocation.propTypes = {
-  location: PropTypes.string
+  location: PropTypes.string.isRequired
 }
 
 const mapStateToProps = state => ({

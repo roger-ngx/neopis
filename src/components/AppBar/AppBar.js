@@ -7,6 +7,7 @@ import notification from '../../assets/images/notification.svg';
 import CurrentMoment from '../CurrentMoment/CurrentMoment';
 import CurrentWeather from '../CurrentWeather/CurrentWeather';
 import CurrentLocation from '../CurrentLocation/CurrentLocation';
+import CurrentUser from '../CurrentUser/CurrentUser';
 
 const AppBar = props => {
   return <div className='nav_app_bar'>
@@ -20,10 +21,13 @@ const AppBar = props => {
     <div className='nav_location'>
       <CurrentLocation />
     </div>
-    <div className='nav_login_div'>
+    {/* <div className='nav_login_div'>
       <Button className='nav_btn_login' variant="extendedFab" aria-label="Log in">
         <span>Log in</span>
       </Button>
+    </div> */}
+    <div className='nav_user'>
+      <CurrentUser username='Thanh Nguyen Tien' />
     </div>
 
     <IconButton className='nav_btn_notification' aria-label="Notification">

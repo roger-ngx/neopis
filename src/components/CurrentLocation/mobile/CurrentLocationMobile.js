@@ -11,7 +11,7 @@ const CurrentLocationMobile = props =>
   </div>
 
 CurrentLocationMobile.propTypes = {
-  location: PropTypes.string
+  location: PropTypes.string.isRequired
 }
 
 const mapStateToProps = state => ({

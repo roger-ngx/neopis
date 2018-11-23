@@ -1,0 +1,42 @@
+.cur_user {
+  width: 244px;
+  height: 44px;
+  border-radius: 22px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: rgba(235, 236, 236, 0.11);
+}
+
+.cur_user_img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  margin-left: 10px;
+}
+
+.cur_user_name {
+  font-family: HiraKakuProN-W3;
+  font-size: 12px;
+  font-weight: 300;
+  letter-spacing: -1px;
+  color: #ffffff;
+  margin-left: 10px;
+}
+
+.cur_user_logout {
+  margin-left: auto;
+  margin-right: 10px;
+}
+
+.cur_user_logout_btn {
+  width: 67px;
+  min-height: 24px !important;
+  height: 24px !important;
+  border-radius: 20px !important;
+  color: #ffffff !important;
+  font-family: HiraKakuProN-W6 !important;
+  font-size: 9px !important;
+  border: solid 1px #9e9ea5 !important;
+  padding: 0 !important;
+}
