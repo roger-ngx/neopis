@@ -1,5 +1,6 @@
 import React from 'react';
-import './CardTitle.css';
+import './CardTitle.scss';
+import { PropTypes } from 'prop-types';
 
 const CardTitle = (props) =>
   <div className='card_title'>
@@ -11,4 +12,9 @@ const CardTitle = (props) =>
     </div>
   </div>
 
-export default CardTitle;  
+CardTitle.propTypes = {
+  title: PropTypes.string.isRequired,
+  image: PropTypes.string.isRequired,
+}
+
+export default CardTitle;

@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react';
-import './Dashboard.css';
+import './Dashboard.scss';
 import withStyles from "@material-ui/core/styles/withStyles";
 import Grid from '@material-ui/core/Grid';
 import Card from './Card/Card';
@@ -10,7 +10,7 @@ import energy from '../../assets/images/energy.svg';
 import AppBar from '../../components/AppBar/AppBar';
 // import LineChart from '../../components/ElectricityChart/LineChartWithCrossHairs/LineChartCrs';
 import { connect } from 'react-redux';
-import { updateBatteryInfor } from '../../store/actionCreators';
+import { updateBatteryInfor, getUsersMe } from '../../store/actionCreators';
 import { SOURCE, BATTERY_1, BATTERY_2, ELECTRICITY } from '../../components/CurrentElectricityValue/mobile/CurrentElectricityValueMobile';
 import socket from '../../services/wsServices';
 import userService from '../../services/userService'
@@ -39,8 +39,15 @@ const styles = {
 class Dashboard extends React.Component {
 
   componentDidMount() {
-    //socket.initSocketChannel();
-    //userService.me().then(data => console.log(data));
+    this.props.onFetchingCurrentUser();
+
+    socket.initSocketChannel();
+
+    let sensor = {
+      id: 'temperature-0b842e22550d4919b8465b0f8c14acf1-2',
+      owner: '0b842e22550d4919b8465b0f8c14acf1'
+    }
+    socket.subscribeSensor(sensor, data => console.log(data), data => console.log(data));
   }
 
   render() {
@@ -91,14 +98,13 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   onUpdateBatteryInfo: () => {
-    userService.me().then(data => console.log(data));
-
     dispatch(updateBatteryInfor({
       thisMonth: (Math.random() * 1000).toFixed(1),
       today: (Math.random() * 100).toFixed(1),
       percentage: Math.round(Math.random() * 100)
     }))
-  }
+  },
+  onFetchingCurrentUser: () => dispatch(getUsersMe())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(Dashboard));

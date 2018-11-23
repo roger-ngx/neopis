@@ -1,5 +1,5 @@
 import React from 'react';
-import './BatteryMode.css';
+import './BatteryMode.scss';
 
 const BatteryMode = props => {
 

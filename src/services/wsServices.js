@@ -75,7 +75,8 @@ function getWSUrl(namespace = 'mqtt') {
 
 function registerWsBulk(eventName, registeredGS, gsIds, retryCountDown = 10) {
   // const userId = userService.getUserId();
-  const { userId } = Store.getters;
+
+  const userId = _.get(Store.getState(), 'currentUser.loginId');
   if (!userId && retryCountDown) {
     // userService가 사용자 정보를 로딩해오는데 시간이 걸릴 경우에도 정상동작하기 위한 재시도.
     // 단 최대 10번까지만 재시도하고 안되면 에러메시지 내고 끝냄.

@@ -1,7 +1,8 @@
 import React from 'react';
-import './CurrentWeatherMobile.css'
+import './CurrentWeatherMobile.scss'
 import image from '../../../assets/images/weather.svg'
 import { connect } from 'react-redux';
+import { PropTypes } from 'prop-types';
 
 const CurrentWeatherMobile = props => {
   return <div className='m_weather'>
@@ -13,6 +14,11 @@ const CurrentWeatherMobile = props => {
       {props.humidity}%
     </div>
   </div>
+}
+
+CurrentWeatherMobile.propTypes = {
+  temperature: PropTypes.number,
+  humidity: PropTypes.number
 }
 
 const mapStateToProps = state => ({

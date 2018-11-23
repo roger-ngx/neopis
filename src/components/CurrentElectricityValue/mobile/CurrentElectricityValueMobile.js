@@ -1,5 +1,5 @@
 import React from 'react';
-import './CurrentElectricityValueMobile.css';
+import './CurrentElectricityValueMobile.scss';
 import classNames from 'classnames';
 
 export const SOURCE = 1;

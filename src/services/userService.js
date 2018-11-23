@@ -3,8 +3,8 @@ axios.defaults.withCredentials = true;
 
 export default {
   me() {
-    //return axios.get('/api/users/me');
-    return fetch('/api/users/me', { credentials: 'include' });
+    return axios.get('/api/users/me');
+    //return fetch('/api/users/me', { credentials: 'include' });
   },
   saveUserAccount(data) {
     return axios.put('/users/me', data);

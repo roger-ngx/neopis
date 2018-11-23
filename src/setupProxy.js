@@ -4,12 +4,10 @@ module.exports = function (app) {
   let cookie;
   app.use(
     proxy(
-      ['/api', '/asset'],
+      ['/api', '/asset', '/mqtt', '/socket.io', '/sockjs-node'],
       {
         target: 'https://sfactory.testnt.thingbine.com',
         changeOrigin: true,
-        secure: false,
-        https: true,
         onProxyReq: (proxyReq) => {
           proxyReq.setHeader('Cookie', 'dwTPlus=s%3AKDt_Y9CRmMi013omEfrLpcr4r30ylbAW.SYAec8z3b1L19GRLwTrTLisO0yURT0ZWPBaY7oc3OXk');
         },

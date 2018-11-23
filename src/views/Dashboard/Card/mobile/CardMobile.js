@@ -1,5 +1,5 @@
 import React from 'react';
-import './CardMobile.css';
+import './CardMobile.scss';
 import CurrentBatteryPercentage from '../../../../components/CurrentBatteryPercentage/CurrentBatteryPercentage';
 import CardTitle from '../../../../components/CardTitle/CardTitle';
 import DonutChartWithCss from '../../../../components/ElectricityChart/DonutChartWithCss';

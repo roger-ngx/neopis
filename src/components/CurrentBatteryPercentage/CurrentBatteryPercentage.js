@@ -1,5 +1,5 @@
 import React from 'react';
-import './CurrentBatteryPercentage.css'
+import './CurrentBatteryPercentage.scss'
 import classnames from 'classnames';
 import { PropTypes } from 'prop-types';
 
@@ -31,7 +31,8 @@ const CurrentBatteryPercentage = props => {
 }
 
 CurrentBatteryPercentage.propTypes = {
-  mobile: PropTypes.bool
+  mobile: PropTypes.bool,
+  value: PropTypes.number.isRequired
 }
 
 CurrentBatteryPercentage.defaultProps = {

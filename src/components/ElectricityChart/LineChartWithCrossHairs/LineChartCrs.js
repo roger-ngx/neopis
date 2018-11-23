@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import './LineChartCrs.css';
+import './LineChartCrs.scss';
 import * as d3 from 'd3';
 
 class LineChartCrs extends Component {

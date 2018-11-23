@@ -1,5 +1,5 @@
 import React from 'react';
-import './AppBarMobile.css';
+import './AppBarMobile.scss';
 import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
 import logo from '../../../assets/images/neopis-logo.svg';

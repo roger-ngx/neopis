@@ -1,5 +1,5 @@
 import React from 'react';
-import './DashboardMobile.css';
+import './DashboardMobile.scss';
 import withStyles from "@material-ui/core/styles/withStyles";
 import CurrentMomentMobile from '../../../components/CurrentMoment/mobile/CurrentMomentMobile';
 import CurrentWeatherMobile from '../../../components/CurrentWeather/mobile/CurrentWeatherMobile';

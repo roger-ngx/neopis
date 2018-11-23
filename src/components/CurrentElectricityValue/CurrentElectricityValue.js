@@ -1,8 +1,9 @@
 import React from 'react';
-import './style.css';
-import './CurrentElectricityValue.css';
+import './style.scss';
+import './CurrentElectricityValue.scss';
 import classnames from 'classnames'
 import { SOURCE, BATTERY_1, BATTERY_2, ELECTRICITY } from './mobile/CurrentElectricityValueMobile';
+import { PropTypes } from 'prop-types';
 
 const CurrentElectricityValue = (props) =>{
 
@@ -27,6 +28,13 @@ const CurrentElectricityValue = (props) =>{
       {props.description}
     </span>
   </div>
+}
+
+CurrentElectricityValue.propTypes = {
+  type: PropTypes.number.isRequired,
+  value: PropTypes.number.isRequired,
+  unit: PropTypes.string.isRequired,
+  description: PropTypes.string.isRequired,
 }
 
 export default CurrentElectricityValue;

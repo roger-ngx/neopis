@@ -1,5 +1,5 @@
 import React from 'react';
-import './Card.css';
+import './Card.scss';
 import CardTitle from '../../../components/CardTitle/CardTitle';
 import CurrentElectricityValue from '../../../components/CurrentElectricityValue/CurrentElectricityValue';
 import CurrentBatteryPercentage from '../../../components/CurrentBatteryPercentage/CurrentBatteryPercentage';
@@ -7,6 +7,7 @@ import DonutChartWithCss from '../../../components/ElectricityChart/DonutChartWi
 import classnames from 'classnames';
 import BatteryMode from '../../../components/BatteryMode/BatteryMode';
 import { BATTERY_2, BATTERY_1 } from '../../../components/CurrentElectricityValue/mobile/CurrentElectricityValueMobile';
+import { PropTypes } from 'prop-types';
 
 
 const Card = props => {
@@ -41,6 +42,14 @@ const Card = props => {
       </div>
     </div>
   </div>
+}
+
+Card.propTypes = {
+  type: PropTypes.number.isRequired,
+  titleName: PropTypes.string.isRequired,
+  titleImage: PropTypes.string.isRequired,
+  data: PropTypes.object.isRequired,
+  description: PropTypes.string
 }
 
 export default Card;

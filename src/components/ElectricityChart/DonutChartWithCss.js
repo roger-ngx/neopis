@@ -1,5 +1,5 @@
 import React from 'react';
-import './DonutChartWithCss.css'
+import './DonutChartWithCss.scss'
 import { SOURCE, BATTERY_2, BATTERY_1, ELECTRICITY } from '../CurrentElectricityValue/mobile/CurrentElectricityValueMobile';
 import { PropTypes } from 'prop-types';
 
@@ -48,7 +48,10 @@ const DonutChartWithCss = (props) => {
 }
 
 DonutChartWithCss.propTypes = {
-  size: PropTypes.number.isRequired
+  size: PropTypes.number.isRequired,
+  percentage: PropTypes.number.isRequired,
+  electricity: PropTypes.string.isRequired,
+  description: PropTypes.string.isRequired
 }
 
 export default DonutChartWithCss;

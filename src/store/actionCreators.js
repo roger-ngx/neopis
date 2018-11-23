@@ -1,3 +1,5 @@
+import userService from "../services/userService";
+
 export const UPDATE_DATE_TIME = 'UPDATE_DATE_TIME';
 export const UPDATE_WEATHER = 'UPDATE_WEATHER';
 export const UPDATE_LOCATION = 'UPDATE_LOCATION';
@@ -5,6 +7,7 @@ export const UPDATE_SOLAR_ENERGY = 'UPDATE_SOLAR_ENERGY';
 export const UPDATE_BATTERY_STORAGE = 'UPDATE_BATTERY_STORAGE';
 export const UPDATE_GENERATED_ELECTRICITY = 'UPDATE_GENERATED_ELECTRICITY';
 export const UPDATE_SUMMARY_CHART = 'UPDATE_SUMMARY_CHART';
+export const UPDATE_CURRENT_USER = 'UPDATE_CURRENT_USER';
 
 export const updateDateTime = content => ({
   type: UPDATE_DATE_TIME,
@@ -40,4 +43,11 @@ export const updateSummaryChart = content => ({
   type: UPDATE_SUMMARY_CHART,
   content
 });
+
+export const updateCurrentUser = content => ({
+  type: UPDATE_CURRENT_USER,
+  content
+});
+
+export const getUsersMe = () => dispatch => userService.me().then(res => dispatch(updateCurrentUser(res.data)))
 

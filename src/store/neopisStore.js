@@ -3,7 +3,8 @@ import { UPDATE_DATE_TIME,
   UPDATE_LOCATION, 
   UPDATE_SOLAR_ENERGY, 
   UPDATE_BATTERY_STORAGE, 
-  UPDATE_GENERATED_ELECTRICITY } from "./actionCreators";
+  UPDATE_GENERATED_ELECTRICITY,
+  UPDATE_CURRENT_USER } from "./actionCreators";
 
 const initialState = {
   dateTime: {
@@ -58,6 +59,10 @@ export function neopisReducer(state = initialState, action) {
 
     case UPDATE_GENERATED_ELECTRICITY:
       newState.generatedElectricity = action.content;
+      return newState;
+
+    case UPDATE_CURRENT_USER:
+      newState.currentUser = action.content;
       return newState;
 
     default:
