@@ -8,15 +8,15 @@ import battery2 from '../../assets/images/battery-2.svg';
 import electricity from '../../assets/images/electricity.svg';
 import energy from '../../assets/images/energy.svg';
 import AppBar from '../../components/AppBar/AppBar';
-// import LineChart from '../../components/ElectricityChart/LineChartWithCrossHairs/LineChartCrs';
+import LineChart from '../../components/ElectricityChart/LineChartWithCrossHairs/LineChartCrs';
 import { connect } from 'react-redux';
-import { updateBatteryInfor, getUsersMe } from '../../store/actionCreators';
+import { updateBatteryInfor, getUsersMe, getInitialDataForChart } from '../../store/actionCreators';
 import { SOURCE, BATTERY_1, BATTERY_2, ELECTRICITY } from '../../components/CurrentElectricityValue/mobile/CurrentElectricityValueMobile';
 import socket from '../../services/wsServices';
 import sensorService from '../../services/sensorService'
 import _ from 'lodash';
 
-const LineChart = lazy(() => import('../../components/ElectricityChart/LineChartWithCrossHairs/LineChartCrs'));
+//const LineChart = lazy(() => import('../../components/ElectricityChart/LineChartWithCrossHairs/LineChartCrs'));
 
 const styles = {
   root: {
@@ -64,7 +64,13 @@ class Dashboard extends React.Component {
     'temperature-0b842e22550d4919b8465b0f8c14acf1-2',
     query);
 
-    this.getSensorsData('0b842e22550d4919b8465b0f8c14acf1', null, minTime, currentTime, '10m', 'temperature');
+    const sensorIds = [
+      'temperature-9786c9c4c95840228ed4fdb30bf9e5a4-1',
+      'temperature-9786c9c4c95840228ed4fdb30bf9e5a4-2',
+      'temperature-9786c9c4c95840228ed4fdb30bf9e5a4-3'
+    ]
+
+    this.getSensorsData('9786c9c4c95840228ed4fdb30bf9e5a4', sensorIds, minTime, currentTime, '5m', 'temperature');
   }
 
   getSensorsData(gwId, sensorIds, startTime, endTime, interval = '0m', type) {
@@ -84,7 +90,8 @@ class Dashboard extends React.Component {
       query['sensors[filter][type]'] = type;
     }
 
-    sensorService.getSensorsData(gwId, query);
+    //sensorService.getSensorsData(gwId, query);
+    this.props.onInitialChartData(gwId, query);
   }
 
   componentWillUnmount() {
@@ -145,7 +152,8 @@ const mapDispatchToProps = dispatch => ({
       percentage: Math.round(Math.random() * 100)
     }))
   },
-  onFetchingCurrentUser: () => dispatch(getUsersMe())
+  onFetchingCurrentUser: () => dispatch(getUsersMe()),
+  onInitialChartData: (gwId, params) => dispatch(getInitialDataForChart(gwId, params))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(Dashboard));

@@ -3,6 +3,7 @@ import './CurrentUser.scss';
 import { PropTypes } from 'prop-types';
 import { Button } from '@material-ui/core';
 import user from '../../assets/images/user.svg'
+import { connect } from 'react-redux';
 
 const CurrentUser = props => {
   return <div className='cur_user'>
@@ -18,4 +19,12 @@ CurrentUser.propsType = {
   username: PropTypes.string.isRequired
 }
 
-export default CurrentUser;
+CurrentUser.defaultProps = {
+  username: ''
+}
+
+const mapStateToProps = state => ({
+  username: state.currentUser && state.currentUser.loginId
+})
+
+export default connect(mapStateToProps)(CurrentUser);

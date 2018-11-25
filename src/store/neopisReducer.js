@@ -1,10 +1,14 @@
-import { UPDATE_DATE_TIME, 
-  UPDATE_WEATHER, 
-  UPDATE_LOCATION, 
-  UPDATE_SOLAR_ENERGY, 
-  UPDATE_BATTERY_STORAGE, 
+import {
+  UPDATE_DATE_TIME,
+  UPDATE_WEATHER,
+  UPDATE_LOCATION,
+  UPDATE_SOLAR_ENERGY,
+  UPDATE_BATTERY_STORAGE,
   UPDATE_GENERATED_ELECTRICITY,
-  UPDATE_CURRENT_USER } from "./actionCreators";
+  UPDATE_CURRENT_USER,
+  UPDATE_CHART_DATA,
+  INITIAL_CHART_DATA
+} from "./actionCreators";
 
 const initialState = {
   dateTime: {
@@ -30,6 +34,9 @@ const initialState = {
     thisMonth: 876.5,
     today: 60.2,
     percentage: 32
+  },
+  summaryChart: {
+    data: [[], [], []]
   }
 };
 
@@ -63,6 +70,18 @@ export function neopisReducer(state = initialState, action) {
 
     case UPDATE_CURRENT_USER:
       newState.currentUser = action.content;
+      return newState;
+
+    case UPDATE_CHART_DATA:
+      const content = action.content;
+      const index = content.index;
+      const data = content.data;
+      newState.summaryChart.data[index].push(data);
+      newState.summaryChart.data[index].unshift();
+      return newState;
+
+    case INITIAL_CHART_DATA:
+      newState.summaryChart = action.content;
       return newState;
 
     default:
