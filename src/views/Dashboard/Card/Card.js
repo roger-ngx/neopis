@@ -21,11 +21,12 @@ const Card = props => {
   let cardBottom;
   if (+props.type === BATTERY_2) {
     cardBottom = <>
-      <BatteryMode status='Manual'/><CurrentBatteryPercentage value={props.data.percentage}/>;
+      <BatteryMode status={props.isActive ? 'Manual' : 'Automatic'} />
+      <CurrentBatteryPercentage value={props.data.batteryRate} />;
       </>
   } else {
     cardBottom = <DonutChartWithCss type={props.type} percentage={props.data.percentage}
-                                    size={128} description={props.description} electricity='851kW' />;
+      size={128} description={props.description} electricity={(props.data.curPower || 0) + 'kW'} />;
   }
 
   return <div className={cardClasses}>
@@ -33,8 +34,8 @@ const Card = props => {
       <CardTitle title={props.titleName} image={props.titleImage} />
     </div>
     <div className='db_card_middle'>
-      <CurrentElectricityValue type={props.type} value={props.data.thisMonth} unit="kWh" description="This month" />
-      <CurrentElectricityValue type={props.type} value={props.data.today} unit="kWh" description="Today" />
+      <CurrentElectricityValue type={props.type} value={props.data.thisMonth} unit="MWh" description="This month" isActive={props.isActive} />
+      <CurrentElectricityValue type={props.type} value={props.data.today} unit="kWh" description="Today" isActive={props.isActive} />
     </div>
     <div className="db_card_bottom">
       <div className="content">
@@ -49,7 +50,12 @@ Card.propTypes = {
   titleName: PropTypes.string.isRequired,
   titleImage: PropTypes.string.isRequired,
   data: PropTypes.object.isRequired,
-  description: PropTypes.string
+  description: PropTypes.string,
+  isActive: PropTypes.bool,
+}
+
+Card.defaultProps = {
+  isActive: true
 }
 
 export default Card;

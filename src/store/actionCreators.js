@@ -6,12 +6,14 @@ export const UPDATE_DATE_TIME = 'UPDATE_DATE_TIME';
 export const UPDATE_WEATHER = 'UPDATE_WEATHER';
 export const UPDATE_LOCATION = 'UPDATE_LOCATION';
 export const UPDATE_SOLAR_ENERGY = 'UPDATE_SOLAR_ENERGY';
-export const UPDATE_BATTERY_STORAGE = 'UPDATE_BATTERY_STORAGE';
-export const UPDATE_GENERATED_ELECTRICITY = 'UPDATE_GENERATED_ELECTRICITY';
+export const UPDATE_ESS_DISCHARGE = 'UPDATE_ESS_DISCHARGE';
+export const UPDATE_ESS_CHARGE = 'UPDATE_ESS_CHARGE';
+export const UPDATE_GRID_ENERGY = 'UPDATE_GRID_ENERGY';
 export const UPDATE_SUMMARY_CHART = 'UPDATE_SUMMARY_CHART';
 export const UPDATE_CURRENT_USER = 'UPDATE_CURRENT_USER';
 export const UPDATE_CHART_DATA = 'UPDATE_CHART_DATA';
 export const INITIAL_CHART_DATA = 'INITIAL_CHART_DATA';
+export const UPDATE_ESS_STATUS = 'UPDATE_ESS_STATUS';
 
 export const updateDateTime = content => ({
   type: UPDATE_DATE_TIME,
@@ -28,18 +30,28 @@ export const updateLocation = content => ({
   content
 });
 
-export const updateSolarEneryInformation = content => ({
+export const updateSolarEnergy = content => ({
   type: UPDATE_SOLAR_ENERGY,
   content
 });
 
-export const updateBatteryInfor = content => ({
-  type: UPDATE_BATTERY_STORAGE,
+export const updateESSDischarge = content => ({
+  type: UPDATE_ESS_DISCHARGE,
   content
 });
 
-export const updateGeneratedElectricity = content => ({
-  type: UPDATE_GENERATED_ELECTRICITY,
+export const updateESSStatus = content => ({
+  type: UPDATE_ESS_STATUS,
+  content
+});
+
+export const updateESSCharge = content => ({
+  type: UPDATE_ESS_CHARGE,
+  content
+});
+
+export const updateGridEnergy = content => ({
+  type: UPDATE_GRID_ENERGY,
   content
 });
 
@@ -58,6 +70,11 @@ export const initialChartData = content => ({
   content
 });
 
+export const updateChartData = content => ({
+  type: UPDATE_CHART_DATA,
+  content
+});
+
 export const getUsersMe = () => dispatch => userService.me().then(res => dispatch(updateCurrentUser(res.data)))
 
 export const getInitialDataForChart =
@@ -65,7 +82,8 @@ export const getInitialDataForChart =
     dispatch =>
       sensorService.getSensorsData(gwId, params)
         .then(res => {
-          const sensorData = _.filter(_.get(res, 'data.data.sensors'), data => _.isObject(data));
+          const sensorData = _.filter(_.get(res, 'data.data.sensors'), data => _.isObject(data))
+                              .map(data => _.pick(data, ['name', 'id', 'series.data']));
 
           sensorData && dispatch(initialChartData(sensorData))
         });

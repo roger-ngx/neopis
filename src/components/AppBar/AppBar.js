@@ -27,7 +27,7 @@ const AppBar = props => {
       </Button>
     </div> */}
     <div className='nav_user'>
-      <CurrentUser username='Thanh Nguyen Tien' />
+      <CurrentUser />
     </div>
 
     <IconButton className='nav_btn_notification' aria-label="Notification">

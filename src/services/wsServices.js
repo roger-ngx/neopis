@@ -38,6 +38,7 @@ let registeredGateways = {};
 let registeredSensors = {};
 let wsSubdomain = 'ws';
 let onQueue = [];
+let wrappedCallbacks = {};
 
 let WS_USE_DEDICATED_SERVER = false;
 const UNREGISTER_DELAY = 30000; // 30 seconds
@@ -135,8 +136,7 @@ function unregisterWsBulk(eventName, registeredGS, gsIds, filterFn) {
   // NOTE: make a delay for the successive unsub/sub operation.
   // To reduce needlessly frequent unregister/register operation.
   setTimeout(() => {
-    const { userId } = Store.getters;
-    // const userId = userService.getUserId();
+    const userId = _.get(Store.getState(), 'currentUser.loginId');
 
     if (!socket) { return; }
 
@@ -219,8 +219,8 @@ function initSocketChannel() {
 
   ['connect_error', 'connect_timeout', 'reconnect', 'reconnect_attempt',
     'reconnecting', 'reconnect_error', 'reconnect_failed'].forEach((event) => {
-    socket.on(event, eventData => console.info('[wsService]', event, eventData));
-  });
+      socket.on(event, eventData => console.info('[wsService]', event, eventData));
+    });
 
   socket.on('connect', () => {
     console.info('WebSocket is connected', socket.socket);
@@ -292,6 +292,123 @@ function wrapSensorCallback(target, orgCallback) {
   };
 }
 
+function _subscribeRealtime(path, cb) {
+  if (socket) {
+    socket.on(path, cb);
+  } else {
+    console.warn('wsService - _subscribeRealtime(): socket is NULL:', path);
+  }
+}
+
+function _unsubscribeRealtime(path, cb) {
+  if (socket) {
+    socket.off(path, cb);
+  } else {
+    console.warn('wsService - _unsubscribeRealtime(): socket is NULL:', path);
+  }
+}
+
+function _registerWsBulk(eventName, registeredGS, gsIds) {
+  const userId = _.get(Store.getState(), 'currentUser.loginId');
+
+  var toRegisterIds = _.filter(gsIds, function (gsId) {
+    return !registeredGS[gsId];
+  });
+
+  _.forEach(toRegisterIds, function (gsId) {
+    registeredGS[gsId] = true;
+  });
+
+  if (socket && !_.isEmpty(toRegisterIds)) {
+    socket.emit(eventName, { gsIds: toRegisterIds, userId: userId });
+  }
+}
+
+function _registerSensorBulk(sensorIds) {
+  _registerWsBulk('sensors:register', registeredSensors, sensorIds);
+}
+
+function _registerGatewayBulk(gatewayIds) {
+  _registerWsBulk('gateways:register', registeredGateways, gatewayIds);
+}
+function _unregisterWsBulk(eventName, registeredGS, gsIds, filterFn) {
+  // NOTE: make a delay for the successive unsub/sub operation.
+  // To reduce needlessly frequent unregister/register operation.
+  setTimeout(function () {
+    const userId = _.get(Store.getState(), 'currentUser.loginId');
+
+    var toUnregisterIds;
+
+    if (!socket) { return; }
+
+    toUnregisterIds = _.filter(gsIds, filterFn);
+    _.forEach(toUnregisterIds, function (gsId) {
+      delete registeredGS[gsId];
+    });
+
+    if (!_.isEmpty(toUnregisterIds)) {
+      socket.emit(eventName, { gsIds: toUnregisterIds, userId: userId });
+    }
+  }, UNREGISTER_DELAY);
+}
+
+function _unregisterSensors(sensorIds) {
+  _unregisterWsBulk('sensors:unregister', registeredSensors, sensorIds,
+    function (id) {
+      var statusTopic = 's/' + id + '/status';
+      var dataTopic = 's/' + id + '/value';
+      return !socket.hasListeners(dataTopic) && !socket.hasListeners(statusTopic);
+    });
+}
+
+function _unregisterGateways(gatewayIds) {
+  _unregisterWsBulk('gateways:unregister', registeredGateways, gatewayIds,
+    function (id) {
+      var statusTopic = 'g/' + id + '/status';
+      return !socket.hasListeners(statusTopic);
+    });
+}
+
+function _wsSubscribeSensor(sensors, cbObj) {
+  _registerSensorBulk(_.map(sensors, 'id'));
+  _registerGatewayBulk(_.map(sensors, 'owner'));
+
+  _.forEach(sensors, function (sensor) {
+    wrappedCallbacks[sensor.id] = {};
+
+    if (cbObj.dataCallback) {
+      wrappedCallbacks[sensor.id].dataCB = wrapSensorCallback(sensor, cbObj.dataCallback);
+      _subscribeRealtime('s/' + sensor.id + '/value', wrappedCallbacks[sensor.id].dataCB);
+    }
+
+    if (cbObj.statusCallback) {
+      wrappedCallbacks[sensor.id].statusCB = wrapSensorCallback(sensor, cbObj.statusCallback);
+      _subscribeRealtime('s/' + sensor.id + '/status', wrappedCallbacks[sensor.id].statusCB);
+      _subscribeRealtime('g/' + sensor.owner + '/status', wrappedCallbacks[sensor.id].statusCB);
+    }
+  });
+}
+
+function _wsUnsubscribeSensor(sensors, cbObj) {
+  _.forEach(sensors, function (sensor) {
+    if (cbObj.dataCallback) {
+      _unsubscribeRealtime('s/' + sensor.id + '/value', wrappedCallbacks[sensor.id].dataCB);
+      delete wrappedCallbacks[sensor.id].dataCB;
+    }
+
+    if (cbObj.statusCallback) {
+      _unsubscribeRealtime('s/' + sensor.id + '/status', wrappedCallbacks[sensor.id].statusCB);
+      _unsubscribeRealtime('g/' + sensor.owner + '/status', wrappedCallbacks[sensor.id].statusCB);
+      delete wrappedCallbacks[sensor.id].statusCB;
+    }
+
+    delete wrappedCallbacks[sensor.id];
+  });
+
+  _unregisterSensors(_.map(sensors, 'id'));
+  _unregisterGateways(_.map(sensors, 'owner'));
+}
+
 export default {
   /**
    * subscribeSensor - 센서등록(및 subscription).
@@ -316,6 +433,21 @@ export default {
     };
     registerAndSubscribeSensor(sensorObj, cbObj);
     return unregisterAndUnsubscribe.bind(null, sensorObj, cbObj);
+  },
+  subscribeSensors: function (sensors, dataCallback, statusCallback) {
+    var cbObj = { dataCallback: dataCallback, statusCallback: statusCallback };
+    var _sensors = [];
+
+    if (_.isArray(sensors)) {
+      _.forEach(sensors, function (sensor) {
+        _sensors.push({ id: sensor.id, owner: sensor.owner });
+      });
+    } else {
+      _sensors.push({ id: sensors.id, owner: sensors.owner });
+    }
+
+    _wsSubscribeSensor(_sensors, cbObj);
+    return _wsUnsubscribeSensor.bind(null, _sensors, cbObj);
   },
   subscribeGatewayStatus(gatewayId, statusCallback) {
     this.registerRealtimeGateway(gatewayId);

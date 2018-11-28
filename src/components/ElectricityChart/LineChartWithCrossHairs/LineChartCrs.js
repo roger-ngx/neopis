@@ -16,9 +16,19 @@ const XAxis = props => {
     .ticks(Math.max(props.width / 75, 4))
     .tickSize(-props.height);
 
-  xScale.domain(d3.extent(props.data.values, function (d) {
-    return d.time;
-  }));
+  xScale.domain([
+    d3.min(props.data, function (c) {
+      return c.values.length && c.values[0].time;
+    }),
+    d3.max(props.data, function (c) {
+      const length = c.values.length;
+      return length && c.values[length - 1].time;
+    })
+  ]);
+
+  // xScale.domain(d3.extent(props.data.values, function (d) {
+  //   return d.time;
+  // }));
 
   d3.select(".x").attr("transform", "translate(0," + props.height + ")").call(xAxis);
 
@@ -71,9 +81,15 @@ const Lines = props => {
   const xScale = d3.scaleTime()
     .range([0, props.width]);
 
-  xScale.domain(d3.extent(props.data[0].values, function (d) {
-    return d.time;
-  }));
+  xScale.domain([
+    d3.min(props.data, function (c) {
+      return c.values.length && c.values[0].time;
+    }),
+    d3.max(props.data, function (c) {
+      const length = c.values.length;
+      return length && c.values[length - 1].time;
+    })
+  ]);
 
   const yScale = d3.scaleLinear()
     .range([props.height, 0]);
@@ -105,6 +121,13 @@ const Lines = props => {
 const MouseOverEffect = props => {
   var lines = document.getElementsByClassName('line');
 
+  const xScale = d3.scaleTime()
+    .range([0, props.width]);
+
+  xScale.domain(d3.extent(props.data[0].values, function (d) {
+    return d.time;
+  }));
+
   const yScale = d3.scaleLinear()
     .range([props.height, 0]);
 
@@ -127,6 +150,8 @@ const MouseOverEffect = props => {
     .append("g")
     .attr("class", "mouse-per-line");
 
+  d3.select('g').append('text').attr('class', 'x-value');
+
   mousePerLine.append("circle")
     .attr("r", 7)
     .style("stroke", function (d, i) {
@@ -136,12 +161,13 @@ const MouseOverEffect = props => {
     .style("stroke-width", "2px")
     .style("opacity", "0");
 
-  mousePerLine.append("text")
-    .attr("transform", "translate(10,3)");
+  mousePerLine.append("text");
 
   d3.select('rect') // append a rect to catch mouse movements on canvas
     .on('mouseout', function () { // on mouse out hide line, circles and text
       d3.select(".mouse-line")
+        .style("opacity", "0");
+      d3.select(".x-value")
         .style("opacity", "0");
       d3.selectAll(".mouse-per-line circle")
         .style("opacity", "0");
@@ -150,6 +176,8 @@ const MouseOverEffect = props => {
     })
     .on('mouseover', function () { // on mouse in show line, circles and text
       d3.select(".mouse-line")
+        .style("opacity", "1");
+      d3.select(".x-value")
         .style("opacity", "1");
       d3.selectAll(".mouse-per-line circle")
         .style("opacity", "1");
@@ -185,9 +213,19 @@ const MouseOverEffect = props => {
             else break; //position found
           }
 
-          d3.select(this).select('text')
+          const text = d3.select(this).select('text')
             .text(yScale.invert(pos.y).toFixed(2))
             .attr("fill", 'white');
+
+          if (pos.x > props.width / 2) {
+            text.attr("transform", "translate(-55,-10)")
+          } else {
+            text.attr("transform", "translate(10,-10)")
+          }
+
+          d3.select('.x-value').text(d3.timeFormat("%H:%M")(xScale.invert(pos.x)))
+            .attr('x', pos.x - 25)
+            .attr('y', props.height + 20);
 
           return "translate(" + mouse[0] + "," + pos.y + ")";
         });
@@ -196,6 +234,10 @@ const MouseOverEffect = props => {
   d3.select('.mouse-line')
     .style("stroke", "white")
     .style("stroke-width", "1px")
+    .style("opacity", "0");
+
+  d3.select('.x-value')
+    .style("fill", "white")
     .style("opacity", "0");
 
   return <g className='mouse-over-effects'>
@@ -211,17 +253,16 @@ class LineChartCrs extends Component {
     this.chartArea = React.createRef();
     this.gradients = ['url(#energy)', 'url(#battery)', 'url(#electricity)'];
     this.margin = {
-      top: 20,
-      right: 30,
+      top: 30,
+      right: 20,
       bottom: 20,
-      left: 30
+      left: 20
     };
 
     this.state = {
       width: 0,
       height: 0,
       data: [],
-      cities: []
     };
   }
 
@@ -242,7 +283,7 @@ class LineChartCrs extends Component {
   };
 
   render() {
-
+    
     return <svg width="100%" height="100%" ref={this.chartArea}>
       <g transform={`translate(${this.margin.left},${this.margin.top})`}>
         <defs>
@@ -266,7 +307,7 @@ class LineChartCrs extends Component {
           </linearGradient>
         </defs>
 
-        <XAxis width={this.state.width} height={this.state.height} data={this.props.data[0]} />
+        <XAxis width={this.state.width} height={this.state.height} data={this.props.data} />
 
         <YAxis width={this.state.width} height={this.state.height} data={this.props.data} />
 

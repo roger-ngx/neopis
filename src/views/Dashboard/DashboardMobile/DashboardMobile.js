@@ -16,9 +16,10 @@ import "slick-carousel/slick/slick-theme.css";
 import AppBarMobile from '../../../components/AppBar/mobile/AppBarMobile';
 import { SOURCE, BATTERY_1, BATTERY_2, ELECTRICITY } from '../../../components/CurrentElectricityValue/mobile/CurrentElectricityValueMobile';
 import { connect } from 'react-redux';
-import { updateBatteryInfor } from '../../../store/actionCreators';
-import userService from '../../../services/userService';
+import { updateESSDischarge, getUsersMe } from '../../../store/actionCreators';
 import LineChartCrs from '../../../components/ElectricityChart/LineChartWithCrossHairs/LineChartCrs';
+import { getInitialDataForChart } from '../../../store/actionCreators';
+import _ from 'lodash';
 
 const styles = {
   root: {
@@ -35,7 +36,50 @@ const styles = {
 class DashboardMobile extends React.Component {
 
   componentDidMount() {
-    userService.me().then(data => console.log(data));
+    this.props.onFetchingCurrentUser();
+
+    const currentTime = new Date();
+    const minTime = currentTime - 24 * 60 * 60 * 1000;
+
+    const sensorIds = [
+      'temperature-9786c9c4c95840228ed4fdb30bf9e5a4-1',
+      'temperature-9786c9c4c95840228ed4fdb30bf9e5a4-2',
+      'temperature-9786c9c4c95840228ed4fdb30bf9e5a4-3'
+    ];
+
+    this.getSensorsData('9786c9c4c95840228ed4fdb30bf9e5a4',sensorIds, minTime, currentTime, '15m', 'temperature');
+
+    this.chartDataUpdateInterval = setInterval(() => this.getSensorsData('9786c9c4c95840228ed4fdb30bf9e5a4', 
+                                    sensorIds, 
+                                    minTime, 
+                                    currentTime, 
+                                    '15m', 
+                                    'temperature'), 15 * 60 * 1000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.chartDataUpdateInterval);
+  }
+
+  getSensorsData(gwId, sensorIds, startTime, endTime, interval = '0m', type) {
+    const query = {
+      embed: 'sensors',
+      'sensors[embed]': ['series', 'status', 'owner'],
+      'sensors[series][dataStart]': (new Date(startTime)).toISOString(),
+      'sensors[series][dataEnd]': (new Date(endTime)).toISOString(),
+      'sensors[series][interval]': interval
+    };
+
+    if (!_.isEmpty(sensorIds)) {
+      query['sensors[filter][id]'] = sensorIds
+    }
+
+    if (type) {
+      query['sensors[filter][type]'] = type;
+    }
+
+    //sensorService.getSensorsData(gwId, query);
+    this.props.onInitialChartData(gwId, query);
   }
 
   render() {
@@ -89,11 +133,13 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  onUpdateBatteryInfo: () => dispatch(updateBatteryInfor({
+  onUpdateBatteryInfo: () => dispatch(updateESSDischarge({
     thisMonth: (Math.random() * 1000).toFixed(1),
     today: (Math.random() * 100).toFixed(1),
-    percentage: Math.round(Math.random() * 100)
-  }))
+    batteryRate: Math.round(Math.random() * 100)
+  })),
+  onInitialChartData: (gwId, params) => dispatch(getInitialDataForChart(gwId, params)),
+  onFetchingCurrentUser: () => dispatch(getUsersMe()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(DashboardMobile));

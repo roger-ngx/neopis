@@ -3,37 +3,51 @@ import {
   UPDATE_WEATHER,
   UPDATE_LOCATION,
   UPDATE_SOLAR_ENERGY,
-  UPDATE_BATTERY_STORAGE,
-  UPDATE_GENERATED_ELECTRICITY,
+  UPDATE_ESS_CHARGE,
+  UPDATE_ESS_DISCHARGE,
+  UPDATE_GRID_ENERGY,
   UPDATE_CURRENT_USER,
   UPDATE_CHART_DATA,
-  INITIAL_CHART_DATA
+  INITIAL_CHART_DATA,
+  UPDATE_ESS_STATUS
 } from "./actionCreators";
+
+import _ from 'lodash';
 
 const initialState = {
   dateTime: {
-    date: '2018 / 10 / 26 / 수요일',
-    time: '15:30:00'
+    date: '',
+    time: ''
   },
   weather: {
-    temperature: 23,
-    humidity: 75
+    temperature: 0,
+    humidity: 0
   },
   location: '강원도 고성군 간성읍 금수리 산 40-4',
   solarEnergy: {
-    thisMonth: 912.9,
-    today: 23.9,
-    percentage: 92
+    thisMonth: 0,
+    today: 0,
+    capacity: 0,
+    curPower: 0,
+    percentage: 0
   },
-  batteryStorage: {
-    thisMonth: 456.7,
-    today: 54.6,
-    percentage: 66
+  ESSDischarge: {
+    thisMonth: 0,
+    today: 0,
+    batteryRate: 0,
+  },
+  isESSCharging: false,
+  ESSCharge: {
+    thisMonth: 0,
+    today: 0,
+    percentage: 0,
   },
   generatedElectricity: {
-    thisMonth: 876.5,
-    today: 60.2,
-    percentage: 32
+    thisMonth: 0,
+    today: 0,
+    capacity: 0,
+    curPower: 0,
+    percentage: 0
   },
   summaryChart: {
     data: [[], [], []]
@@ -41,7 +55,7 @@ const initialState = {
 };
 
 export function neopisReducer(state = initialState, action) {
-  const newState = Object.assign({}, state);
+  const newState = _.cloneDeep(state);
 
   switch (action.type) {
     case UPDATE_DATE_TIME:
@@ -49,7 +63,12 @@ export function neopisReducer(state = initialState, action) {
       return newState;
 
     case UPDATE_WEATHER:
-      newState.weather = action.content;
+      newState.weather = _.cloneDeep(newState.weather);
+
+      const { temperature, humidity } = action.content;
+      temperature && (newState.weather.temperature = temperature);
+      humidity && (newState.weather.humidity = humidity);
+
       return newState;
 
     case UPDATE_LOCATION:
@@ -57,15 +76,34 @@ export function neopisReducer(state = initialState, action) {
       return newState;
 
     case UPDATE_SOLAR_ENERGY:
-      newState.solarEnergy = action.content;
+      newState.solarEnergy = { ...newState.solarEnergy, ...action.content };
+
+      if (newState.solarEnergy.capacity) {
+        newState.solarEnergy.percentage = Math.ceil(newState.solarEnergy.curPower * 100 / newState.solarEnergy.capacity);
+      }
       return newState;
 
-    case UPDATE_BATTERY_STORAGE:
-      newState.batteryStorage = action.content;
+    case UPDATE_ESS_DISCHARGE:
+      newState.ESSDischarge = { ...newState.ESSDischarge, ...action.content };
+
       return newState;
 
-    case UPDATE_GENERATED_ELECTRICITY:
-      newState.generatedElectricity = action.content;
+    case UPDATE_ESS_CHARGE:
+      newState.ESSCharge = { ...newState.ESSCharge, ...action.content };
+
+      return newState;
+
+    case UPDATE_ESS_STATUS:
+      newState.isESSCharging = action.content;
+      return newState;
+
+    case UPDATE_GRID_ENERGY:
+      newState.generatedElectricity = { ...newState.generatedElectricity, ...action.content };
+
+      if (+newState.generatedElectricity.capacity) {
+        newState.generatedElectricity.percentage = Math.ceil(newState.generatedElectricity.curPower * 100 / newState.generatedElectricity.capacity);
+      }
+
       return newState;
 
     case UPDATE_CURRENT_USER:
@@ -74,13 +112,22 @@ export function neopisReducer(state = initialState, action) {
 
     case UPDATE_CHART_DATA:
       const content = action.content;
-      const index = content.index;
-      const data = content.data;
-      newState.summaryChart.data[index].push(data);
-      newState.summaryChart.data[index].unshift();
+      const { id, value, time } = content;
+
+      const chartData = _.find(newState.summaryChart, data => data.id === id);
+
+      const seriesData = _.get(chartData, 'series.data');
+
+      if (chartData && seriesData) {
+        seriesData.push(value, time);
+        if (seriesData.length > 576) {
+          seriesData.splice(0, 2);
+        }
+      };
       return newState;
 
     case INITIAL_CHART_DATA:
+      newState.summaryChart = _.cloneDeep(newState.summaryChart);
       newState.summaryChart = action.content;
       return newState;
 

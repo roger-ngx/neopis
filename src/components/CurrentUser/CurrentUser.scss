@@ -1,5 +1,5 @@
 .cur_user {
-  width: 244px;
+  width: 100%;
   height: 44px;
   border-radius: 22px;
   display: flex;
@@ -21,7 +21,8 @@
   font-weight: 300;
   letter-spacing: -1px;
   color: #ffffff;
-  margin-left: 10px;
+  margin-left: 5px;
+  margin-right: 10px;
 }
 
 .cur_user_logout {

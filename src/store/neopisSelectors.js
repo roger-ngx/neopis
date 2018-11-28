@@ -21,7 +21,7 @@ const getDataForChart = (sensorNames, sensorDatas) => {
   return _.map(sensorNames, (name, index) => {
     const times = sensorDatas[index][TIME];
     const values = sensorDatas[index][VALUE];
-    
+
     return { name,  values: _.map(values, (value, i) => ({ time: times[i], value })) }
   })
 }
