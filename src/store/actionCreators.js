@@ -1,6 +1,7 @@
 import userService from "../services/userService";
 import sensorService from "../services/sensorService";
 import _ from 'lodash';
+import sensorInfo from '../views/Dashboard/sensorsInfo';
 
 export const UPDATE_DATE_TIME = 'UPDATE_DATE_TIME';
 export const UPDATE_WEATHER = 'UPDATE_WEATHER';
@@ -14,6 +15,7 @@ export const UPDATE_CURRENT_USER = 'UPDATE_CURRENT_USER';
 export const UPDATE_CHART_DATA = 'UPDATE_CHART_DATA';
 export const INITIAL_CHART_DATA = 'INITIAL_CHART_DATA';
 export const UPDATE_ESS_STATUS = 'UPDATE_ESS_STATUS';
+export const UPDATE_BATTERY_STATUS = 'UPDATE_BATTERY_STATUS';
 
 export const updateDateTime = content => ({
   type: UPDATE_DATE_TIME,
@@ -34,6 +36,11 @@ export const updateSolarEnergy = content => ({
   type: UPDATE_SOLAR_ENERGY,
   content
 });
+
+export const updateBatteryStatus = content => ({
+  type: UPDATE_BATTERY_STATUS,
+  content
+})
 
 export const updateESSDischarge = content => ({
   type: UPDATE_ESS_DISCHARGE,
@@ -83,8 +90,21 @@ export const getInitialDataForChart =
       sensorService.getSensorsData(gwId, params)
         .then(res => {
           const sensorData = _.filter(_.get(res, 'data.data.sensors'), data => _.isObject(data))
-                              .map(data => _.pick(data, ['name', 'id', 'series.data']));
+            .map(data => _.pick(data, ['name', 'id', 'series.data']));
 
-          sensorData && dispatch(initialChartData(sensorData))
+          const sensorIds = [
+            sensorInfo.solargenPower,
+            sensorInfo.eSSChargePower,
+            sensorInfo.gridPower
+          ];
+
+          const sortedSensors = [];
+
+          _.forEach(sensorIds, sensorId => {
+            const sensor = _.filter(sensorData, sensor => sensor.id === sensorId);
+            sensor.length && sortedSensors.push(sensor[0]);
+          })
+
+          sensorData && dispatch(initialChartData(sortedSensors))
         });
 

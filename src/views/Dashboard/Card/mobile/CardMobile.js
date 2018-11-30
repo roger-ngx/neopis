@@ -12,12 +12,12 @@ const CardMobile = props => {
   let cardRight;
   if (+props.type === BATTERY_2) {
     cardRight = <>
-      <BatteryMode status='Manual' />
-      <CurrentBatteryPercentage value={props.data.percentage} mobile={true} />;
+      <BatteryMode status={props.batteryStatus} />
+      <CurrentBatteryPercentage value={props.data.batteryRate} mobile={true} />;
     </>
   } else {
     cardRight = <DonutChartWithCss type={props.type} percentage={props.data.percentage}
-      size={112} description={props.description} electricity='851kW' />;
+      size={112} description={props.description} electricity={(props.data.curPower || 0) + 'kW'} />;
   }
 
   return <div className='m_db_card'>
@@ -26,8 +26,15 @@ const CardMobile = props => {
     </div>
     <div className='m_db_card_body'>
       <div className='m_db_card_body_left'>
-        <CurrentElectricityValueMobile type={props.type} value={props.data.thisMonth} unit="kWh" description="This month" />
-        <CurrentElectricityValueMobile type={props.type} value={props.data.today} unit="kWh" description="Today" />
+        <CurrentElectricityValueMobile 
+                  type={props.type} value={props.data.thisMonth} 
+                  unit="MWh" description="This month" 
+                  isActive={props.isActive}/>
+                  
+        <CurrentElectricityValueMobile 
+                  type={props.type} value={props.data.today} 
+                  unit="kWh" description="Today" 
+                  isActive={props.isActive}/>
       </div>
       <div className="m_db_card_body_right">
         {cardRight}

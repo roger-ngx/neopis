@@ -6,7 +6,7 @@ export default {
     return axios.get('/api/users/me');
   },
   saveUserAccount(data) {
-    return axios.put('/users/me', data);
+    return axios.put('/api/users/me', data);
   },
   changePassword(data) {
     return axios.post('/api/changePassword', data);

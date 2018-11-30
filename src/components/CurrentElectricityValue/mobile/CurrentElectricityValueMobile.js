@@ -12,9 +12,10 @@ const CurrentElectricityValueMobile = (props) => {
   const separatorClass = classNames({
     'm_ev_separator': true,
     'ev_separator': true,
+    'gbg_deactive': !props.isActive,
     'gbg_source': +props.type === SOURCE,
-    'gbg_battery_1': +props.type === BATTERY_1,
-    'gbg_battery_2': +props.type === BATTERY_2,
+    'gbg_battery_1': +props.type === BATTERY_1 && props.isActive,
+    'gbg_battery_2': +props.type === BATTERY_2 && props.isActive,
     'gbg_electricity': +props.type === ELECTRICITY
   })
 

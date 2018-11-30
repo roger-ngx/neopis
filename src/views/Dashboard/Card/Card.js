@@ -21,7 +21,7 @@ const Card = props => {
   let cardBottom;
   if (+props.type === BATTERY_2) {
     cardBottom = <>
-      <BatteryMode status={props.isActive ? 'Manual' : 'Automatic'} />
+      <BatteryMode status={props.batteryStatus} />
       <CurrentBatteryPercentage value={props.data.batteryRate} />;
       </>
   } else {
@@ -52,6 +52,7 @@ Card.propTypes = {
   data: PropTypes.object.isRequired,
   description: PropTypes.string,
   isActive: PropTypes.bool,
+  batteryStatus: PropTypes.number
 }
 
 Card.defaultProps = {

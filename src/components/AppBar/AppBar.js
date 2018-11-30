@@ -11,7 +11,7 @@ import CurrentUser from '../CurrentUser/CurrentUser';
 
 const AppBar = props => {
   return <div className='nav_app_bar'>
-    <img src={logo} className='nav_logo' alt='logo' />
+    <a href='/'><img src={logo} href='/' className='nav_logo' alt='logo' /></a>
     <div className='nav_moment'>
       <CurrentMoment />
     </div>
@@ -31,7 +31,7 @@ const AppBar = props => {
     </div>
 
     <IconButton className='nav_btn_notification' aria-label="Notification">
-      <img src={notification} className='nav_logo' alt='logo' />
+    <a href='/#/timeline'><img src={notification} href='/#/timeline' className='nav_logo' alt='logo' /></a>
     </IconButton>
   </div>;
 };

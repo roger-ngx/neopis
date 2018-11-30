@@ -1,4 +1,4 @@
-import React, { lazy, Suspense } from 'react';
+import React from 'react';
 import './Dashboard.scss';
 import withStyles from "@material-ui/core/styles/withStyles";
 import Grid from '@material-ui/core/Grid';
@@ -11,17 +11,18 @@ import AppBar from '../../components/AppBar/AppBar';
 import LineChart from '../../components/ElectricityChart/LineChartWithCrossHairs/LineChartCrs';
 import { connect } from 'react-redux';
 
-import { 
-  getUsersMe, 
-  getInitialDataForChart, 
-  updateChartData, 
-  updateDateTime, 
-  updateWeather, 
+import {
+  getUsersMe,
+  getInitialDataForChart,
+  updateChartData,
+  updateDateTime,
+  updateWeather,
   updateSolarEnergy,
-  updateGridEnergy, 
+  updateGridEnergy,
   updateESSDischarge,
   updateESSCharge,
-  updateESSStatus
+  updateESSStatus,
+  updateBatteryStatus
 } from '../../store/actionCreators';
 
 import { SOURCE, BATTERY_1, BATTERY_2, ELECTRICITY } from '../../components/CurrentElectricityValue/mobile/CurrentElectricityValueMobile';
@@ -31,6 +32,7 @@ import _ from 'lodash';
 import sensorInfo from './sensorsInfo';
 
 //const LineChart = lazy(() => import('../../components/ElectricityChart/LineChartWithCrossHairs/LineChartCrs'));
+import { ABNORMAL, MANUAL, AUTOMATIC } from '../../components/BatteryMode/BatteryMode';
 
 const styles = {
   root: {
@@ -52,6 +54,11 @@ const styles = {
 }
 
 class Dashboard extends React.Component {
+  
+  constructor(props) {
+    super(props);
+    this.wsSubscribers = [];
+  }
 
   componentDidMount() {
     this.props.onFetchingCurrentUser();
@@ -59,12 +66,36 @@ class Dashboard extends React.Component {
     socket.initSocketChannel();
 
     this.initAndSubscribeChartData();
-    
+
     this.initAndSubscribeWeatherData();
     this.initAndSubscribeSolarData();
     this.initAndSubscribeGridEnergyData();
     this.initAndSubscribeDischargeESSData();
     this.initAndSubscribeChargeESSData();
+    this.initAndSubscribeBatteryStatus();
+  }
+
+  initAndSubscribeBatteryStatus() {
+    //subscribe sensors for ws
+    const manualStatus = {
+      id: sensorInfo.manualStatus,
+      owner: sensorInfo.gwId
+    };
+    this.wsSubscribers.push(socket.subscribeSensors(manualStatus, data => this.props.onUpdateBatteryStatus(+data.value ? MANUAL : ABNORMAL)));
+
+    const automaticStatus = {
+      id: sensorInfo.automaticStatus,
+      owner: sensorInfo.gwId
+    }
+    this.wsSubscribers.push(socket.subscribeSensors(automaticStatus, data => this.props.onUpdateBatteryStatus(+data.value ? AUTOMATIC : ABNORMAL)));
+
+    //query for the 1st data
+    var query = {
+      embed: ['series'],
+    };
+
+    sensorService.getSensorData(sensorInfo.gwId, sensorInfo.manualStatus, query).then(res => this.props.onUpdateBatteryStatus(+_.get(res.data, 'data.series.value', '') ? MANUAL : ABNORMAL));
+    sensorService.getSensorData(sensorInfo.gwId, sensorInfo.automaticStatus, query).then(res => this.props.onUpdateBatteryStatus(+_.get(res.data, 'data.series.value', '') ? AUTOMATIC : ABNORMAL));
   }
 
   initAndSubscribeChartData() {
@@ -90,8 +121,10 @@ class Dashboard extends React.Component {
       id: sensorId,
       owner: sensorInfo.gwId
     }));
-    
+
     _.forEach(sensors, sensor => sensorsSubscriber.subscribe(sensor));
+
+    this.wsSubscribers.push(sensorsSubscriber);
   }
 
   initAndSubscribeSolarData() {
@@ -100,29 +133,29 @@ class Dashboard extends React.Component {
       id: sensorInfo.monthlySolarGenEnergy,
       owner: sensorInfo.gwId
     };
-    socket.newSensorSubscriber(data => this.props.onUpdateSolarEnergy({thisMonth: +(+data.value/1000).toFixed(1)})).subscribe(monthlySolarGenEnergy);
+    this.wsSubscribers.push(socket.subscribeSensors(monthlySolarGenEnergy, data => this.props.onUpdateSolarEnergy({ thisMonth: +(+data.value / 1000).toFixed(1) })));
 
     const dailySolarGenEnergy = {
       id: sensorInfo.dailySolarGenEnergy,
       owner: sensorInfo.gwId
     }
-    socket.newSensorSubscriber(data => this.props.onUpdateSolarEnergy({today: parseInt(data.value)})).subscribe(dailySolarGenEnergy);
-    
+    this.wsSubscribers.push(socket.subscribeSensors(dailySolarGenEnergy, data => this.props.onUpdateSolarEnergy({ today: parseInt(data.value) })));
+
     const solargenPower = {
       id: sensorInfo.solargenPower,
       owner: sensorInfo.gwId
     }
-    socket.newSensorSubscriber(data => this.props.onUpdateSolarEnergy({curPower: data.value})).subscribe(solargenPower);
-    
+    this.wsSubscribers.push(socket.subscribeSensors(solargenPower, data => this.props.onUpdateSolarEnergy({ curPower: (+data.value).toFixed(1) })));
+
     //query for the 1st data
     var query = {
       embed: ['series'],
     };
 
-    sensorService.getSensorData(sensorInfo.gwId, sensorInfo.monthlySolarGenEnergy, query).then(res => this.props.onUpdateSolarEnergy({thisMonth: +(+_.get(res.data, 'data.series.value', '')/1000).toFixed(1)}));
-    sensorService.getSensorData(sensorInfo.gwId, sensorInfo.dailySolarGenEnergy, query).then(res => this.props.onUpdateSolarEnergy({today: parseInt(_.get(res.data, 'data.series.value', ''))}));
-    sensorService.getSensorData(sensorInfo.gwId, sensorInfo.solarInstallationCapacity, query).then(res => this.props.onUpdateSolarEnergy({capacity: +_.get(res.data, 'data.series.value', '')}));
-    sensorService.getSensorData(sensorInfo.gwId, sensorInfo.solargenPower, query).then(res => this.props.onUpdateSolarEnergy({curPower: _.get(res.data, 'data.series.value', '')}));
+    sensorService.getSensorData(sensorInfo.gwId, sensorInfo.monthlySolarGenEnergy, query).then(res => this.props.onUpdateSolarEnergy({ thisMonth: +(+_.get(res.data, 'data.series.value', '') / 1000).toFixed(1) }));
+    sensorService.getSensorData(sensorInfo.gwId, sensorInfo.dailySolarGenEnergy, query).then(res => this.props.onUpdateSolarEnergy({ today: parseInt(_.get(res.data, 'data.series.value', '')) }));
+    sensorService.getSensorData(sensorInfo.gwId, sensorInfo.solarInstallationCapacity, query).then(res => this.props.onUpdateSolarEnergy({ capacity: +_.get(res.data, 'data.series.value', '') }));
+    sensorService.getSensorData(sensorInfo.gwId, sensorInfo.solargenPower, query).then(res => this.props.onUpdateSolarEnergy({ curPower: _.get(res.data, 'data.series.value', '') }));
   }
 
   initAndSubscribeGridEnergyData() {
@@ -131,30 +164,30 @@ class Dashboard extends React.Component {
       id: sensorInfo.monthlyGridEnergy,
       owner: sensorInfo.gwId
     };
-    socket.newSensorSubscriber(data => this.props.onUpdateGridEnergy({thisMonth: +(+data.value/1000).toFixed(1)})).subscribe(monthlyGridEnergy);
+    this.wsSubscribers.push(socket.subscribeSensors(monthlyGridEnergy, data => this.props.onUpdateGridEnergy({ thisMonth: +(+data.value / 1000).toFixed(1) })));
 
     const dailyGridEnergy = {
       id: sensorInfo.dailyGridEnergy,
       owner: sensorInfo.gwId
     }
-    socket.newSensorSubscriber(data => this.props.onUpdateGridEnergy({today: parseInt(data.value)})).subscribe(dailyGridEnergy);
-    
+    this.wsSubscribers.push(socket.subscribeSensors(dailyGridEnergy, data => this.props.onUpdateGridEnergy({ today: parseInt(data.value) })));
+
     const gridPower = {
       id: sensorInfo.gridPower,
       owner: sensorInfo.gwId
     }
-    socket.newSensorSubscriber(data => this.props.onUpdateGridEnergy({curPower: data.value})).subscribe(gridPower);
-    
+    this.wsSubscribers.push(socket.subscribeSensors(gridPower, data => this.props.onUpdateGridEnergy({ curPower: (+data.value).toFixed(1) })));
+
 
     //query for the 1st data
     var query = {
       embed: ['series'],
     };
 
-    sensorService.getSensorData(sensorInfo.gwId, sensorInfo.monthlyGridEnergy, query).then(res => this.props.onUpdateGridEnergy({thisMonth: +(+_.get(res.data, 'data.series.value', '')/1000).toFixed(1)}));
-    sensorService.getSensorData(sensorInfo.gwId, sensorInfo.dailyGridEnergy, query).then(res => this.props.onUpdateGridEnergy({today: parseInt(_.get(res.data, 'data.series.value', ''))}));
-    sensorService.getSensorData(sensorInfo.gwId, sensorInfo.gridInstallationCapacity, query).then(res => this.props.onUpdateGridEnergy({capacity: +_.get(res.data, 'data.series.value', '')}));
-    sensorService.getSensorData(sensorInfo.gwId, sensorInfo.gridPower, query).then(res => this.props.onUpdateGridEnergy({curPower: _.get(res.data, 'data.series.value', '')}));
+    sensorService.getSensorData(sensorInfo.gwId, sensorInfo.monthlyGridEnergy, query).then(res => this.props.onUpdateGridEnergy({ thisMonth: +(+_.get(res.data, 'data.series.value', '') / 1000).toFixed(1) }));
+    sensorService.getSensorData(sensorInfo.gwId, sensorInfo.dailyGridEnergy, query).then(res => this.props.onUpdateGridEnergy({ today: parseInt(_.get(res.data, 'data.series.value', '')) }));
+    sensorService.getSensorData(sensorInfo.gwId, sensorInfo.gridInstallationCapacity, query).then(res => this.props.onUpdateGridEnergy({ capacity: +_.get(res.data, 'data.series.value', '') }));
+    sensorService.getSensorData(sensorInfo.gwId, sensorInfo.gridPower, query).then(res => this.props.onUpdateGridEnergy({ curPower: _.get(res.data, 'data.series.value', '') }));
   }
 
   initAndSubscribeDischargeESSData() {
@@ -163,28 +196,28 @@ class Dashboard extends React.Component {
       id: sensorInfo.monthlyESSDischargeEnergy,
       owner: sensorInfo.gwId
     };
-    socket.newSensorSubscriber(data => this.props.onUpdateESSDischarge({thisMonth: +(+data.value/1000).toFixed(1)})).subscribe(monthlyESSDischargeEnergy);
+    this.wsSubscribers.push(socket.subscribeSensors(monthlyESSDischargeEnergy, data => this.props.onUpdateESSDischarge({ thisMonth: +(+data.value / 1000).toFixed(1) })));
 
     const dailyESSDischargeEnergy = {
       id: sensorInfo.dailyESSDischargeEnergy,
       owner: sensorInfo.gwId
     }
-    socket.newSensorSubscriber(data => this.props.onUpdateESSDischarge({today: parseInt(data.value)})).subscribe(dailyESSDischargeEnergy);
-    
+    this.wsSubscribers.push(socket.subscribeSensors(dailyESSDischargeEnergy, data => this.props.onUpdateESSDischarge({ today: parseInt(data.value) })));
+
     const batteryRate = {
       id: sensorInfo.batteryRate,
       owner: sensorInfo.gwId
     }
-    socket.newSensorSubscriber(data => this.props.onUpdateESSDischarge({batteryRate: +data.value})).subscribe(batteryRate);
-    
+    this.wsSubscribers.push(socket.subscribeSensors(batteryRate, data => this.props.onUpdateESSDischarge({ batteryRate: +data.value })));
+
     //query for the 1st data
     var query = {
       embed: ['series'],
     };
 
-    sensorService.getSensorData(sensorInfo.gwId, sensorInfo.monthlyESSDischargeEnergy, query).then(res => this.props.onUpdateESSDischarge({thisMonth: +(+_.get(res.data, 'data.series.value', '')/1000).toFixed(1)}));
-    sensorService.getSensorData(sensorInfo.gwId, sensorInfo.dailyESSDischargeEnergy, query).then(res => this.props.onUpdateESSDischarge({today: parseInt(_.get(res.data, 'data.series.value', ''))}));
-    sensorService.getSensorData(sensorInfo.gwId, sensorInfo.batteryRate, query).then(res => this.props.onUpdateESSDischarge({batteryRate: +_.get(res.data, 'data.series.value', '')}));
+    sensorService.getSensorData(sensorInfo.gwId, sensorInfo.monthlyESSDischargeEnergy, query).then(res => this.props.onUpdateESSDischarge({ thisMonth: +(+_.get(res.data, 'data.series.value', '') / 1000).toFixed(1) }));
+    sensorService.getSensorData(sensorInfo.gwId, sensorInfo.dailyESSDischargeEnergy, query).then(res => this.props.onUpdateESSDischarge({ today: parseInt(_.get(res.data, 'data.series.value', '')) }));
+    sensorService.getSensorData(sensorInfo.gwId, sensorInfo.batteryRate, query).then(res => this.props.onUpdateESSDischarge({ batteryRate: +_.get(res.data, 'data.series.value', '') }));
   }
 
   initAndSubscribeChargeESSData() {
@@ -193,63 +226,63 @@ class Dashboard extends React.Component {
       id: sensorInfo.monthlyESSChargeEnergy,
       owner: sensorInfo.gwId
     };
-    socket.newSensorSubscriber(data => this.props.onUpdateESSCharge({thisMonth: +(+data.value/1000).toFixed(1)})).subscribe(monthlyESSChargeEnergy);
+    this.wsSubscribers.push(socket.subscribeSensors(monthlyESSChargeEnergy, data => this.props.onUpdateESSCharge({ thisMonth: +(+data.value / 1000).toFixed(1) })));
 
     const dailyESSChargeEnergy = {
       id: sensorInfo.dailyESSChargeEnergy,
       owner: sensorInfo.gwId
     }
-    socket.newSensorSubscriber(data => this.props.onUpdateESSCharge({today: data.value})).subscribe(dailyESSChargeEnergy);
-    
+    this.wsSubscribers.push(socket.subscribeSensors(dailyESSChargeEnergy, data => this.props.onUpdateESSCharge({ today: data.value })));
+
     const eSSChargePower = {
       id: sensorInfo.eSSChargePower,
       owner: sensorInfo.gwId
     }
-    socket.newSensorSubscriber(data => {
+    this.wsSubscribers.push(socket.subscribeSensors(eSSChargePower, data => {
       const curPower = data.value;
-      this.props.onUpdateESSCharge({curPower: curPower});
-      this.props.onUpdateESSStatus(+curPower >= 0);
-    }).subscribe(eSSChargePower);
-    
+      this.props.onUpdateESSCharge({ curPower: (+curPower).toFixed(1) });
+      this.props.onUpdateESSStatus(+curPower < 0);
+    }));
+
     //query for the 1st data
     var query = {
       embed: ['series'],
     };
 
-    sensorService.getSensorData(sensorInfo.gwId, sensorInfo.monthlyESSChargeEnergy, query).then(res => this.props.onUpdateESSCharge({thisMonth: +(+_.get(res.data, 'data.series.value', '')/1000).toFixed(1)}));
-    sensorService.getSensorData(sensorInfo.gwId, sensorInfo.dailyESSChargeEnergy, query).then(res => this.props.onUpdateESSCharge({today: +_.get(res.data, 'data.series.value', '')}));
-    sensorService.getSensorData(sensorInfo.gwId, sensorInfo.ESSInstallationCapacity, query).then(res => this.props.onUpdateESSCharge({capacity: +_.get(res.data, 'data.series.value', '')}));
+    sensorService.getSensorData(sensorInfo.gwId, sensorInfo.monthlyESSChargeEnergy, query).then(res => this.props.onUpdateESSCharge({ thisMonth: +(+_.get(res.data, 'data.series.value', '') / 1000).toFixed(1) }));
+    sensorService.getSensorData(sensorInfo.gwId, sensorInfo.dailyESSChargeEnergy, query).then(res => this.props.onUpdateESSCharge({ today: +_.get(res.data, 'data.series.value', '') }));
+    sensorService.getSensorData(sensorInfo.gwId, sensorInfo.ESSInstallationCapacity, query).then(res => this.props.onUpdateESSCharge({ capacity: +_.get(res.data, 'data.series.value', '') }));
     sensorService.getSensorData(sensorInfo.gwId, sensorInfo.eSSChargePower, query).then(res => {
       const curPower = _.get(res.data, 'data.series.value', '');
-      this.props.onUpdateESSCharge({curPower: curPower});
-      this.props.onUpdateESSStatus(+curPower >= 0);
-    });      
+      this.props.onUpdateESSCharge({ curPower: curPower });
+      this.props.onUpdateESSStatus(+curPower < 0);
+    });
   }
 
-  initAndSubscribeWeatherData(){
+  initAndSubscribeWeatherData() {
     //subscribe sensors for ws
     const tempSensor = {
       id: sensorInfo.temperature,
       owner: sensorInfo.gwId
     };
-    socket.newSensorSubscriber(data => this.props.onUpdateWeather({temperature: data.value})).subscribe(tempSensor);
+    this.wsSubscribers.push(socket.subscribeSensors(tempSensor, data => this.props.onUpdateWeather({ temperature: data.value })));
 
     const humiditySensor = {
       id: sensorInfo.humidity,
       owner: sensorInfo.gwId
     }
-    socket.newSensorSubscriber(data => this.props.onUpdateWeather({humidity: data.value})).subscribe(humiditySensor);
-    
+    this.wsSubscribers.push(socket.subscribeSensors(humiditySensor, data => this.props.onUpdateWeather({ humidity: data.value })));
+
     //query for the 1st data
     var query = {
       embed: ['series'],
     };
 
-    sensorService.getSensorData(sensorInfo.gwId, sensorInfo.temperature, query).then(res => this.props.onUpdateWeather({temperature: +_.get(res.data, 'data.series.value', '')}));
-    sensorService.getSensorData(sensorInfo.gwId, sensorInfo.humidity, query).then(res => this.props.onUpdateWeather({humidity: +_.get(res.data, 'data.series.value', '')}));
+    sensorService.getSensorData(sensorInfo.gwId, sensorInfo.temperature, query).then(res => this.props.onUpdateWeather({ temperature: +_.get(res.data, 'data.series.value', '') }));
+    sensorService.getSensorData(sensorInfo.gwId, sensorInfo.humidity, query).then(res => this.props.onUpdateWeather({ humidity: +_.get(res.data, 'data.series.value', '') }));
   }
 
-  getSensorData(gwId, sensorIds){
+  getSensorData(gwId, sensorIds) {
     const query = {
       embed: 'sensors',
       'sensors[embed]': ['series', 'status', 'owner'],
@@ -284,6 +317,8 @@ class Dashboard extends React.Component {
   }
 
   componentWillUnmount() {
+    _.forEach(this.wsSubscribers, unsubscriber => unsubscriber());
+
     socket.disconnectSocketChannel();
   }
 
@@ -295,33 +330,41 @@ class Dashboard extends React.Component {
       </div>
       <Grid container className={classes.root} spacing={8}>
         <Grid item xs={12} md={3}>
-          <Card type={SOURCE} titleName='태양광 발전량' titleImage={energy}
-            description='현재 발전 전력' data={this.props.solarEnergy} />
+          <Card type={SOURCE} titleName='태양광 발전량' 
+                titleImage={energy} description='현재 발전 전력' 
+                data={this.props.solarEnergy} />
         </Grid>
 
         <Grid item xs={12} md={6}>
           <Grid container spacing={0}>
             <Grid item xs={12} md={6}>
-              <Card type={BATTERY_1} titleName='ESS충전량' titleImage={battery1}
-                description={this.props.isESSCharging ? '현재 ESS 충전 전력' : '현재 ESS 방전 전력'} data={this.props.ESSCharge} isActive={this.props.isESSCharging}/>
+              <Card type={BATTERY_1} titleName='ESS충전량' 
+                    titleImage={battery1} 
+                    description={this.props.isESSCharging ? '현재 ESS 충전 전력' : '현재 ESS 방전 전력'} 
+                    data={this.props.ESSCharge} 
+                    isActive={this.props.isESSCharging} />
             </Grid>
             <Grid item xs={12} md={6}>
-              <Card type={BATTERY_2} titleName='ESS방전량' titleImage={battery2} data={this.props.ESSDischarge} isActive={!this.props.isESSCharging}/>
+              <Card type={BATTERY_2} titleName='ESS방전량' 
+                    titleImage={battery2} 
+                    data={this.props.ESSDischarge} 
+                    isActive={!this.props.isESSCharging} 
+                    batteryStatus={this.props.batteryStatus}/>
             </Grid>
           </Grid>
         </Grid>
 
         <Grid item xs={12} md={3}>
-          <Card type={ELECTRICITY} titleName='계통 송수전 전력량' titleImage={electricity}
-            description='현재 계통 송수전 전력' data={this.props.electricityInfo} />
+          <Card type={ELECTRICITY} titleName='계통 송수전 전력량' 
+                titleImage={electricity}
+                description='현재 계통 송수전 전력' 
+                data={this.props.electricityInfo} />
         </Grid>
       </Grid>
       <Grid container className='db_chart'>
-        <Suspense fallback={<div className='db_chart_loading'>Loading...</div>}>
-          <Grid item xs={12}>
-            <LineChart />
-          </Grid>
-        </Suspense>
+        <Grid item xs={12}>
+          <LineChart />
+        </Grid>
       </Grid>
     </div>
   }
@@ -332,12 +375,13 @@ const mapStateToProps = state => ({
   electricityInfo: state.generatedElectricity,
   ESSDischarge: state.ESSDischarge,
   ESSCharge: state.ESSCharge,
-  isESSCharging: state.isESSCharging, 
+  isESSCharging: state.isESSCharging,
+  batteryStatus: state.batteryStatus
 });
 
 const mapDispatchToProps = dispatch => ({
-  onUpdateWeather: ({temperature, humidity}) => dispatch(updateWeather({temperature, humidity})),
-  onUpdateDateTime: ([date, time]) => date && time && dispatch(updateDateTime({date, time})),
+  onUpdateWeather: ({ temperature, humidity }) => dispatch(updateWeather({ temperature, humidity })),
+  onUpdateDateTime: ([date, time]) => date && time && dispatch(updateDateTime({ date, time })),
   onFetchingCurrentUser: () => dispatch(getUsersMe()),
   onInitialChartData: (gwId, params) => dispatch(getInitialDataForChart(gwId, params)),
   onUpdateChartData: data => dispatch(updateChartData(data)),
@@ -345,7 +389,8 @@ const mapDispatchToProps = dispatch => ({
   onUpdateGridEnergy: data => dispatch(updateGridEnergy(data)),
   onUpdateESSDischarge: data => dispatch(updateESSDischarge(data)),
   onUpdateESSCharge: data => dispatch(updateESSCharge(data)),
-  onUpdateESSStatus: data => dispatch(updateESSStatus(data))
+  onUpdateESSStatus: data => dispatch(updateESSStatus(data)),
+  onUpdateBatteryStatus: data => dispatch(updateBatteryStatus(data))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(Dashboard));

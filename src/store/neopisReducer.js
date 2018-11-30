@@ -5,6 +5,7 @@ import {
   UPDATE_SOLAR_ENERGY,
   UPDATE_ESS_CHARGE,
   UPDATE_ESS_DISCHARGE,
+  UPDATE_BATTERY_STATUS,
   UPDATE_GRID_ENERGY,
   UPDATE_CURRENT_USER,
   UPDATE_CHART_DATA,
@@ -37,6 +38,7 @@ const initialState = {
     batteryRate: 0,
   },
   isESSCharging: false,
+  batteryStatus: 0,
   ESSCharge: {
     thisMonth: 0,
     today: 0,
@@ -75,6 +77,10 @@ export function neopisReducer(state = initialState, action) {
       newState.location = action.content;
       return newState;
 
+    case UPDATE_BATTERY_STATUS:
+      newState.batteryStatus = action.content;
+      return newState;
+
     case UPDATE_SOLAR_ENERGY:
       newState.solarEnergy = { ...newState.solarEnergy, ...action.content };
 
@@ -90,6 +96,9 @@ export function neopisReducer(state = initialState, action) {
 
     case UPDATE_ESS_CHARGE:
       newState.ESSCharge = { ...newState.ESSCharge, ...action.content };
+      if (newState.ESSCharge.capacity) {
+        newState.ESSCharge.percentage = Math.ceil(newState.ESSCharge.curPower * 100 / newState.ESSCharge.capacity);
+      }
 
       return newState;
 

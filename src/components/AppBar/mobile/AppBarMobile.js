@@ -8,14 +8,14 @@ import CurrentUser from '../../CurrentUser/CurrentUser';
 
 const AppBarMobile = props => {
   return <div className='m_nav_app_bar'>
-    <img src={logo} className='m_nav_logo' alt='logo' />
+    <a href='/'><img src={logo} href='/' className='m_nav_logo' alt='logo' /></a>
 
     <div className='m_nav_user'>
       <CurrentUser />
     </div>
 
     <IconButton className='m_nav_btn_notification' aria-label="Notification">
-      <img src={notification} className='m_nav_notification_icon' alt='logo' />
+    <a href='/#/timeline'><img src={notification} className='m_nav_notification_icon' alt='logo' /></a>
     </IconButton>
   </div>;
 };
