@@ -64,10 +64,9 @@ class Dashboard extends React.Component {
     socket.initSocketChannel();
 
     sensorService.getGatewayInfo().then(res => {
-      this.gatewayInfo = _.pick(_.get(res.data, 'data'), ['name', 'gwId', 'sensors']);
+      this.gatewayInfo = _.pick(_.get(res.data, ['data', '0']), ['name', 'gwId', 'sensors']);
 
       this.initAndSubscribeChartData();
-  
       this.initAndSubscribeWeatherData();
       this.initAndSubscribeSolarData();
       this.initAndSubscribeGridEnergyData();
