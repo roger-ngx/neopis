@@ -1,7 +1,6 @@
 import userService from "../services/userService";
 import sensorService from "../services/sensorService";
 import _ from 'lodash';
-import sensorInfo from '../views/Dashboard/sensorsInfo';
 
 export const UPDATE_DATE_TIME = 'UPDATE_DATE_TIME';
 export const UPDATE_WEATHER = 'UPDATE_WEATHER';
@@ -85,18 +84,12 @@ export const updateChartData = content => ({
 export const getUsersMe = () => dispatch => userService.me().then(res => dispatch(updateCurrentUser(res.data)))
 
 export const getInitialDataForChart =
-  (gwId, params) =>
+  (gwId, params, sensorIds) =>
     dispatch =>
       sensorService.getSensorsData(gwId, params)
         .then(res => {
           const sensorData = _.filter(_.get(res, 'data.data.sensors'), data => _.isObject(data))
             .map(data => _.pick(data, ['name', 'id', 'series.data']));
-
-          const sensorIds = [
-            sensorInfo.solargenPower,
-            sensorInfo.eSSChargePower,
-            sensorInfo.gridPower
-          ];
 
           const sortedSensors = [];
 
