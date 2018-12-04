@@ -14,20 +14,22 @@ const CurrentBatteryPercentage = props => {
     m_battery: props.mobile
   });
 
-  return <div className={batteryClass}>
-    <div className='battery_image'>
-      <div style={batteryVolumnStyle} className='battery_volumn'>
+  return <a className='card_link' href={`/#/gateways/${props.gwId}/sensors/${props.sensorId}`}>
+    <div className={batteryClass}>
+      <div className='battery_image'>
+        <div style={batteryVolumnStyle} className='battery_volumn'>
+        </div>
+      </div>
+      <div className='battery_info'>
+        <div className='battery_value'>
+          <span>{props.value}%</span>
+        </div>
+        <div className='battery_label'>
+          <span>배터리량</span>
+        </div>
       </div>
     </div>
-    <div className='battery_info'>
-      <div className='battery_value'>
-        <span>{props.value}%</span>
-      </div>
-      <div className='battery_label'>
-        <span>배터리량</span>
-      </div>
-    </div>
-  </div>;
+  </a>
 }
 
 CurrentBatteryPercentage.propTypes = {

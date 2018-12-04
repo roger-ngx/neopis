@@ -34,17 +34,19 @@ const DonutChartWithCss = (props) => {
     height: (props.size - 20) + 'px'
   }
 
-  return <div className='neopis_pie'>
-    <div style={outerPieStyle} className='outer_pie'>
-      <div style={innerPieStyle} className='inner_pie'>
-        <div className='pie_data'>
-          <span className='pie_value'>{props.percentage}%</span>
-          <span className='pie_unit'>{props.electricity}</span>
+  return <a className='card_link' href={`/#/gateways/${props.gwId}/sensors/${props.sensorId}`}>
+    <div className='neopis_pie'>
+      <div style={outerPieStyle} className='outer_pie'>
+        <div style={innerPieStyle} className='inner_pie'>
+          <div className='pie_data'>
+            <span className='pie_value'>{props.percentage}%</span>
+            <span className='pie_unit'>{props.electricity}</span>
+          </div>
         </div>
       </div>
+      <span className='pie_description'>{props.description}</span>
     </div>
-    <span className='pie_description'>{props.description}</span>
-  </div>
+  </a>
 }
 
 DonutChartWithCss.propTypes = {

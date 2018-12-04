@@ -2,7 +2,9 @@ import socketio from 'socket.io-client';
 import productConfService from './productConfService';
 import Store from '../store/store';
 import _ from 'lodash';
+import logger from '../utils/logger'
 
+const log = logger.getLogger('wsService');
 /*
 wsService 센서 등록 컨셉:
 Register: websocket server로 센서(or 게이트웨이) 정보를 받기 위해 등록하는 센서id를 등록하는 과정.
@@ -69,7 +71,7 @@ function getWSUrl(namespace = 'mqtt') {
 
   const wsUrl = `${wsHost}/${namespace}`;
 
-  console.debug('[wsService] wsUrl', window.location, originalHost, originalPort, wsUrl);
+  log.debug('[wsService] wsUrl', window.location, originalHost, originalPort, wsUrl);
 
   return wsUrl;
 }
@@ -83,7 +85,7 @@ function registerWsBulk(eventName, registeredGS, gsIds, retryCountDown = 10) {
     // 단 최대 10번까지만 재시도하고 안되면 에러메시지 내고 끝냄.
     setTimeout(() => {
       if (retryCountDown < 9) {
-        console.warn(`retry registerWsBulk ${eventName} ${gsIds} to retry count down:${retryCountDown}`);
+        log.warn(`retry registerWsBulk ${eventName} ${gsIds} to retry count down:${retryCountDown}`);
       }
       registerWsBulk(eventName, registeredGS, gsIds, retryCountDown - 1);
     }, 500);
@@ -91,7 +93,7 @@ function registerWsBulk(eventName, registeredGS, gsIds, retryCountDown = 10) {
   }
 
   if (retryCountDown === 0) {
-    console.error('Could not get userId from userId from userService!!!');
+    log.error('Could not get userId from userId from userService!!!');
     return;
   }
 
@@ -102,7 +104,7 @@ function registerWsBulk(eventName, registeredGS, gsIds, retryCountDown = 10) {
     registeredGS[gsId] = true;
   });
 
-  console.trace('toRegisterIds:', toRegisterIds);
+  log.trace('toRegisterIds:', toRegisterIds);
   if (socket && !_.isEmpty(toRegisterIds)) {
     socket.emit(eventName, { gsIds: toRegisterIds, userId });
   }
@@ -120,7 +122,7 @@ function addPathListener(path, cb) {
   if (socket) {
     socket.on(path, cb);
   } else {
-    console.warn('wsService - addPathListener(): socket is NULL:', path);
+    log.warn('wsService - addPathListener(): socket is NULL:', path);
   }
 }
 
@@ -128,7 +130,7 @@ function removePathListener(path, cb) {
   if (socket) {
     socket.off(path, cb);
   } else {
-    console.warn('wsService - removePathListener(): socket is NULL:', path);
+    log.warn('wsService - removePathListener(): socket is NULL:', path);
   }
 }
 
@@ -202,28 +204,28 @@ function initSocketChannel() {
     socket.logout = false;
 
     if (!isConnect) {
-      console.debug('wsService - getSocketChannel(): socket reconnect', socket);
+      log.debug('wsService - getSocketChannel(): socket reconnect', socket);
       socket.connect();
     }
     return;
   }
 
-  console.debug('wsService - getSocketChannel: socket is not created, and connect', socket);
+  log.debug('wsService - getSocketChannel: socket is not created, and connect', socket);
 
   socket = socketio(getWSUrl(wsNamespace), {
     reconnection: true,
     reconnectionDelay: 1000
   });
 
-  console.debug('socket', socket, socket.io.uri);
+  log.debug('socket', socket, socket.io.uri);
 
   ['connect_error', 'connect_timeout', 'reconnect', 'reconnect_attempt',
     'reconnecting', 'reconnect_error', 'reconnect_failed'].forEach((event) => {
-      socket.on(event, eventData => console.info('[wsService]', event, eventData));
+      socket.on(event, eventData => log.info('[wsService]', event, eventData));
     });
 
   socket.on('connect', () => {
-    console.info('WebSocket is connected', socket.socket);
+    log.info('WebSocket is connected', socket.socket);
     isConnect = true;
 
     const toRegisterSensorIds = Object.keys(registeredSensors);
@@ -239,7 +241,7 @@ function initSocketChannel() {
   });
 
   socket.on('user:logout', () => {
-    console.info('wsService - getSocketChannel - logout', socket);
+    log.info('wsService - getSocketChannel - logout', socket);
 
     if (socket) {
       socket.logout = true;
@@ -248,7 +250,7 @@ function initSocketChannel() {
   });
 
   socket.on('disconnect', () => {
-    console.info('WebSocket is disconnected', socket);
+    log.info('WebSocket is disconnected', socket);
 
     isConnect = false;
     if (!tryReconnect) {
@@ -257,9 +259,9 @@ function initSocketChannel() {
 
     if (socket) {
       if (socket.logout) {
-        console.info('wsService - getSocketChannel - disconnect: bug socket not reconnect', socket);
+        log.info('wsService - getSocketChannel - disconnect: bug socket not reconnect', socket);
       } else {
-        console.info('wsService - getSocketChannel - disconnect: socket reconnect', socket);
+        log.info('wsService - getSocketChannel - disconnect: socket reconnect', socket);
         // socket.socket.reconnect();
       }
     }
@@ -296,7 +298,7 @@ function _subscribeRealtime(path, cb) {
   if (socket) {
     socket.on(path, cb);
   } else {
-    console.warn('wsService - _subscribeRealtime(): socket is NULL:', path);
+    log.warn('wsService - _subscribeRealtime(): socket is NULL:', path);
   }
 }
 
@@ -304,7 +306,7 @@ function _unsubscribeRealtime(path, cb) {
   if (socket) {
     socket.off(path, cb);
   } else {
-    console.warn('wsService - _unsubscribeRealtime(): socket is NULL:', path);
+    log.warn('wsService - _unsubscribeRealtime(): socket is NULL:', path);
   }
 }
 

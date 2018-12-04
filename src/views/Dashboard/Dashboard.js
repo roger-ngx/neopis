@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
 
 import {
   getUsersMe,
-  getInitialDataForChart,
+  initialChartData,
   updateChartData,
   updateDateTime,
   updateWeather,
@@ -53,7 +53,7 @@ const styles = {
 }
 
 class Dashboard extends React.Component {
-  
+
   constructor(props) {
     super(props);
     this.wsSubscribers = [];
@@ -63,9 +63,14 @@ class Dashboard extends React.Component {
     this.props.onFetchingCurrentUser();
     socket.initSocketChannel();
 
-    sensorService.getGatewayInfo().then(res => {
-      this.gatewayInfo = _.pick(_.get(res.data, ['data', '0']), ['name', 'gwId', 'sensors']);
+    this.init();
+  }
 
+  async init() {
+    const gwInfo = await sensorService.getGatewayInfo();
+    this.gatewayInfo = _.pick(_.get(gwInfo.data, ['data', '0']), ['name', 'gwId', 'sensors']);
+
+    if (!_.isEmpty(this.gatewayInfo)) {
       this.initAndSubscribeChartData();
       this.initAndSubscribeWeatherData();
       this.initAndSubscribeSolarData();
@@ -73,7 +78,7 @@ class Dashboard extends React.Component {
       this.initAndSubscribeDischargeESSData();
       this.initAndSubscribeChargeESSData();
       this.initAndSubscribeBatteryStatus();
-    });
+    }
   }
 
   initAndSubscribeBatteryStatus() {
@@ -82,13 +87,13 @@ class Dashboard extends React.Component {
       id: this.gatewayInfo.sensors.manualStatus,
       owner: this.gatewayInfo.gwId
     };
-    this.wsSubscribers.push(socket.subscribeSensors(manualStatus, data => this.props.onUpdateBatteryStatus(+data.value ? MANUAL : ABNORMAL)));
+    this.wsSubscribers.push(socket.subscribeSensor(manualStatus, data => this.props.onUpdateBatteryStatus(+data.value ? MANUAL : ABNORMAL)));
 
     const automaticStatus = {
       id: this.gatewayInfo.sensors.automaticStatus,
       owner: this.gatewayInfo.gwId
     }
-    this.wsSubscribers.push(socket.subscribeSensors(automaticStatus, data => this.props.onUpdateBatteryStatus(+data.value ? AUTOMATIC : ABNORMAL)));
+    this.wsSubscribers.push(socket.subscribeSensor(automaticStatus, data => this.props.onUpdateBatteryStatus(+data.value ? AUTOMATIC : ABNORMAL)));
 
     //query for the 1st data
     var query = {
@@ -101,7 +106,7 @@ class Dashboard extends React.Component {
 
   initAndSubscribeChartData() {
     const currentTime = new Date();
-    const minTime = currentTime - 24 * 60 * 60 * 1000;
+    const startTime = currentTime - 24 * 60 * 60 * 1000;
 
     const sensorIds = [
       this.gatewayInfo.sensors.solargenPower,
@@ -109,7 +114,7 @@ class Dashboard extends React.Component {
       this.gatewayInfo.sensors.gridPower
     ];
 
-    this.getSensorsData(this.gatewayInfo.gwId, sensorIds, minTime, currentTime, '5m');
+    this.getSensorsData(this.gatewayInfo.gwId, sensorIds, startTime, currentTime, '5m');
 
     const sensorsSubscriber = socket.newSensorSubscriber((data, info) => this.props.onUpdateChartData({
       id: info.id,
@@ -134,19 +139,19 @@ class Dashboard extends React.Component {
       id: this.gatewayInfo.sensors.monthlySolarGenEnergy,
       owner: this.gatewayInfo.gwId
     };
-    this.wsSubscribers.push(socket.subscribeSensors(monthlySolarGenEnergy, data => this.props.onUpdateSolarEnergy({ thisMonth: +(+data.value / 1000).toFixed(1) })));
+    this.wsSubscribers.push(socket.subscribeSensor(monthlySolarGenEnergy, data => this.props.onUpdateSolarEnergy({ thisMonth: +(+data.value / 1000).toFixed(1) })));
 
     const dailySolarGenEnergy = {
       id: this.gatewayInfo.sensors.dailySolarGenEnergy,
       owner: this.gatewayInfo.gwId
     }
-    this.wsSubscribers.push(socket.subscribeSensors(dailySolarGenEnergy, data => this.props.onUpdateSolarEnergy({ today: parseInt(data.value) })));
+    this.wsSubscribers.push(socket.subscribeSensor(dailySolarGenEnergy, data => this.props.onUpdateSolarEnergy({ today: parseInt(data.value) })));
 
     const solargenPower = {
       id: this.gatewayInfo.sensors.solargenPower,
       owner: this.gatewayInfo.gwId
     }
-    this.wsSubscribers.push(socket.subscribeSensors(solargenPower, data => this.props.onUpdateSolarEnergy({ curPower: (+data.value).toFixed(1) })));
+    this.wsSubscribers.push(socket.subscribeSensor(solargenPower, data => this.props.onUpdateSolarEnergy({ curPower: (+data.value).toFixed(1) })));
 
     //query for the 1st data
     var query = {
@@ -165,19 +170,19 @@ class Dashboard extends React.Component {
       id: this.gatewayInfo.sensors.monthlyGridEnergy,
       owner: this.gatewayInfo.gwId
     };
-    this.wsSubscribers.push(socket.subscribeSensors(monthlyGridEnergy, data => this.props.onUpdateGridEnergy({ thisMonth: +(+data.value / 1000).toFixed(1) })));
+    this.wsSubscribers.push(socket.subscribeSensor(monthlyGridEnergy, data => this.props.onUpdateGridEnergy({ thisMonth: +(+data.value / 1000).toFixed(1) })));
 
     const dailyGridEnergy = {
       id: this.gatewayInfo.sensors.dailyGridEnergy,
       owner: this.gatewayInfo.gwId
     }
-    this.wsSubscribers.push(socket.subscribeSensors(dailyGridEnergy, data => this.props.onUpdateGridEnergy({ today: parseInt(data.value) })));
+    this.wsSubscribers.push(socket.subscribeSensor(dailyGridEnergy, data => this.props.onUpdateGridEnergy({ today: parseInt(data.value) })));
 
     const gridPower = {
       id: this.gatewayInfo.sensors.gridPower,
       owner: this.gatewayInfo.gwId
     }
-    this.wsSubscribers.push(socket.subscribeSensors(gridPower, data => this.props.onUpdateGridEnergy({ curPower: (+data.value).toFixed(1) })));
+    this.wsSubscribers.push(socket.subscribeSensor(gridPower, data => this.props.onUpdateGridEnergy({ curPower: (+data.value).toFixed(1) })));
 
 
     //query for the 1st data
@@ -197,19 +202,19 @@ class Dashboard extends React.Component {
       id: this.gatewayInfo.sensors.monthlyESSDischargeEnergy,
       owner: this.gatewayInfo.gwId
     };
-    this.wsSubscribers.push(socket.subscribeSensors(monthlyESSDischargeEnergy, data => this.props.onUpdateESSDischarge({ thisMonth: +(+data.value / 1000).toFixed(1) })));
+    this.wsSubscribers.push(socket.subscribeSensor(monthlyESSDischargeEnergy, data => this.props.onUpdateESSDischarge({ thisMonth: +(+data.value / 1000).toFixed(1) })));
 
     const dailyESSDischargeEnergy = {
       id: this.gatewayInfo.sensors.dailyESSDischargeEnergy,
       owner: this.gatewayInfo.gwId
     }
-    this.wsSubscribers.push(socket.subscribeSensors(dailyESSDischargeEnergy, data => this.props.onUpdateESSDischarge({ today: parseInt(data.value) })));
+    this.wsSubscribers.push(socket.subscribeSensor(dailyESSDischargeEnergy, data => this.props.onUpdateESSDischarge({ today: parseInt(data.value) })));
 
     const batteryRate = {
       id: this.gatewayInfo.sensors.batteryRate,
       owner: this.gatewayInfo.gwId
     }
-    this.wsSubscribers.push(socket.subscribeSensors(batteryRate, data => this.props.onUpdateESSDischarge({ batteryRate: +data.value })));
+    this.wsSubscribers.push(socket.subscribeSensor(batteryRate, data => this.props.onUpdateESSDischarge({ batteryRate: +data.value })));
 
     //query for the 1st data
     var query = {
@@ -227,19 +232,19 @@ class Dashboard extends React.Component {
       id: this.gatewayInfo.sensors.monthlyESSChargeEnergy,
       owner: this.gatewayInfo.gwId
     };
-    this.wsSubscribers.push(socket.subscribeSensors(monthlyESSChargeEnergy, data => this.props.onUpdateESSCharge({ thisMonth: +(+data.value / 1000).toFixed(1) })));
+    this.wsSubscribers.push(socket.subscribeSensor(monthlyESSChargeEnergy, data => this.props.onUpdateESSCharge({ thisMonth: +(+data.value / 1000).toFixed(1) })));
 
     const dailyESSChargeEnergy = {
       id: this.gatewayInfo.sensors.dailyESSChargeEnergy,
       owner: this.gatewayInfo.gwId
     }
-    this.wsSubscribers.push(socket.subscribeSensors(dailyESSChargeEnergy, data => this.props.onUpdateESSCharge({ today: data.value })));
+    this.wsSubscribers.push(socket.subscribeSensor(dailyESSChargeEnergy, data => this.props.onUpdateESSCharge({ today: data.value })));
 
     const eSSChargePower = {
       id: this.gatewayInfo.sensors.eSSChargePower,
       owner: this.gatewayInfo.gwId
     }
-    this.wsSubscribers.push(socket.subscribeSensors(eSSChargePower, data => {
+    this.wsSubscribers.push(socket.subscribeSensor(eSSChargePower, data => {
       const curPower = data.value;
       this.props.onUpdateESSCharge({ curPower: (+curPower).toFixed(1) });
       this.props.onUpdateESSStatus(+curPower < 0);
@@ -266,13 +271,13 @@ class Dashboard extends React.Component {
       id: this.gatewayInfo.sensors.temperature,
       owner: this.gatewayInfo.gwId
     };
-    this.wsSubscribers.push(socket.subscribeSensors(tempSensor, data => this.props.onUpdateWeather({ temperature: data.value })));
+    this.wsSubscribers.push(socket.subscribeSensor(tempSensor, data => this.props.onUpdateWeather({ temperature: data.value })));
 
     const humiditySensor = {
       id: this.gatewayInfo.sensors.humidity,
       owner: this.gatewayInfo.gwId
     }
-    this.wsSubscribers.push(socket.subscribeSensors(humiditySensor, data => this.props.onUpdateWeather({ humidity: data.value })));
+    this.wsSubscribers.push(socket.subscribeSensor(humiditySensor, data => this.props.onUpdateWeather({ humidity: data.value })));
 
     //query for the 1st data
     var query = {
@@ -290,7 +295,7 @@ class Dashboard extends React.Component {
     };
 
     if (!_.isEmpty(sensorIds)) {
-      query['sensors[filter][id]'] = sensorIds
+      query['sensors[filter][id]'] = sensorIds;
     }
 
     sensorService.getSensorsData(gwId, query).then(res => console.log(_.filter(_.get(res.data, 'data.sensors'), sensor => _.isObject(sensor)).map(sensor => _.get(sensor, 'series.value'))));
@@ -306,20 +311,56 @@ class Dashboard extends React.Component {
     };
 
     if (!_.isEmpty(sensorIds)) {
-      query['sensors[filter][id]'] = sensorIds
+      query['sensors[filter][id]'] = sensorIds;
     }
 
     if (type) {
       query['sensors[filter][type]'] = type;
     }
 
-    const sortedSensorIds = [
-      this.gatewayInfo.sensors.solargenPower,
-      this.gatewayInfo.sensors.eSSChargePower,
-      this.gatewayInfo.sensors.gridPower
-    ];
+    sensorService.getSensorsData(gwId, query)
+      .then(res => {
+        const sensorData = _.filter(_.get(res, 'data.data.sensors'), data => _.isObject(data))
+          .map(data => _.pick(data, ['name', 'id', 'series.data']));
+          
+          const durationInMs = 5 * 60 * 1000;
+          
+        _.forEach(sensorData, data => {
+          const seriesData = _.get(data, 'series.data', []);
 
-    this.props.onInitialChartData(gwId, query, sortedSensorIds);
+          const length = seriesData.length;
+
+          if(length){
+            const min = seriesData[1];
+            const max = seriesData[length - 1];
+            
+            let index = 0;
+            for (let time = min; time <= max; time += durationInMs) {
+              if(seriesData[2 * index + 1] === time){
+                index++;
+                continue;
+              }else{
+                seriesData.splice(2 * index, 0, null, time);
+                index++;
+              }
+            }
+
+            for (let time = min - durationInMs; time > startTime; time -= durationInMs) {
+              seriesData.unshift(null, time);
+            }
+
+            for (let time = max + durationInMs; time <= endTime; time += durationInMs) {
+              seriesData.push(null, time);
+            }
+          }else{
+            for (let time = endTime; time > startTime; time -= durationInMs) {
+                seriesData.unshift(null, time);
+            }
+          } 
+        });
+
+        this.props.onInitialChartData(sensorData);
+      });
   }
 
   componentWillUnmount() {
@@ -330,41 +371,89 @@ class Dashboard extends React.Component {
 
   render() {
     const { classes } = this.props;
+    if (_.isEmpty(this.gatewayInfo)) {
+      return <div className="db_chart_loading">
+          Loading...
+        </div>
+    }
+
     return <div className="np_dashboard">
       <div className="np_app_bar" onClick={this.props.onUpdateBatteryInfo}>
         <AppBar />
       </div>
       <Grid container className={classes.root} spacing={8}>
         <Grid item xs={12} md={3}>
-          <Card type={SOURCE} titleName='태양광 발전량' 
-                titleImage={energy} description='현재 발전 전력' 
-                data={this.props.solarEnergy} />
+          <Card type={SOURCE} titleName='태양광 발전량'
+            titleImage={energy} description='현재 발전 전력'
+            data={this.props.solarEnergy}
+            devices={
+              {
+                gwId: this.gatewayInfo.gwId,
+                sensors: [
+                  this.gatewayInfo.sensors.monthlySolarGenEnergy,
+                  this.gatewayInfo.sensors.dailySolarGenEnergy,
+                  this.gatewayInfo.sensors.solargenPower
+                ]
+              }
+            } />
         </Grid>
 
         <Grid item xs={12} md={6}>
           <Grid container spacing={0}>
             <Grid item xs={12} md={6}>
-              <Card type={BATTERY_1} titleName='ESS충전량' 
-                    titleImage={battery1} 
-                    description={this.props.isESSCharging ? '현재 ESS 충전 전력' : '현재 ESS 방전 전력'} 
-                    data={this.props.ESSCharge} 
-                    isActive={this.props.isESSCharging} />
+              <Card type={BATTERY_1} titleName='ESS충전량'
+                titleImage={battery1}
+                description={this.props.isESSCharging ? '현재 ESS 충전 전력' : '현재 ESS 방전 전력'}
+                data={this.props.ESSCharge}
+                isActive={this.props.isESSCharging}
+                devices={
+                  {
+                    gwId: this.gatewayInfo.gwId,
+                    sensors: [
+                      this.gatewayInfo.sensors.monthlyESSChargeEnergy,
+                      this.gatewayInfo.sensors.dailyESSChargeEnergy,
+                      this.gatewayInfo.sensors.eSSChargePower
+                    ]
+                  }
+                }
+              />
             </Grid>
             <Grid item xs={12} md={6}>
-              <Card type={BATTERY_2} titleName='ESS방전량' 
-                    titleImage={battery2} 
-                    data={this.props.ESSDischarge} 
-                    isActive={!this.props.isESSCharging} 
-                    batteryStatus={this.props.batteryStatus}/>
+              <Card type={BATTERY_2} titleName='ESS방전량'
+                titleImage={battery2}
+                data={this.props.ESSDischarge}
+                isActive={!this.props.isESSCharging}
+                batteryStatus={this.props.batteryStatus}
+                devices={
+                  {
+                    gwId: this.gatewayInfo.gwId,
+                    sensors: [
+                      this.gatewayInfo.sensors.monthlyESSDischargeEnergy,
+                      this.gatewayInfo.sensors.dailyESSDischargeEnergy,
+                      this.gatewayInfo.sensors.batteryRate
+                    ]
+                  }
+                }
+              />
             </Grid>
           </Grid>
         </Grid>
 
         <Grid item xs={12} md={3}>
-          <Card type={ELECTRICITY} titleName='계통 송수전 전력량' 
-                titleImage={electricity}
-                description='현재 계통 송수전 전력' 
-                data={this.props.electricityInfo} />
+          <Card type={ELECTRICITY} titleName='계통 송수전 전력량'
+            titleImage={electricity}
+            description='현재 계통 송수전 전력'
+            data={this.props.electricityInfo}
+            devices={
+              {
+                gwId: this.gatewayInfo.gwId,
+                sensors: [
+                  this.gatewayInfo.sensors.monthlyGridEnergy,
+                  this.gatewayInfo.sensors.dailyGridEnergy,
+                  this.gatewayInfo.sensors.gridPower
+                ]
+              }
+            } />
         </Grid>
       </Grid>
       <Grid container className='db_chart'>
@@ -389,7 +478,7 @@ const mapDispatchToProps = dispatch => ({
   onUpdateWeather: ({ temperature, humidity }) => dispatch(updateWeather({ temperature, humidity })),
   onUpdateDateTime: ([date, time]) => date && time && dispatch(updateDateTime({ date, time })),
   onFetchingCurrentUser: () => dispatch(getUsersMe()),
-  onInitialChartData: (gwId, params, sensorIds) => dispatch(getInitialDataForChart(gwId, params, sensorIds)),
+  onInitialChartData: (sensorData) => dispatch(initialChartData(sensorData)),
   onUpdateChartData: data => dispatch(updateChartData(data)),
   onUpdateSolarEnergy: data => dispatch(updateSolarEnergy(data)),
   onUpdateGridEnergy: data => dispatch(updateGridEnergy(data)),

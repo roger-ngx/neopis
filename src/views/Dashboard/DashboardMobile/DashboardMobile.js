@@ -59,10 +59,9 @@ class DashboardMobile extends React.Component {
     socket.initSocketChannel();
 
     sensorService.getGatewayInfo().then(res => {
-      this.gatewayInfo = _.pick(_.get(res.data, 'data'), ['name', 'gwId', 'sensors']);
+      this.gatewayInfo = _.pick(_.get(res.data, ['data', '0']), ['name', 'gwId', 'sensors']);
 
       this.initAndSubscribeChartData();
-  
       this.initAndSubscribeWeatherData();
       this.initAndSubscribeSolarData();
       this.initAndSubscribeGridEnergyData();
@@ -78,13 +77,13 @@ class DashboardMobile extends React.Component {
       id: this.gatewayInfo.sensors.manualStatus,
       owner: this.gatewayInfo.gwId
     };
-    this.wsSubscribers.push(socket.subscribeSensors(manualStatus, data => this.props.onUpdateBatteryStatus(+data.value ? MANUAL : ABNORMAL)));
+    this.wsSubscribers.push(socket.subscribeSensor(manualStatus, data => this.props.onUpdateBatteryStatus(+data.value ? MANUAL : ABNORMAL)));
 
     const automaticStatus = {
       id: this.gatewayInfo.sensors.automaticStatus,
       owner: this.gatewayInfo.gwId
     }
-    this.wsSubscribers.push(socket.subscribeSensors(automaticStatus, data => this.props.onUpdateBatteryStatus(+data.value ? AUTOMATIC : ABNORMAL)));
+    this.wsSubscribers.push(socket.subscribeSensor(automaticStatus, data => this.props.onUpdateBatteryStatus(+data.value ? AUTOMATIC : ABNORMAL)));
 
     //query for the 1st data
     var query = {
@@ -105,7 +104,7 @@ class DashboardMobile extends React.Component {
       this.gatewayInfo.sensors.gridPower
     ];
 
-    this.getSensorsData(this.gatewayInfo.gwId, sensorIds, minTime, currentTime, '5m');
+    this.getSensorsData(this.gatewayInfo.gwId, sensorIds, minTime, currentTime, '15m');
 
     const sensorsSubscriber = socket.newSensorSubscriber((data, info) => this.props.onUpdateChartData({
       id: info.id,
@@ -130,19 +129,19 @@ class DashboardMobile extends React.Component {
       id: this.gatewayInfo.sensors.monthlySolarGenEnergy,
       owner: this.gatewayInfo.gwId
     };
-    this.wsSubscribers.push(socket.subscribeSensors(monthlySolarGenEnergy, data => this.props.onUpdateSolarEnergy({ thisMonth: +(+data.value / 1000).toFixed(1) })));
+    this.wsSubscribers.push(socket.subscribeSensor(monthlySolarGenEnergy, data => this.props.onUpdateSolarEnergy({ thisMonth: +(+data.value / 1000).toFixed(1) })));
 
     const dailySolarGenEnergy = {
       id: this.gatewayInfo.sensors.dailySolarGenEnergy,
       owner: this.gatewayInfo.gwId
     }
-    this.wsSubscribers.push(socket.subscribeSensors(dailySolarGenEnergy, data => this.props.onUpdateSolarEnergy({ today: parseInt(data.value) })));
+    this.wsSubscribers.push(socket.subscribeSensor(dailySolarGenEnergy, data => this.props.onUpdateSolarEnergy({ today: parseInt(data.value) })));
 
     const solargenPower = {
       id: this.gatewayInfo.sensors.solargenPower,
       owner: this.gatewayInfo.gwId
     }
-    this.wsSubscribers.push(socket.subscribeSensors(solargenPower, data => this.props.onUpdateSolarEnergy({ curPower: (+data.value).toFixed(1) })));
+    this.wsSubscribers.push(socket.subscribeSensor(solargenPower, data => this.props.onUpdateSolarEnergy({ curPower: (+data.value).toFixed(1) })));
 
     //query for the 1st data
     var query = {
@@ -161,19 +160,19 @@ class DashboardMobile extends React.Component {
       id: this.gatewayInfo.sensors.monthlyGridEnergy,
       owner: this.gatewayInfo.gwId
     };
-    this.wsSubscribers.push(socket.subscribeSensors(monthlyGridEnergy, data => this.props.onUpdateGridEnergy({ thisMonth: +(+data.value / 1000).toFixed(1) })));
+    this.wsSubscribers.push(socket.subscribeSensor(monthlyGridEnergy, data => this.props.onUpdateGridEnergy({ thisMonth: +(+data.value / 1000).toFixed(1) })));
 
     const dailyGridEnergy = {
       id: this.gatewayInfo.sensors.dailyGridEnergy,
       owner: this.gatewayInfo.gwId
     }
-    this.wsSubscribers.push(socket.subscribeSensors(dailyGridEnergy, data => this.props.onUpdateGridEnergy({ today: parseInt(data.value) })));
+    this.wsSubscribers.push(socket.subscribeSensor(dailyGridEnergy, data => this.props.onUpdateGridEnergy({ today: parseInt(data.value) })));
 
     const gridPower = {
       id: this.gatewayInfo.sensors.gridPower,
       owner: this.gatewayInfo.gwId
     }
-    this.wsSubscribers.push(socket.subscribeSensors(gridPower, data => this.props.onUpdateGridEnergy({ curPower: (+data.value).toFixed(1) })));
+    this.wsSubscribers.push(socket.subscribeSensor(gridPower, data => this.props.onUpdateGridEnergy({ curPower: (+data.value).toFixed(1) })));
 
 
     //query for the 1st data
@@ -193,19 +192,19 @@ class DashboardMobile extends React.Component {
       id: this.gatewayInfo.sensors.monthlyESSDischargeEnergy,
       owner: this.gatewayInfo.gwId
     };
-    this.wsSubscribers.push(socket.subscribeSensors(monthlyESSDischargeEnergy, data => this.props.onUpdateESSDischarge({ thisMonth: +(+data.value / 1000).toFixed(1) })));
+    this.wsSubscribers.push(socket.subscribeSensor(monthlyESSDischargeEnergy, data => this.props.onUpdateESSDischarge({ thisMonth: +(+data.value / 1000).toFixed(1) })));
 
     const dailyESSDischargeEnergy = {
       id: this.gatewayInfo.sensors.dailyESSDischargeEnergy,
       owner: this.gatewayInfo.gwId
     }
-    this.wsSubscribers.push(socket.subscribeSensors(dailyESSDischargeEnergy, data => this.props.onUpdateESSDischarge({ today: parseInt(data.value) })));
+    this.wsSubscribers.push(socket.subscribeSensor(dailyESSDischargeEnergy, data => this.props.onUpdateESSDischarge({ today: parseInt(data.value) })));
 
     const batteryRate = {
       id: this.gatewayInfo.sensors.batteryRate,
       owner: this.gatewayInfo.gwId
     }
-    this.wsSubscribers.push(socket.subscribeSensors(batteryRate, data => this.props.onUpdateESSDischarge({ batteryRate: +data.value })));
+    this.wsSubscribers.push(socket.subscribeSensor(batteryRate, data => this.props.onUpdateESSDischarge({ batteryRate: +data.value })));
 
     //query for the 1st data
     var query = {
@@ -223,19 +222,19 @@ class DashboardMobile extends React.Component {
       id: this.gatewayInfo.sensors.monthlyESSChargeEnergy,
       owner: this.gatewayInfo.gwId
     };
-    this.wsSubscribers.push(socket.subscribeSensors(monthlyESSChargeEnergy, data => this.props.onUpdateESSCharge({ thisMonth: +(+data.value / 1000).toFixed(1) })));
+    this.wsSubscribers.push(socket.subscribeSensor(monthlyESSChargeEnergy, data => this.props.onUpdateESSCharge({ thisMonth: +(+data.value / 1000).toFixed(1) })));
 
     const dailyESSChargeEnergy = {
       id: this.gatewayInfo.sensors.dailyESSChargeEnergy,
       owner: this.gatewayInfo.gwId
     }
-    this.wsSubscribers.push(socket.subscribeSensors(dailyESSChargeEnergy, data => this.props.onUpdateESSCharge({ today: data.value })));
+    this.wsSubscribers.push(socket.subscribeSensor(dailyESSChargeEnergy, data => this.props.onUpdateESSCharge({ today: data.value })));
 
     const eSSChargePower = {
       id: this.gatewayInfo.sensors.eSSChargePower,
       owner: this.gatewayInfo.gwId
     }
-    this.wsSubscribers.push(socket.subscribeSensors(eSSChargePower, data => {
+    this.wsSubscribers.push(socket.subscribeSensor(eSSChargePower, data => {
       const curPower = data.value;
       this.props.onUpdateESSCharge({ curPower: (+curPower).toFixed(1) });
       this.props.onUpdateESSStatus(+curPower < 0);
@@ -262,13 +261,13 @@ class DashboardMobile extends React.Component {
       id: this.gatewayInfo.sensors.temperature,
       owner: this.gatewayInfo.gwId
     };
-    this.wsSubscribers.push(socket.subscribeSensors(tempSensor, data => this.props.onUpdateWeather({ temperature: data.value })));
+    this.wsSubscribers.push(socket.subscribeSensor(tempSensor, data => this.props.onUpdateWeather({ temperature: data.value })));
 
     const humiditySensor = {
       id: this.gatewayInfo.sensors.humidity,
       owner: this.gatewayInfo.gwId
     }
-    this.wsSubscribers.push(socket.subscribeSensors(humiditySensor, data => this.props.onUpdateWeather({ humidity: data.value })));
+    this.wsSubscribers.push(socket.subscribeSensor(humiditySensor, data => this.props.onUpdateWeather({ humidity: data.value })));
 
     //query for the 1st data
     var query = {
@@ -309,8 +308,13 @@ class DashboardMobile extends React.Component {
       query['sensors[filter][type]'] = type;
     }
 
-    //sensorService.getSensorsData(gwId, query);
-    this.props.onInitialChartData(gwId, query);
+    const sortedSensorIds = [
+      this.gatewayInfo.sensors.solargenPower,
+      this.gatewayInfo.sensors.eSSChargePower,
+      this.gatewayInfo.sensors.gridPower
+    ];
+
+    this.props.onInitialChartData(gwId, query, sortedSensorIds);
   }
 
   componentWillUnmount() {
@@ -390,7 +394,7 @@ const mapDispatchToProps = dispatch => ({
   onUpdateWeather: ({ temperature, humidity }) => dispatch(updateWeather({ temperature, humidity })),
   onUpdateDateTime: ([date, time]) => date && time && dispatch(updateDateTime({ date, time })),
   onFetchingCurrentUser: () => dispatch(getUsersMe()),
-  onInitialChartData: (gwId, params) => dispatch(getInitialDataForChart(gwId, params)),
+  onInitialChartData: (gwId, params, sensorIds) => dispatch(getInitialDataForChart(gwId, params, sensorIds)),
   onUpdateChartData: data => dispatch(updateChartData(data)),
   onUpdateSolarEnergy: data => dispatch(updateSolarEnergy(data)),
   onUpdateGridEnergy: data => dispatch(updateGridEnergy(data)),

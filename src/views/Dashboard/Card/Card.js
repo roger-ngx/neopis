@@ -21,12 +21,25 @@ const Card = props => {
   let cardBottom;
   if (+props.type === BATTERY_2) {
     cardBottom = <>
-      <BatteryMode status={props.batteryStatus} />
-      <CurrentBatteryPercentage value={props.data.batteryRate} />;
+      <BatteryMode
+        status={props.batteryStatus}
+        gwId={props.devices.gwId}
+        sensorId={props.devices.sensors[2]} />
+
+      <CurrentBatteryPercentage
+        value={props.data.batteryRate}
+        gwId={props.devices.gwId}
+        sensorId={props.devices.sensors[2]} />;
       </>
   } else {
-    cardBottom = <DonutChartWithCss type={props.type} percentage={props.data.percentage}
-      size={128} description={props.description} electricity={(props.data.curPower || 0) + 'kW'} />;
+    cardBottom = <DonutChartWithCss
+      type={props.type}
+      percentage={props.data.percentage}
+      gwId={props.devices.gwId}
+      sensorId={props.devices.sensors[2]}
+      size={128}
+      description={props.description}
+      electricity={(props.data.curPower || 0) + 'kW'} />;
   }
 
   return <div className={cardClasses}>
@@ -34,8 +47,20 @@ const Card = props => {
       <CardTitle title={props.titleName} image={props.titleImage} />
     </div>
     <div className='db_card_middle'>
-      <CurrentElectricityValue type={props.type} value={props.data.thisMonth} unit="MWh" description="This month" isActive={props.isActive} />
-      <CurrentElectricityValue type={props.type} value={props.data.today} unit="kWh" description="Today" isActive={props.isActive} />
+      <CurrentElectricityValue
+        type={props.type}
+        value={props.data.thisMonth}
+        unit="MWh" description="This month"
+        isActive={props.isActive}
+        gwId={props.devices.gwId}
+        sensorId={props.devices.sensors[0]} />
+      <CurrentElectricityValue
+        type={props.type}
+        value={props.data.today}
+        unit="kWh" description="Today"
+        isActive={props.isActive}
+        gwId={props.devices.gwId}
+        sensorId={props.devices.sensors[1]} />
     </div>
     <div className="db_card_bottom">
       <div className="content">

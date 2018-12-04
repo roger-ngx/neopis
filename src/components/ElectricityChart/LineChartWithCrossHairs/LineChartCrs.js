@@ -70,7 +70,8 @@ const Line = props => {
     })
     .y(d => {
       return props.yScale(d.value);
-    });
+    })
+    .defined( d => d.value != null);
 
   return <g className='city'>
     <path className='line' d={line(props.data.values)} stroke={props.stroke}></path>
@@ -97,7 +98,7 @@ const Lines = props => {
   yScale.domain([
     d3.min(props.data, function (c) {
       return d3.min(c.values, function (v) {
-        return v.value;
+        return v.value || 0;
       });
     }),
     d3.max(props.data, function (c) {
@@ -124,9 +125,15 @@ const MouseOverEffect = props => {
   const xScale = d3.scaleTime()
     .range([0, props.width]);
 
-  xScale.domain(d3.extent(props.data[0].values, function (d) {
-    return d.time;
-  }));
+  xScale.domain([
+    d3.min(props.data, function (c) {
+      return c.values.length && c.values[0].time;
+    }),
+    d3.max(props.data, function (c) {
+      const length = c.values.length;
+      return length && c.values[length - 1].time;
+    })
+  ]);
 
   const yScale = d3.scaleLinear()
     .range([props.height, 0]);
@@ -213,14 +220,16 @@ const MouseOverEffect = props => {
             else break; //position found
           }
 
-          const text = d3.select(this).select('text')
-            .text(yScale.invert(pos.y).toFixed(2))
-            .attr("fill", 'white');
-
-          if (pos.x > props.width / 2) {
-            text.attr("transform", "translate(-55,-10)")
-          } else {
-            text.attr("transform", "translate(10,-10)")
+          const yValue = yScale.invert(pos.y);
+          if(yValue){
+            const text = d3.select(this).select('text')
+              .text(yValue.toFixed(2))
+              .attr("fill", 'white');
+              if (pos.x > props.width / 2) {
+                text.attr("transform", "translate(-55,-10)")
+              } else {
+                text.attr("transform", "translate(10,-10)")
+              }
           }
 
           d3.select('.x-value').text(d3.timeFormat("%H:%M")(xScale.invert(pos.x)))
@@ -267,10 +276,12 @@ class LineChartCrs extends Component {
   }
 
   componentDidMount() {
+    console.log(this.chartArea.current, this.chartArea.current.height.baseVal);
+
     let width = this.chartArea.current.clientWidth - this.margin.left - this.margin.right;
     let height = this.chartArea.current.clientHeight - this.margin.top - this.margin.bottom;
 
-    this.setState({ width, height })
+    this.setState({ width, height });
 
     d3.select(window).on('resize', this.resize.bind(this));
   }
@@ -279,7 +290,7 @@ class LineChartCrs extends Component {
     var width = this.chartArea.current.clientWidth - this.margin.left - this.margin.right,
       height = this.chartArea.current.clientHeight - this.margin.top - this.margin.bottom;
 
-    this.setState({ width, height })
+    this.setState({ width, height });
   };
 
   render() {
