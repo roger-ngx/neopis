@@ -1,15 +1,20 @@
 import React from 'react';
-import './Dashboard.scss';
+import _ from 'lodash';
+import { connect } from 'react-redux';
 import withStyles from "@material-ui/core/styles/withStyles";
 import Grid from '@material-ui/core/Grid';
+
+import './Dashboard.scss';
 import Card from '../../components/Card/Card';
+import AppBar from '../../components/AppBar/AppBar';
+import LineChart from '../../components/ElectricityChart/LineChartWithCrossHairs/LineChartCrs';
+import { SOURCE, BATTERY_1, BATTERY_2, ELECTRICITY } from '../../components/CurrentElectricityValue/mobile/CurrentElectricityValueMobile';
+import { ABNORMAL, MANUAL, AUTOMATIC } from '../../components/BatteryMode/BatteryMode';
+
 import battery1 from '../../assets/images/battery-1.svg';
 import battery2 from '../../assets/images/battery-2.svg';
 import electricity from '../../assets/images/electricity.svg';
 import energy from '../../assets/images/energy.svg';
-import AppBar from '../../components/AppBar/AppBar';
-import LineChart from '../../components/ElectricityChart/LineChartWithCrossHairs/LineChartCrs';
-import { connect } from 'react-redux';
 
 import {
   getUsersMe,
@@ -25,13 +30,10 @@ import {
   updateBatteryStatus
 } from '../../store/actionCreators';
 
-import { SOURCE, BATTERY_1, BATTERY_2, ELECTRICITY } from '../../components/CurrentElectricityValue/mobile/CurrentElectricityValueMobile';
 import socket from '../../services/wsServices';
 import sensorService from '../../services/sensorService'
-import _ from 'lodash';
 
 //const LineChart = lazy(() => import('../../components/ElectricityChart/LineChartWithCrossHairs/LineChartCrs'));
-import { ABNORMAL, MANUAL, AUTOMATIC } from '../../components/BatteryMode/BatteryMode';
 
 const styles = {
   root: {
@@ -446,19 +448,6 @@ class Dashboard extends React.Component {
       .then(res => this.processDataForChart(res.data, sensorIds, startTime, endTime))
   }
 
-  getSensorData(gwId, sensorIds) {
-    const query = {
-      embed: 'sensors',
-      'sensors[embed]': ['series', 'status', 'owner'],
-    };
-
-    if (!_.isEmpty(sensorIds)) {
-      query['sensors[filter][id]'] = sensorIds;
-    }
-
-    sensorService.getSensorsData(gwId, query).then(res => console.log(_.filter(_.get(res.data, 'data.sensors'), sensor => _.isObject(sensor)).map(sensor => _.get(sensor, 'series.value'))));
-  }
-
   getSensorValues(gwId, sensorIds) {
     const query = {
       embed: 'sensors',
@@ -469,7 +458,7 @@ class Dashboard extends React.Component {
     return sensorService.getSensorsData(gwId, query);
   }
 
-  getSensorSeries(gwId, sensorIds, startTime, endTime, interval = '0m', type) {
+  getSensorSeries(gwId, sensorIds, startTime, endTime, interval = '0m') {
     const query = {
       embed: 'sensors',
       'sensors[embed]': 'series',
@@ -480,10 +469,6 @@ class Dashboard extends React.Component {
 
     if (!_.isEmpty(sensorIds)) {
       query['sensors[filter][id]'] = sensorIds;
-    }
-
-    if (type) {
-      query['sensors[filter][type]'] = type;
     }
 
     return sensorService.getSensorsData(gwId, query);

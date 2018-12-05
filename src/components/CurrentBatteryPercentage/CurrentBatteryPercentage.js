@@ -1,7 +1,8 @@
 import React from 'react';
-import './CurrentBatteryPercentage.scss'
 import classnames from 'classnames';
 import { PropTypes } from 'prop-types';
+
+import './CurrentBatteryPercentage.scss'
 
 const CurrentBatteryPercentage = props => {
 

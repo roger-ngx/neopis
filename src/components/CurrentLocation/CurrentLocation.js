@@ -1,8 +1,9 @@
 import React from 'react';
-import './CurrentLocation.scss';
-import image from '../../assets/images/location.svg'
 import { connect } from 'react-redux';
 import { PropTypes } from 'prop-types';
+
+import './CurrentLocation.scss';
+import image from '../../assets/images/location.svg'
 
 const CurrentLocation = props =>
   <div className='location'>

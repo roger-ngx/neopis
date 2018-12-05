@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import './LineChartCrs.scss';
-import * as d3 from 'd3';
-import { chartDataSelector } from '../../../store/neopisSelectors';
 import { connect } from 'react-redux';
+import * as d3 from 'd3';
+
+import './LineChartCrs.scss';
+import { chartDataSelector } from '../../../store/neopisSelectors';
 
 export const ENERGY = 0;
 export const BATTERY = 1;

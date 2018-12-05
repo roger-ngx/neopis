@@ -1,13 +1,14 @@
 import React from 'react';
+import { PropTypes } from 'prop-types';
+import classnames from 'classnames';
+
 import './Card.scss';
 import CardTitle from '../CardTitle/CardTitle';
 import CurrentElectricityValue from '../CurrentElectricityValue/CurrentElectricityValue';
 import CurrentBatteryPercentage from '../CurrentBatteryPercentage/CurrentBatteryPercentage';
 import PowerDonutChart from '../PowerChart/PowerDonutChart';
-import classnames from 'classnames';
 import BatteryMode from '../BatteryMode/BatteryMode';
 import { BATTERY_2, BATTERY_1 } from '../CurrentElectricityValue/mobile/CurrentElectricityValueMobile';
-import { PropTypes } from 'prop-types';
 
 
 const Card = props => {

@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
-import './CurrentMoment.scss';
-import image from '../../assets/images/time.svg'
-//import { connect } from 'react-redux';
-//import { PropTypes } from 'prop-types';
 import * as moment from 'moment';
 import 'moment/locale/ko';
+
+import './CurrentMoment.scss';
+import image from '../../assets/images/time.svg'
 
 class CurrentMoment extends Component {
 

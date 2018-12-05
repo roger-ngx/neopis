@@ -278,19 +278,6 @@ class DashboardMobile extends React.Component {
     sensorService.getSensorData(this.gatewayInfo.gwId, this.gatewayInfo.sensors.humidity, query).then(res => this.props.onUpdateWeather({ humidity: +_.get(res.data, 'data.series.value', '') }));
   }
 
-  getSensorData(gwId, sensorIds) {
-    const query = {
-      embed: 'sensors',
-      'sensors[embed]': ['series', 'status', 'owner'],
-    };
-
-    if (!_.isEmpty(sensorIds)) {
-      query['sensors[filter][id]'] = sensorIds
-    }
-
-    sensorService.getSensorsData(gwId, query).then(res => console.log(_.filter(_.get(res.data, 'data.sensors'), sensor => _.isObject(sensor)).map(sensor => _.get(sensor, 'series.value'))));
-  }
-
   getSensorsData(gwId, sensorIds, startTime, endTime, interval = '0m', type) {
     const query = {
       embed: 'sensors',
@@ -322,7 +309,6 @@ class DashboardMobile extends React.Component {
 
     socket.disconnectSocketChannel();
   }
-
 
   render() {
     const { classes } = this.props;

@@ -1,8 +1,9 @@
 import React from 'react';
-import './CurrentWeather.scss'
-import image from '../../assets/images/weather.svg'
 import { connect } from 'react-redux';
 import { PropTypes } from 'prop-types';
+
+import './CurrentWeather.scss'
+import image from '../../assets/images/weather.svg'
 
 export const _CurrentWeather = props => {
   return <div className='weather'>

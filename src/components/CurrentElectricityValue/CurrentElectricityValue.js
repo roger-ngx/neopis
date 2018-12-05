@@ -1,9 +1,10 @@
 import React from 'react';
+import { PropTypes } from 'prop-types';
+import classnames from 'classnames'
+
 import './style.scss';
 import './CurrentElectricityValue.scss';
-import classnames from 'classnames'
 import { SOURCE, BATTERY_1, BATTERY_2, ELECTRICITY } from './mobile/CurrentElectricityValueMobile';
-import { PropTypes } from 'prop-types';
 
 const CurrentElectricityValue = (props) => {
 
