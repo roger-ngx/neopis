@@ -4,7 +4,7 @@ import image from '../../assets/images/weather.svg'
 import { connect } from 'react-redux';
 import { PropTypes } from 'prop-types';
 
-const CurrentWeather = props => {
+export const _CurrentWeather = props => {
   return <div className='weather'>
     <img src={image} className='weather_icon' alt='weather icon' />
     <div className='weather_temperature'>
@@ -16,7 +16,7 @@ const CurrentWeather = props => {
   </div>
 }
 
-CurrentWeather.propTypes = {
+_CurrentWeather.propTypes = {
   temperature: PropTypes.number,
   humidity: PropTypes.number
 }
@@ -26,4 +26,4 @@ const mapStateToProps = state => ({
   humidity: state.weather.humidity
 })
 
-export default connect(mapStateToProps)(CurrentWeather);
+export default connect(mapStateToProps)(_CurrentWeather);

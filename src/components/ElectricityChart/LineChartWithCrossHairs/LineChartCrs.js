@@ -141,7 +141,7 @@ const MouseOverEffect = props => {
   yScale.domain([
     d3.min(props.data, function (c) {
       return d3.min(c.values, function (v) {
-        return v.value;
+        return v.value || 0;
       });
     }),
     d3.max(props.data, function (c) {
@@ -223,7 +223,7 @@ const MouseOverEffect = props => {
           const yValue = yScale.invert(pos.y);
           if(yValue){
             const text = d3.select(this).select('text')
-              .text(yValue.toFixed(2))
+              .text(yValue.toFixed(1))
               .attr("fill", 'white');
               if (pos.x > props.width / 2) {
                 text.attr("transform", "translate(-55,-10)")

@@ -5,7 +5,7 @@ import CurrentMomentMobile from '../../../components/CurrentMoment/mobile/Curren
 import CurrentWeatherMobile from '../../../components/CurrentWeather/mobile/CurrentWeatherMobile';
 import CurrentLocationMobile from '../../../components/CurrentLocation/mobile/CurrentLocationMobile';
 import Grid from '@material-ui/core/Grid';
-import CardMobile from '../Card/mobile/CardMobile';
+import CardMobile from '../../../components/Card/mobile/CardMobile';
 import battery1 from '../../../assets/images/battery-1.svg';
 import battery2 from '../../../assets/images/battery-2.svg';
 import electricity from '../../../assets/images/electricity.svg';

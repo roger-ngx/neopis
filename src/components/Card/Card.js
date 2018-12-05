@@ -1,12 +1,12 @@
 import React from 'react';
 import './Card.scss';
-import CardTitle from '../../../components/CardTitle/CardTitle';
-import CurrentElectricityValue from '../../../components/CurrentElectricityValue/CurrentElectricityValue';
-import CurrentBatteryPercentage from '../../../components/CurrentBatteryPercentage/CurrentBatteryPercentage';
-import DonutChartWithCss from '../../../components/ElectricityChart/DonutChartWithCss';
+import CardTitle from '../CardTitle/CardTitle';
+import CurrentElectricityValue from '../CurrentElectricityValue/CurrentElectricityValue';
+import CurrentBatteryPercentage from '../CurrentBatteryPercentage/CurrentBatteryPercentage';
+import PowerDonutChart from '../PowerChart/PowerDonutChart';
 import classnames from 'classnames';
-import BatteryMode from '../../../components/BatteryMode/BatteryMode';
-import { BATTERY_2, BATTERY_1 } from '../../../components/CurrentElectricityValue/mobile/CurrentElectricityValueMobile';
+import BatteryMode from '../BatteryMode/BatteryMode';
+import { BATTERY_2, BATTERY_1 } from '../CurrentElectricityValue/mobile/CurrentElectricityValueMobile';
 import { PropTypes } from 'prop-types';
 
 
@@ -32,7 +32,7 @@ const Card = props => {
         sensorId={props.devices.sensors[2]} />;
       </>
   } else {
-    cardBottom = <DonutChartWithCss
+    cardBottom = <PowerDonutChart
       type={props.type}
       percentage={props.data.percentage}
       gwId={props.devices.gwId}

@@ -1,5 +1,5 @@
 import React from 'react';
-import './DonutChartWithCss.scss'
+import './PowerDonutChart.scss'
 import { SOURCE, BATTERY_2, BATTERY_1, ELECTRICITY } from '../CurrentElectricityValue/mobile/CurrentElectricityValueMobile';
 import { PropTypes } from 'prop-types';
 
@@ -21,7 +21,7 @@ const getBackground = function (type, percentage) {
   }
 };
 
-const DonutChartWithCss = (props) => {
+const PowerDonutChart = (props) => {
 
   const outerPieStyle = {
     width: props.size + 'px',
@@ -49,11 +49,11 @@ const DonutChartWithCss = (props) => {
   </a>
 }
 
-DonutChartWithCss.propTypes = {
+PowerDonutChart.propTypes = {
   size: PropTypes.number.isRequired,
   percentage: PropTypes.number.isRequired,
   electricity: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired
 }
 
-export default DonutChartWithCss;
+export default PowerDonutChart;

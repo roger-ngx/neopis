@@ -1,11 +1,11 @@
 import React from 'react';
 import './CardMobile.scss';
-import CurrentBatteryPercentage from '../../../../components/CurrentBatteryPercentage/CurrentBatteryPercentage';
-import CardTitle from '../../../../components/CardTitle/CardTitle';
-import DonutChartWithCss from '../../../../components/ElectricityChart/DonutChartWithCss';
-import BatteryMode from '../../../../components/BatteryMode/BatteryMode';
-import { BATTERY_2 } from '../../../../components/CurrentElectricityValue/mobile/CurrentElectricityValueMobile';
-import CurrentElectricityValueMobile from '../../../../components/CurrentElectricityValue/mobile/CurrentElectricityValueMobile';
+import CurrentBatteryPercentage from '../../CurrentBatteryPercentage/CurrentBatteryPercentage';
+import CardTitle from '../../CardTitle/CardTitle';
+import PowerDonutChart from '../../PowerChart/PowerDonutChart';
+import BatteryMode from '../../BatteryMode/BatteryMode';
+import { BATTERY_2 } from '../../CurrentElectricityValue/mobile/CurrentElectricityValueMobile';
+import CurrentElectricityValueMobile from '../../CurrentElectricityValue/mobile/CurrentElectricityValueMobile';
 
 const CardMobile = props => {
 
@@ -16,7 +16,7 @@ const CardMobile = props => {
       <CurrentBatteryPercentage value={props.data.batteryRate} mobile={true} />;
     </>
   } else {
-    cardRight = <DonutChartWithCss type={props.type} percentage={props.data.percentage}
+    cardRight = <PowerDonutChart type={props.type} percentage={props.data.percentage}
       size={112} description={props.description} electricity={(props.data.curPower || 0) + 'kW'} />;
   }
 

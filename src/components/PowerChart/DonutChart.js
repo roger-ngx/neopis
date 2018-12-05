@@ -4,7 +4,7 @@ import { arc as d3Arc, pie as d3Pie } from 'd3-shape';
 import { csvParse } from 'd3-dsv';
 
 // Same as data.csv
-import dataCsv from './data';
+import dataCsv from '../ElectricityChart/data';
 
 import './chart.css';
 
