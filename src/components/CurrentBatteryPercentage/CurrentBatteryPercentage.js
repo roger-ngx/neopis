@@ -7,7 +7,7 @@ import './CurrentBatteryPercentage.scss'
 const CurrentBatteryPercentage = props => {
 
   const batteryVolumnStyle = {
-    width: props.value
+    width: props.value + '%'
   };
 
   const batteryClass = classnames({

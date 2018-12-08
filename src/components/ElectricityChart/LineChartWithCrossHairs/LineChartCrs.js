@@ -14,7 +14,7 @@ const XAxis = props => {
     .range([0, props.width]);
 
   const xAxis = d3.axisBottom(xScale)
-    .ticks(Math.max(props.width / 75, 4))
+    .ticks(Math.max(props.width / 60, 4))
     .tickSize(-props.height);
 
   xScale.domain([
