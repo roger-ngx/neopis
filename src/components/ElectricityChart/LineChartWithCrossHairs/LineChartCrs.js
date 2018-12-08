@@ -124,8 +124,6 @@ const MouseOverEffect = props => {
     .append("g")
     .attr("class", "mouse-per-line");
 
-  d3.select('g').append('text').attr('class', 'x-value');
-
   mousePerLine.append("circle")
     .attr("r", 7)
     .style("stroke", function (d, i) {
@@ -135,30 +133,38 @@ const MouseOverEffect = props => {
     .style("stroke-width", "2px")
     .style("opacity", "0");
 
-  mousePerLine.append("text");
 
-  d3.select('rect') // append a rect to catch mouse movements on canvas
+  d3.select('.mouse_area') // append a rect to catch mouse movements on canvas
     .on('mouseout', function () { // on mouse out hide line, circles and text
       d3.select(".mouse-line")
         .style("opacity", "0");
-      d3.select(".x-value")
+      d3.select(".time-value")
         .style("opacity", "0");
       d3.selectAll(".mouse-per-line circle")
         .style("opacity", "0");
-      d3.selectAll(".mouse-per-line text")
+      d3.select('.tooltip')
         .style("opacity", "0");
     })
     .on('mouseover', function () { // on mouse in show line, circles and text
       d3.select(".mouse-line")
         .style("opacity", "1");
-      d3.select(".x-value")
+      d3.select(".time-value")
         .style("opacity", "1");
       d3.selectAll(".mouse-per-line circle")
         .style("opacity", "1");
-      d3.selectAll(".mouse-per-line text")
+      d3.select('.tooltip')
         .style("opacity", "1");
     })
     .on('mousemove', function () { // mouse moving over canvas
+      d3.select(".mouse-line")
+        .style("opacity", "1");
+      d3.select(".time-value")
+        .style("opacity", "1");
+      d3.selectAll(".mouse-per-line circle")
+        .style("opacity", "1");
+      d3.select('.tooltip')
+        .style("opacity", "1");
+
       var mouse = d3.mouse(this);
       var pos;
 
@@ -168,6 +174,21 @@ const MouseOverEffect = props => {
           d += " " + mouse[0] + "," + 0;
           return d;
         });
+
+      const timeValue = d3.select('.time-value').text(d3.timeFormat("%H:%M")(xScale.invert(mouse[0])))
+        .attr('x', mouse[0] - 25)
+        .attr('y', props.height + 20);
+
+      var toolTip = d3.select('.tooltip');
+
+      if (mouse[0] > props.width / 2) {
+        timeValue.attr("transform", "translate(-30,0)");
+        toolTip.attr('transform', `translate(${mouse[0] - 90}, ${mouse[1] - 20})`);
+      } else {
+        timeValue.attr("transform", "translate(35,0)");
+        toolTip.attr('transform', `translate(${mouse[0] + 15}, ${mouse[1] - 20})`);
+      }
+
 
       d3.selectAll(".mouse-per-line")
         .attr("transform", function (d, i) {
@@ -187,27 +208,18 @@ const MouseOverEffect = props => {
             else break; //position found
           }
 
-          const yValue = yScale.invert(pos.y);
-          if (yValue) {
-            const text = d3.select(this).select('text')
-              .text(yValue.toFixed(1))
-              .attr("fill", 'white');
-            if (pos.x > props.width / 2) {
-              text.attr("transform", "translate(-55,-10)");
-            } else {
-              text.attr("transform", "translate(10,-10)");
-            }
+          let yValue = yScale.invert(pos.y);
+          if (yValue <= 0) yValue = 0;
+
+          const text = toolTip.select(`.point-value-${i}`)
+            .text(yValue.toFixed(1))
+            .attr('fill', props.gradients[i]);
+
+          if (pos.x > props.width / 2) {
+            text.attr("transform", `translate(10,${20 + 20 * i})`);
+          } else {
+            text.attr("transform", `translate(10,${20 + 20 * i})`);
           }
-
-          const timeValue = d3.select('.x-value').text(d3.timeFormat("%H:%M")(xScale.invert(pos.x)))
-            .attr('x', pos.x - 25)
-            .attr('y', props.height + 20);
-
-            if (pos.x > props.width / 2) {
-              timeValue.attr("transform", "translate(-30,0)");
-            } else {
-              timeValue.attr("transform", "translate(35,0)");
-            }
 
           return "translate(" + mouse[0] + "," + pos.y + ")";
         });
@@ -218,13 +230,30 @@ const MouseOverEffect = props => {
     .style("stroke-width", "1px")
     .style("opacity", "0");
 
-  d3.select('.x-value')
+  d3.select('.time-value')
     .style("fill", "white")
+    .style("opacity", "0");
+
+  d3.select('.tooltip')
     .style("opacity", "0");
 
   return <g className='mouse-over-effects'>
     <path className="mouse-line"></path>
-    <rect width={props.width} height={props.height}
+    <text className='time-value'></text>
+    <g className='tooltip'>
+      <rect width={80} height={70}
+        stroke='#525252'
+        opacity='0.5'
+        shapeRendering='crispEdges'
+        pointerEvents="all"></rect>
+      {
+        props.gradients.map((g, i) => (
+          <text className={`point-value-${i}`}
+            fontWeight='bold'></text>
+        ))
+      }
+    </g>
+    <rect className='mouse_area' width={props.width} height={props.height}
       strokeWidth='0.5px' stroke='#525252'
       shapeRendering='crispEdges' fill="none"
       pointerEvents="all"></rect>
@@ -240,7 +269,7 @@ class LineChartCrs extends Component {
     this.margin = {
       top: 30,
       right: 20,
-      bottom: 20,
+      bottom: 25,
       left: 20
     };
 
