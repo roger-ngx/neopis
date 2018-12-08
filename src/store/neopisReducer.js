@@ -129,7 +129,7 @@ export function neopisReducer(state = initialState, action) {
 
       if (chartData && seriesData) {
         seriesData.push(value, time);
-        if (seriesData.length > 576) {
+        if (seriesData.length > 576*4) {
           seriesData.splice(0, 2);
         }
       };

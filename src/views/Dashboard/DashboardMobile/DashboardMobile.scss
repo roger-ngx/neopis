@@ -6,7 +6,6 @@
   max-width: 100%;
 }
 
-
 .m_db_chart {
   width: 100%;
   height: calc(100vh - 400px);
@@ -38,4 +37,9 @@
 
 .db_slider{
   max-width: 100%;
+}
+
+.card_link {
+  color: transparent;
+  text-decoration: none currentcolor solid;
 }

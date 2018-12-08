@@ -18,20 +18,18 @@ const XAxis = props => {
     .tickSize(-props.height);
 
   xScale.domain([
-    d3.min(props.data, function (c) {
-      return c.values.length && c.values[0].time;
-    }),
+    d3.min(props.data, c => c.values.length && c.values[0].time),
     d3.max(props.data, function (c) {
       const length = c.values.length;
       return length && c.values[length - 1].time;
     })
   ]);
 
-  // xScale.domain(d3.extent(props.data.values, function (d) {
-  //   return d.time;
-  // }));
-
-  d3.select(".x").attr("transform", "translate(0," + props.height + ")").call(xAxis);
+  d3.select(".x")
+    .attr("transform", "translate(0," + props.height + ")")
+    .call(xAxis)
+    .selectAll('text')
+    .attr('y', 10);
 
   return <g className='x axis'></g>
 }
@@ -46,16 +44,8 @@ const YAxis = props => {
     .tickFormat("");
 
   yScale.domain([
-    d3.min(props.data, function (c) {
-      return d3.min(c.values, function (v) {
-        return v.value;
-      });
-    }),
-    d3.max(props.data, function (c) {
-      return d3.max(c.values, function (v) {
-        return v.value;
-      });
-    })
+    d3.min(props.data, c => d3.min(c.values, v => v.value)),
+    d3.max(props.data, c => d3.max(c.values, v => v.value))
   ]);
 
   d3.select(".y").call(yAxis);
@@ -66,13 +56,9 @@ const YAxis = props => {
 const Line = props => {
   const line = d3.line()
     .curve(d3.curveCatmullRomOpen)
-    .x(d => {
-      return props.xScale(d.time);
-    })
-    .y(d => {
-      return props.yScale(d.value);
-    })
-    .defined( d => d.value != null);
+    .x(d => props.xScale(d.time))
+    .y(d => props.yScale(d.value))
+    .defined(d => d.value != null);
 
   return <g className='city'>
     <path className='line' d={line(props.data.values)} stroke={props.stroke}></path>
@@ -84,9 +70,7 @@ const Lines = props => {
     .range([0, props.width]);
 
   xScale.domain([
-    d3.min(props.data, function (c) {
-      return c.values.length && c.values[0].time;
-    }),
+    d3.min(props.data, c => c.values.length && c.values[0].time),
     d3.max(props.data, function (c) {
       const length = c.values.length;
       return length && c.values[length - 1].time;
@@ -97,16 +81,8 @@ const Lines = props => {
     .range([props.height, 0]);
 
   yScale.domain([
-    d3.min(props.data, function (c) {
-      return d3.min(c.values, function (v) {
-        return v.value || 0;
-      });
-    }),
-    d3.max(props.data, function (c) {
-      return d3.max(c.values, function (v) {
-        return v.value;
-      });
-    })
+    d3.min(props.data, c => d3.min(c.values, v => v.value || 0)),
+    d3.max(props.data, c => d3.max(c.values, v => v.value))
   ]);
 
   return <>
@@ -127,9 +103,7 @@ const MouseOverEffect = props => {
     .range([0, props.width]);
 
   xScale.domain([
-    d3.min(props.data, function (c) {
-      return c.values.length && c.values[0].time;
-    }),
+    d3.min(props.data, c => c.values.length && c.values[0].time),
     d3.max(props.data, function (c) {
       const length = c.values.length;
       return length && c.values[length - 1].time;
@@ -140,16 +114,8 @@ const MouseOverEffect = props => {
     .range([props.height, 0]);
 
   yScale.domain([
-    d3.min(props.data, function (c) {
-      return d3.min(c.values, function (v) {
-        return v.value || 0;
-      });
-    }),
-    d3.max(props.data, function (c) {
-      return d3.max(c.values, function (v) {
-        return v.value;
-      });
-    })
+    d3.min(props.data, c => d3.min(c.values, v => v.value || 0)),
+    d3.max(props.data, c => d3.max(c.values, v => v.value))
   ]);
 
   var mousePerLine = d3.select('g').selectAll('.mouse-per-line')
@@ -222,20 +188,26 @@ const MouseOverEffect = props => {
           }
 
           const yValue = yScale.invert(pos.y);
-          if(yValue){
+          if (yValue) {
             const text = d3.select(this).select('text')
               .text(yValue.toFixed(1))
               .attr("fill", 'white');
-              if (pos.x > props.width / 2) {
-                text.attr("transform", "translate(-55,-10)")
-              } else {
-                text.attr("transform", "translate(10,-10)")
-              }
+            if (pos.x > props.width / 2) {
+              text.attr("transform", "translate(-55,-10)");
+            } else {
+              text.attr("transform", "translate(10,-10)");
+            }
           }
 
-          d3.select('.x-value').text(d3.timeFormat("%H:%M")(xScale.invert(pos.x)))
+          const timeValue = d3.select('.x-value').text(d3.timeFormat("%H:%M")(xScale.invert(pos.x)))
             .attr('x', pos.x - 25)
             .attr('y', props.height + 20);
+
+            if (pos.x > props.width / 2) {
+              timeValue.attr("transform", "translate(-30,0)");
+            } else {
+              timeValue.attr("transform", "translate(35,0)");
+            }
 
           return "translate(" + mouse[0] + "," + pos.y + ")";
         });
@@ -252,7 +224,10 @@ const MouseOverEffect = props => {
 
   return <g className='mouse-over-effects'>
     <path className="mouse-line"></path>
-    <rect width={props.width} height={props.height} fill="none" pointerEvents="all"></rect>
+    <rect width={props.width} height={props.height}
+      strokeWidth='0.5px' stroke='#525252'
+      shapeRendering='crispEdges' fill="none"
+      pointerEvents="all"></rect>
   </g>
 }
 
@@ -277,9 +252,7 @@ class LineChartCrs extends Component {
   }
 
   componentDidMount() {
-    console.log(this.chartArea.current, this.chartArea.current.height.baseVal);
-
-    let width = this.chartArea.current.clientWidth - this.margin.left - this.margin.right;
+    let width = this.chartArea.current.clientWidth - 2;
     let height = this.chartArea.current.clientHeight - this.margin.top - this.margin.bottom;
 
     this.setState({ width, height });
@@ -288,16 +261,16 @@ class LineChartCrs extends Component {
   }
 
   resize() {
-    var width = this.chartArea.current.clientWidth - this.margin.left - this.margin.right,
+    var width = this.chartArea.current.clientWidth - 2,
       height = this.chartArea.current.clientHeight - this.margin.top - this.margin.bottom;
 
     this.setState({ width, height });
   };
 
   render() {
-    
+
     return <svg width="100%" height="100%" ref={this.chartArea}>
-      <g transform={`translate(${this.margin.left},${this.margin.top})`}>
+      <g transform={`translate(0,${this.margin.top})`}>
         <defs>
           <linearGradient id="energy"
             gradientUnits="userSpaceOnUse" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -336,4 +309,3 @@ const mapStateToProps = state => ({
 })
 
 export default connect(mapStateToProps)(LineChartCrs);
-// export default LineChartCrs;

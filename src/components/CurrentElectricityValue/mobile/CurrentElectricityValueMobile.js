@@ -19,7 +19,7 @@ const CurrentElectricityValueMobile = (props) => {
     'gbg_electricity': +props.type === ELECTRICITY
   })
 
-  return <a href='/#/gateways/080027a081e6/sensors/080027a081e6-211.170.81.205-BAT-stop'>
+  return <a className='card_link' href={`/#/gateways/${props.gwId}/sensors/${props.sensorId}`}>
   <div className='electricity_value m_electricity_value'>
     <div className='ev_value_unit m_ev_value_unit'>
       <span className='ev_value m_ev_value'>

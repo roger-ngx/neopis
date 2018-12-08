@@ -9,7 +9,7 @@ import Card from '../../components/Card/Card';
 import AppBar from '../../components/AppBar/AppBar';
 import LineChart from '../../components/ElectricityChart/LineChartWithCrossHairs/LineChartCrs';
 import { SOURCE, BATTERY_1, BATTERY_2, ELECTRICITY } from '../../components/CurrentElectricityValue/mobile/CurrentElectricityValueMobile';
-import { ABNORMAL, MANUAL, AUTOMATIC } from '../../components/BatteryMode/BatteryMode';
+import { MANUAL, AUTOMATIC } from '../../components/BatteryMode/BatteryMode';
 
 import battery1 from '../../assets/images/battery-1.svg';
 import battery2 from '../../assets/images/battery-2.svg';
@@ -93,7 +93,7 @@ class Dashboard extends React.Component {
     };
     this.wsSubscribers.push(
       socket.subscribeSensor(manualStatus,
-        data => this.props.onUpdateBatteryStatus(+data.value ? MANUAL : ABNORMAL))
+        data => +data.value && this.props.onUpdateBatteryStatus(MANUAL))
     );
 
     const automaticStatus = {
@@ -102,7 +102,7 @@ class Dashboard extends React.Component {
     }
     this.wsSubscribers.push(
       socket.subscribeSensor(automaticStatus,
-        data => this.props.onUpdateBatteryStatus(+data.value ? AUTOMATIC : ABNORMAL))
+        data => +data.value && this.props.onUpdateBatteryStatus(AUTOMATIC))
     );
 
     //query for the 1st data
@@ -116,12 +116,14 @@ class Dashboard extends React.Component {
           .map(data => _.pick(data, ['name', 'id', 'series.value']));
 
         _.forEach(sensorData, data => {
+          const value = +_.get(data, 'series.value', '');
+
           if (data.id === this.gatewayInfo.sensors.manualStatus) {
-            this.props.onUpdateBatteryStatus(+_.get(data, 'series.value', '') ? MANUAL : ABNORMAL);
+            value && this.props.onUpdateBatteryStatus(MANUAL);
           }
 
           if (data.id === this.gatewayInfo.sensors.automaticStatus) {
-            this.props.onUpdateBatteryStatus(+_.get(data, 'series.value', '') ? AUTOMATIC : ABNORMAL);;
+            value && this.props.onUpdateBatteryStatus(AUTOMATIC);
           }
         })
       });
@@ -300,7 +302,7 @@ class Dashboard extends React.Component {
     this.wsSubscribers.push(
       socket.subscribeSensor(batteryRate,
         data => this.props.onUpdateESSDischarge({
-          batteryRate: +data.value
+          batteryRate: (+data.value).toFixed(1)
         }))
     );
 
@@ -311,7 +313,7 @@ class Dashboard extends React.Component {
 
     sensorService.getSensorData(this.gatewayInfo.gwId, this.gatewayInfo.sensors.monthlyESSDischargeEnergy, query)
       .then(res => this.props.onUpdateESSDischarge({
-        thisMonth: +(+_.get(res.data, SERIES_DATA_PATH, '') / 1000).toFixed(1)
+        thisMonth: parseInt(_.get(res.data, SERIES_DATA_PATH, '') / 1000)
       }));
 
     sensorService.getSensorData(this.gatewayInfo.gwId, this.gatewayInfo.sensors.dailyESSDischargeEnergy, query)
@@ -321,7 +323,7 @@ class Dashboard extends React.Component {
 
     sensorService.getSensorData(this.gatewayInfo.gwId, this.gatewayInfo.sensors.batteryRate, query)
       .then(res => this.props.onUpdateESSDischarge({
-        batteryRate: +_.get(res.data, SERIES_DATA_PATH, '')
+        batteryRate: parseInt(_.get(res.data, SERIES_DATA_PATH, ''))
       }));
   }
 
