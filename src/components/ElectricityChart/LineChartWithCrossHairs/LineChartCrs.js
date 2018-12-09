@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as d3 from 'd3';
+import _ from 'lodash';
 
 import './LineChartCrs.scss';
 import { chartDataSelector } from '../../../store/neopisSelectors';
@@ -265,7 +266,7 @@ class LineChartCrs extends Component {
   constructor(props) {
     super(props);
     this.chartArea = React.createRef();
-    this.gradients = ['url(#energy)', 'url(#battery)', 'url(#electricity)'];
+    this.gradients = ['#ff5742', '#40ca88', '#338fff'];
     this.margin = {
       top: 30,
       right: 20,
