@@ -5,8 +5,8 @@
 .outer_pie {
   position: relative;
   border-radius: 50%;
-  width: 128px;
-  height: 128px;
+  width: 130px;
+  height: 130px;
   /* background-image: conic-gradient(#fac600, #42e27f 52%, #338fff 92%, #18161a 0); */
 }
 
@@ -15,8 +15,8 @@
   top: 10px;
   left: 10px;
   border-radius: 50%;
-  width: 108px;
-  height: 108px;
+  width: 110px;
+  height: 110px;
   background-color: #18161a;
 }
 
@@ -31,6 +31,7 @@
 .pie_value {
   font-family: HiraKakuProN-W3;
   font-size: 26px;
+  line-height: 26px;
   text-align: center;
   color: #ffffff;
 }
@@ -41,6 +42,7 @@
   font-size: 12px;
   text-align: center;
   color: #b8b8c2;
+  padding-top: 4px;
 }
 
 
@@ -48,9 +50,8 @@
   font-family: HiraKakuProN-W3;
   font-size: 12px;
   font-weight: 300;
-  line-height: 1.42;
   letter-spacing: -0.5px;
   text-align: center;
   color: #b8b8c2;
-  margin-top: 11px;
+  margin-top: 6px;
 }

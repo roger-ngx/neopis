@@ -44,7 +44,9 @@ const PowerDonutChart = (props) => {
           </div>
         </div>
       </div>
-      <span className='pie_description'>{props.description}</span>
+      <div className='pie_description'>
+        <span >{props.description}</span>
+      </div>
     </div>
   </a>
 }

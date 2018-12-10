@@ -33,7 +33,7 @@ import LineChartCrs from '../../../components/ElectricityChart/LineChartWithCros
 import _ from 'lodash';
 import socket from '../../../services/wsServices';
 import sensorService from '../../../services/sensorService'
-import { ABNORMAL, MANUAL, AUTOMATIC } from '../../../components/BatteryMode/BatteryMode';
+import { MANUAL, AUTOMATIC } from '../../../components/BatteryMode/BatteryMode';
 
 const styles = {
   root: {
@@ -60,15 +60,26 @@ class DashboardMobile extends React.Component {
 
     sensorService.getGatewayInfo().then(res => {
       this.gatewayInfo = _.pick(_.get(res.data, ['data', '0']), ['name', 'gwId', 'sensors']);
-
-      this.initAndSubscribeChartData();
-      this.initAndSubscribeWeatherData();
-      this.initAndSubscribeSolarData();
-      this.initAndSubscribeGridEnergyData();
-      this.initAndSubscribeDischargeESSData();
-      this.initAndSubscribeChargeESSData();
-      this.initAndSubscribeBatteryStatus();
+      if (!_.isEmpty(this.gatewayInfo)) {
+        this.initAndSubscribeChartData();
+        this.initAndSubscribeWeatherData();
+        this.initAndSubscribeSolarData();
+        this.initAndSubscribeGridEnergyData();
+        this.initAndSubscribeDischargeESSData();
+        this.initAndSubscribeChargeESSData();
+        this.initAndSubscribeBatteryStatus();
+      }
     });
+  }
+
+  getSensorValues(gwId, sensorIds) {
+    const query = {
+      embed: 'sensors',
+      'sensors[embed]': 'series',
+      'sensors[filter][id]': sensorIds
+    };
+
+    return sensorService.getSensorsData(gwId, query);
   }
 
   initAndSubscribeBatteryStatus() {
@@ -77,21 +88,42 @@ class DashboardMobile extends React.Component {
       id: this.gatewayInfo.sensors.manualStatus,
       owner: this.gatewayInfo.gwId
     };
-    this.wsSubscribers.push(socket.subscribeSensor(manualStatus, data => this.props.onUpdateBatteryStatus(+data.value ? MANUAL : ABNORMAL)));
+    this.wsSubscribers.push(
+      socket.subscribeSensor(manualStatus,
+        data => +data.value && this.props.onUpdateBatteryStatus(MANUAL))
+    );
 
     const automaticStatus = {
       id: this.gatewayInfo.sensors.automaticStatus,
       owner: this.gatewayInfo.gwId
     }
-    this.wsSubscribers.push(socket.subscribeSensor(automaticStatus, data => this.props.onUpdateBatteryStatus(+data.value ? AUTOMATIC : ABNORMAL)));
+    this.wsSubscribers.push(
+      socket.subscribeSensor(automaticStatus,
+        data => +data.value && this.props.onUpdateBatteryStatus(AUTOMATIC))
+    );
 
     //query for the 1st data
-    var query = {
-      embed: ['series'],
-    };
 
-    sensorService.getSensorData(this.gatewayInfo.gwId, this.gatewayInfo.sensors.manualStatus, query).then(res => this.props.onUpdateBatteryStatus(+_.get(res.data, 'data.series.value', '') ? MANUAL : ABNORMAL));
-    sensorService.getSensorData(this.gatewayInfo.gwId, this.gatewayInfo.sensors.automaticStatus, query).then(res => this.props.onUpdateBatteryStatus(+_.get(res.data, 'data.series.value', '') ? AUTOMATIC : ABNORMAL));
+    this.getSensorValues(this.gatewayInfo.gwId,
+      [
+        this.gatewayInfo.sensors.manualStatus,
+        this.gatewayInfo.sensors.automaticStatus
+      ]).then(res => {
+        const sensorData = _.filter(_.get(res, 'data.data.sensors'), data => _.isObject(data))
+          .map(data => _.pick(data, ['name', 'id', 'series.value']));
+
+        _.forEach(sensorData, data => {
+          const value = +_.get(data, 'series.value', '');
+
+          if (data.id === this.gatewayInfo.sensors.manualStatus) {
+            value && this.props.onUpdateBatteryStatus(MANUAL);
+          }
+
+          if (data.id === this.gatewayInfo.sensors.automaticStatus) {
+            value && this.props.onUpdateBatteryStatus(AUTOMATIC);
+          }
+        })
+      });
   }
 
   initAndSubscribeChartData() {
@@ -151,7 +183,7 @@ class DashboardMobile extends React.Component {
     sensorService.getSensorData(this.gatewayInfo.gwId, this.gatewayInfo.sensors.monthlySolarGenEnergy, query).then(res => this.props.onUpdateSolarEnergy({ thisMonth: +(+_.get(res.data, 'data.series.value', '') / 1000).toFixed(1) }));
     sensorService.getSensorData(this.gatewayInfo.gwId, this.gatewayInfo.sensors.dailySolarGenEnergy, query).then(res => this.props.onUpdateSolarEnergy({ today: parseInt(_.get(res.data, 'data.series.value', '')) }));
     sensorService.getSensorData(this.gatewayInfo.gwId, this.gatewayInfo.sensors.solarInstallationCapacity, query).then(res => this.props.onUpdateSolarEnergy({ capacity: +_.get(res.data, 'data.series.value', '') }));
-    sensorService.getSensorData(this.gatewayInfo.gwId, this.gatewayInfo.sensors.solargenPower, query).then(res => this.props.onUpdateSolarEnergy({ curPower: _.get(res.data, 'data.series.value', '') }));
+    sensorService.getSensorData(this.gatewayInfo.gwId, this.gatewayInfo.sensors.solargenPower, query).then(res => this.props.onUpdateSolarEnergy({ curPower: (+_.get(res.data, 'data.series.value')).toFixed(1) }));
   }
 
   initAndSubscribeGridEnergyData() {
@@ -183,7 +215,7 @@ class DashboardMobile extends React.Component {
     sensorService.getSensorData(this.gatewayInfo.gwId, this.gatewayInfo.sensors.monthlyGridEnergy, query).then(res => this.props.onUpdateGridEnergy({ thisMonth: +(+_.get(res.data, 'data.series.value', '') / 1000).toFixed(1) }));
     sensorService.getSensorData(this.gatewayInfo.gwId, this.gatewayInfo.sensors.dailyGridEnergy, query).then(res => this.props.onUpdateGridEnergy({ today: parseInt(_.get(res.data, 'data.series.value', '')) }));
     sensorService.getSensorData(this.gatewayInfo.gwId, this.gatewayInfo.sensors.gridInstallationCapacity, query).then(res => this.props.onUpdateGridEnergy({ capacity: +_.get(res.data, 'data.series.value', '') }));
-    sensorService.getSensorData(this.gatewayInfo.gwId, this.gatewayInfo.sensors.gridPower, query).then(res => this.props.onUpdateGridEnergy({ curPower: _.get(res.data, 'data.series.value', '') }));
+    sensorService.getSensorData(this.gatewayInfo.gwId, this.gatewayInfo.sensors.gridPower, query).then(res => this.props.onUpdateGridEnergy({ curPower: (+_.get(res.data, 'data.series.value')).toFixed(1) }));
   }
 
   initAndSubscribeDischargeESSData() {
@@ -204,7 +236,7 @@ class DashboardMobile extends React.Component {
       id: this.gatewayInfo.sensors.batteryRate,
       owner: this.gatewayInfo.gwId
     }
-    this.wsSubscribers.push(socket.subscribeSensor(batteryRate, data => this.props.onUpdateESSDischarge({ batteryRate: +data.value })));
+    this.wsSubscribers.push(socket.subscribeSensor(batteryRate, data => this.props.onUpdateESSDischarge({ batteryRate: (+data.value).toFixed(1) })));
 
     //query for the 1st data
     var query = {
@@ -213,7 +245,7 @@ class DashboardMobile extends React.Component {
 
     sensorService.getSensorData(this.gatewayInfo.gwId, this.gatewayInfo.sensors.monthlyESSDischargeEnergy, query).then(res => this.props.onUpdateESSDischarge({ thisMonth: +(+_.get(res.data, 'data.series.value', '') / 1000).toFixed(1) }));
     sensorService.getSensorData(this.gatewayInfo.gwId, this.gatewayInfo.sensors.dailyESSDischargeEnergy, query).then(res => this.props.onUpdateESSDischarge({ today: parseInt(_.get(res.data, 'data.series.value', '')) }));
-    sensorService.getSensorData(this.gatewayInfo.gwId, this.gatewayInfo.sensors.batteryRate, query).then(res => this.props.onUpdateESSDischarge({ batteryRate: +_.get(res.data, 'data.series.value', '') }));
+    sensorService.getSensorData(this.gatewayInfo.gwId, this.gatewayInfo.sensors.batteryRate, query).then(res => this.props.onUpdateESSDischarge({ batteryRate: parseInt(_.get(res.data, 'data.series.value'), '') }));
   }
 
   initAndSubscribeChargeESSData() {
@@ -249,9 +281,9 @@ class DashboardMobile extends React.Component {
     sensorService.getSensorData(this.gatewayInfo.gwId, this.gatewayInfo.sensors.dailyESSChargeEnergy, query).then(res => this.props.onUpdateESSCharge({ today: +_.get(res.data, 'data.series.value', '') }));
     sensorService.getSensorData(this.gatewayInfo.gwId, this.gatewayInfo.sensors.ESSInstallationCapacity, query).then(res => this.props.onUpdateESSCharge({ capacity: +_.get(res.data, 'data.series.value', '') }));
     sensorService.getSensorData(this.gatewayInfo.gwId, this.gatewayInfo.sensors.eSSChargePower, query).then(res => {
-      const curPower = _.get(res.data, 'data.series.value', '');
-      this.props.onUpdateESSCharge({ curPower: curPower });
-      this.props.onUpdateESSStatus(+curPower < 0);
+      const curPower = +_.get(res.data, 'data.series.value', '');
+      this.props.onUpdateESSCharge({ curPower: curPower.toFixed(1) });
+      this.props.onUpdateESSStatus(curPower < 0);
     });
   }
 
@@ -340,23 +372,23 @@ class DashboardMobile extends React.Component {
       </div>
       <div className='db_slider'>
         <Slider {...settings}>
-          <CardMobile type={SOURCE} titleName='태양광 발전량' 
-                      titleImage={energy} description='현재 발전 전력' 
-                      data={this.props.solarEnergy} />
+          <CardMobile type={SOURCE} titleName='태양광 발전량'
+            titleImage={energy} description='현재 발전 전력'
+            data={this.props.solarEnergy} />
 
-          <CardMobile type={BATTERY_1} titleName='ESS충전량' 
-                      titleImage={battery1} description='현재 ESS 방전 전력' 
-                      data={this.props.ESSCharge} 
-                      isActive={this.props.isESSCharging}/>
-          
-          <CardMobile type={BATTERY_2} titleName='ESS방전량' 
-                      titleImage={battery2} data={this.props.ESSDischarge} 
-                      isActive={!this.props.isESSCharging} 
-                      batteryStatus={this.props.batteryStatus}/>
-          
-          <CardMobile type={ELECTRICITY} titleName='계통 송수전 전력량' 
-                      titleImage={electricity} description='현재 계통 송수전 전력' 
-                      data={this.props.electricityInfo} />
+          <CardMobile type={BATTERY_1} titleName='ESS충전량'
+            titleImage={battery1} description='현재 ESS 방전 전력'
+            data={this.props.ESSCharge}
+            isActive={this.props.isESSCharging} />
+
+          <CardMobile type={BATTERY_2} titleName='ESS방전량'
+            titleImage={battery2} data={this.props.ESSDischarge}
+            isActive={!this.props.isESSCharging}
+            batteryStatus={this.props.batteryStatus} />
+
+          <CardMobile type={ELECTRICITY} titleName='계통 송수전 전력량'
+            titleImage={electricity} description='현재 계통 송수전 전력'
+            data={this.props.electricityInfo} />
         </Slider>
       </div>
 

@@ -30,7 +30,7 @@ const CurrentElectricityValueMobile = (props) => {
       </div>
     </div>
     <div className={separatorClass}></div>
-    <span className='ev_description'>
+    <span className='ev_description m_ev_description'>
       {props.description}
     </span>
   </div>

@@ -56,7 +56,7 @@ const YAxis = props => {
 
 const Line = props => {
   const line = d3.line()
-    .curve(d3.curveCatmullRomOpen)
+    // .curve(d3.curveCatmullRomOpen)
     .x(d => props.xScale(d.time))
     .y(d => props.yScale(d.value))
     .defined(d => d.value != null);

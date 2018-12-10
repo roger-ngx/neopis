@@ -1,5 +1,5 @@
 .m_np_app_bar {
-  padding: 10px 10% 0;
+  padding: 27px 10% 0;
 }
 
 .m_db {
@@ -8,7 +8,7 @@
 
 .m_db_chart {
   width: 100%;
-  height: calc(100vh - 400px);
+  height: calc(100vh - 430px);
   background-color: transparent;
   border-radius: 5px;
 }
@@ -28,11 +28,13 @@
 
 .slick-next {
   right: 10px !important;
+  opacity: 0.5;
 }
 
 .slick-prev {
   left: 10px !important;
   z-index: 1000 !important;
+  opacity: 0.5;
 }
 
 .db_slider{
