@@ -12,6 +12,7 @@ import CurrentMomentMobile from '../../components/CurrentMoment/mobile/CurrentMo
 import CurrentWeatherMobile from '../../components/CurrentWeather/mobile/CurrentWeatherMobile';
 import Grid from '@material-ui/core/Grid';
 import CurrentLocationMobile from '../../components/CurrentLocation/mobile/CurrentLocationMobile';
+import DonutChart from '../../components/PowerChart/DonutChart';
 
 const styles = {
   root: {
@@ -83,6 +84,7 @@ class Components extends React.Component {
 
       <Grid container className={classes.root} spacing={16}>
         <Grid item xs={6}>
+          <DonutChart />
         </Grid>
         <Grid item xs={6}>
         </Grid>

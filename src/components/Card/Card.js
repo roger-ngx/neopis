@@ -9,6 +9,7 @@ import CurrentBatteryPercentage from '../CurrentBatteryPercentage/CurrentBattery
 import PowerDonutChart from '../PowerChart/PowerDonutChart';
 import BatteryMode from '../BatteryMode/BatteryMode';
 import { BATTERY_2, BATTERY_1 } from '../CurrentElectricityValue/mobile/CurrentElectricityValueMobile';
+import DonutChart from '../PowerChart/DonutChart';
 
 
 const Card = props => {
@@ -33,14 +34,25 @@ const Card = props => {
         sensorId={props.devices.sensors[2]} />;
       </>
   } else {
-    cardBottom = <PowerDonutChart
-      type={props.type}
-      percentage={props.data.percentage}
-      gwId={props.devices.gwId}
-      sensorId={props.devices.sensors[2]}
-      size={128}
-      description={props.description}
-      electricity={(props.data.curPower || 0) + 'kW'} />;
+    if (!!window.chrome && !!window.chrome.webstore) {
+      cardBottom = <PowerDonutChart
+        type={props.type}
+        percentage={props.data.percentage}
+        gwId={props.devices.gwId}
+        sensorId={props.devices.sensors[2]}
+        size={128}
+        description={props.description}
+        electricity={(props.data.curPower || 0) + 'kW'} />;
+    } else {
+      cardBottom = <DonutChart
+        type={props.type}
+        percentage={66}//{props.data.percentage}
+        gwId={props.devices.gwId}
+        sensorId={props.devices.sensors[2]}
+        size={128}
+        description={props.description}
+        electricity={(props.data.curPower || 0) + 'kW'} />;
+    }
   }
 
   return <div className={cardClasses}>
