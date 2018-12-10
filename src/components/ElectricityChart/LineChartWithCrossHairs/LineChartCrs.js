@@ -299,29 +299,11 @@ class LineChartCrs extends Component {
 
   render() {
 
-    return <svg width="100%" height="100%" ref={this.chartArea}>
+    //Keep in mind that the <svg> element has a default CSS display property of inline.
+    //So you would need to change that to display:block in your CSS.
+
+    return <svg width="100%" height="100%" display='block' ref={this.chartArea}>
       <g transform={`translate(0,${this.margin.top})`}>
-        <defs>
-          <linearGradient id="energy"
-            gradientUnits="userSpaceOnUse" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#ffae33"></stop>
-            <stop offset="66%" stopColor="#ff5742"></stop>
-            <stop offset="100%" stopColor="#ff009e"></stop>
-          </linearGradient>
-
-          <linearGradient id="battery"
-            gradientUnits="userSpaceOnUse" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#338fff"></stop>
-            <stop offset="100%" stopColor="#40ca88"></stop>
-          </linearGradient>
-
-          <linearGradient id="electricity"
-            gradientUnits="userSpaceOnUse" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#0051b2"></stop>
-            <stop offset="100%" stopColor="#8828da"></stop>
-          </linearGradient>
-        </defs>
-
         <XAxis width={this.state.width} height={this.state.height} data={this.props.data} />
 
         <YAxis width={this.state.width} height={this.state.height} data={this.props.data} />

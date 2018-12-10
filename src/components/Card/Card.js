@@ -46,7 +46,7 @@ const Card = props => {
     } else {
       cardBottom = <DonutChart
         type={props.type}
-        percentage={66}//{props.data.percentage}
+        percentage={props.data.percentage}
         gwId={props.devices.gwId}
         sensorId={props.devices.sensors[2]}
         size={128}

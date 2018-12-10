@@ -59,18 +59,6 @@ class DonutChart extends Component {
         }
 
         return <svg width={w} height={h + 25}>
-            <defs>
-                <linearGradient id="1">
-                    <stop offset="0%" stop-color="#338fff" />
-                    <stop offset="52%" stop-color="#42e27f" />
-                    <stop offset="75%" stop-color="#fac600" />
-                    <stop offset="95%" stop-color="#338fff" />
-                </linearGradient>
-                <linearGradient id="2">
-                    <stop offset="0%" stop-color="#2d2e2f" />
-                    <stop offset="100%" stop-color="#2d2e2f" />
-                </linearGradient>
-            </defs>
             <g transform={`translate(${w / 2}, ${h / 2})`}>
                 {
                     arcs.map((arc, index) => (
