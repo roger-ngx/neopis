@@ -20,4 +20,9 @@
   margin-left: auto;
   object-fit: contain;
   opacity: 0.7;
+  display: table-cell;
+
+  img {
+    vertical-align: middle;
+  }
 }
