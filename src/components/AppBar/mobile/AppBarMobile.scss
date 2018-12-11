@@ -33,8 +33,12 @@
 .m_nav_btn_notification {
   height: 36px;
   width: 36px;
-  margin-left: 10px !important;
-  padding: 0 !important;
+  margin-left: auto;
+}
+
+.m_nav_btn_logout{
+  height: 36px;
+  width: 36px;
 }
 
 .m_nav_notification_icon{
@@ -43,9 +47,5 @@
 }
 
 .m_nav_user {
-  margin-left: auto;
-}
-
-.m_nav_right {
   margin-left: auto;
 }

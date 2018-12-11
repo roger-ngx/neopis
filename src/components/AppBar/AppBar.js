@@ -9,8 +9,16 @@ import logout from '../../assets/images/logout.svg';
 import CurrentMoment from '../CurrentMoment/CurrentMoment';
 import CurrentWeather from '../CurrentWeather/CurrentWeather';
 import CurrentLocation from '../CurrentLocation/CurrentLocation';
+import userService from '../../services/userService';
 
-const AppBar = () => {
+const AppBar = (props) => {
+
+  function handleLogout() {
+    userService.logout().then(res => {
+      window.location = "/#/login"
+    });
+  }
+
   return <div className='nav_app_bar'>
     <a href='/'><img src={logo} href='/' className='nav_logo' alt='logo' /></a>
     <div className='nav_moment'>
@@ -33,8 +41,8 @@ const AppBar = () => {
     </div>
 
     <div className='nav_btn_logout'>
-      <IconButton aria-label="Notification">
-        <a href='/#/login'><img src={logout} className='m_nav_notification_icon' alt='logo' /></a>
+      <IconButton aria-label="Notification" onClick={handleLogout}>
+        <a><img src={logout} className='m_nav_notification_icon' alt='logo' /></a>
       </IconButton>
     </div>
 

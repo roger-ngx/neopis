@@ -5,6 +5,9 @@ export default {
   me() {
     return axios.get('/api/users/me');
   },
+  logout() {
+    return axios.post('/api/v2/logout');
+  },
   saveUserAccount(data) {
     return axios.put('/api/users/me', data);
   },
