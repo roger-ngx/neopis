@@ -7,6 +7,7 @@
   border-radius: 50%;
   width: 130px;
   height: 130px;
+  margin:0 auto;
   /* background-image: conic-gradient(#fac600, #42e27f 52%, #338fff 92%, #18161a 0); */
 }
 
@@ -37,7 +38,6 @@
 }
 
 .pie_unit {
-  opacity: 0.5;
   font-family: HiraKakuProN-W3;
   font-size: 12px;
   text-align: center;
@@ -48,10 +48,10 @@
 
 .pie_description{
   font-family: HiraKakuProN-W3;
-  font-size: 12px;
-  font-weight: 300;
-  letter-spacing: -0.5px;
+  font-size: 18px;
+  line-height: 18px;
+  letter-spacing: -0.7px;
   text-align: center;
-  color: #b8b8c2;
-  margin-top: 6px;
+  color: #ffffff;
+  margin-top: 10px;
 }

@@ -4,11 +4,11 @@ import IconButton from '@material-ui/core/IconButton';
 import './AppBar.scss';
 import logo from '../../assets/images/neopis-logo.svg';
 import notification from '../../assets/images/notification.svg';
+import logout from '../../assets/images/logout.svg';
 
 import CurrentMoment from '../CurrentMoment/CurrentMoment';
 import CurrentWeather from '../CurrentWeather/CurrentWeather';
 import CurrentLocation from '../CurrentLocation/CurrentLocation';
-import CurrentUser from '../CurrentUser/CurrentUser';
 
 const AppBar = () => {
   return <div className='nav_app_bar'>
@@ -23,13 +23,21 @@ const AppBar = () => {
       <CurrentLocation />
     </div>
 
-    <div className='nav_user'>
+    {/* <div className='nav_user'>
       <CurrentUser />
+    </div> */}
+    <div className='nav_btn_notification'>
+      <IconButton aria-label="Notification">
+        <a href='/#/timeline'><img src={notification} href='/#/timeline' className='nav_logo' alt='logo' /></a>
+      </IconButton>
     </div>
 
-    <IconButton className='nav_btn_notification' aria-label="Notification">
-    <a href='/#/timeline'><img src={notification} href='/#/timeline' className='nav_logo' alt='logo' /></a>
-    </IconButton>
+    <div className='nav_btn_logout'>
+      <IconButton aria-label="Notification">
+        <a href='/#/login'><img src={logout} className='m_nav_notification_icon' alt='logo' /></a>
+      </IconButton>
+    </div>
+
   </div>;
 };
 

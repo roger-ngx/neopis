@@ -4,7 +4,6 @@ import { PropTypes } from 'prop-types';
 import './PowerDonutChart.scss';
 import { SOURCE, BATTERY_1, ELECTRICITY } from '../CurrentElectricityValue/mobile/CurrentElectricityValueMobile';
 
-const colors = ['#ff5742', '#40ca88', '#338fff', '#2d2e2f'];
 class DonutChart extends Component {
 
     constructor(props) {
@@ -58,8 +57,8 @@ class DonutChart extends Component {
             arcs.push(arc);
         }
 
-        return <svg width={w} height={h + 25}>
-            <g transform={`translate(${w / 2}, ${h / 2})`}>
+        return <svg width={w + 50} height={h + 25}>
+            <g transform={`translate(${w / 2 + 25}, ${h / 2})`}>
                 {
                     arcs.map((arc, index) => (
                         <path

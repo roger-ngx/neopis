@@ -249,7 +249,7 @@ const MouseOverEffect = props => {
         pointerEvents="all"></rect>
       {
         props.gradients.map((g, i) => (
-          <text className={`point-value-${i}`}
+          <text key={i} className={`point-value-${i}`}
             fontWeight='bold'></text>
         ))
       }

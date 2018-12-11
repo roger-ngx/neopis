@@ -68,6 +68,8 @@ class Dashboard extends React.Component {
     socket.initSocketChannel();
 
     this.init();
+
+    console.log(!!window.chrome && !!window.chrome.webstore);
   }
 
   async init() {
