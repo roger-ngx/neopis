@@ -26,7 +26,6 @@ class DonutChart extends Component {
         }
     }
 
-
     render() {
         const data = [this.props.percentage, 100 - this.props.percentage];
 
@@ -57,39 +56,37 @@ class DonutChart extends Component {
             arcs.push(arc);
         }
 
-        return <svg width={w + 50} height={h + 25}>
-            <g transform={`translate(${w / 2 + 25}, ${h / 2})`}>
-                {
-                    arcs.map((arc, index) => (
-                        <path
-                            key={index}
-                            d={arc}
-                            fill={this.colors[index]}
-                        />
-                    ))
-                }
+        return <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <svg width={w} height={h}>
+                <g transform={`translate(${w / 2}, ${h / 2})`}>
+                    {
+                        arcs.map((arc, index) => (
+                            <path
+                                key={index}
+                                d={arc}
+                                fill={this.colors[index]}
+                            />
+                        ))
+                    }
 
-                <text className='pie_value'
-                    fill='#ffffff'
-                    text-anchor="middle">
-                    {this.props.percentage}%
+                    <text className='pie_value'
+                        fill='#ffffff'
+                        text-anchor="middle">
+                        {this.props.percentage}%
                 </text>
 
-                <text className='pie_unit'
-                    fill='#b8b8c2'
-                    text-anchor="middle"
-                    y={20}>
-                    {this.props.electricity}
-                </text>
-
-                <text className='pie_description'
-                    fill='#b8b8c2'
-                    text-anchor="middle"
-                    y={h / 2 + 20}>
-                    {this.props.description}
-                </text>
-            </g>
-        </svg>
+                    <text className='pie_unit'
+                        fill='#b8b8c2'
+                        text-anchor="middle"
+                        y={20}>
+                        {this.props.electricity}
+                    </text>
+                </g>
+            </svg>
+            <span style={{ color: '#b8b8c2', marginTop: '6px', textAlign: 'center' }}>
+                {this.props.description}
+            </span>
+        </div>
     }
 }
 
