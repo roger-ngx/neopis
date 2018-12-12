@@ -1,5 +1,5 @@
 .m_np_app_bar {
-  padding: 27px 10% 0;
+  padding: 20px 10% 0;
 }
 
 .m_db {
@@ -26,15 +26,21 @@
   bottom: 100% !important;
 }
 
-.slick-next {
-  right: 10px !important;
+.slick {
   opacity: 0.5;
+  height: 90% !important;
+  z-index: 1000 !important;
+  width: 30px !important;
+}
+
+.slick-next {
+  @extend .slick;
+  right: 5px !important;
 }
 
 .slick-prev {
-  left: 10px !important;
-  z-index: 1000 !important;
-  opacity: 0.5;
+  @extend .slick;
+  left: 5px !important;
 }
 
 .db_slider{
