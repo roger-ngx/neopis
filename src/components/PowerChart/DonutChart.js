@@ -72,13 +72,13 @@ class DonutChart extends Component {
 
                         <text className='pie_value'
                             fill='#ffffff'
-                            text-anchor="middle">
+                            textAnchor="middle">
                             {this.props.percentage}%
                     </text>
 
                         <text className='pie_unit'
                             fill='#b8b8c2'
-                            text-anchor="middle"
+                            textAnchor="middle"
                             y={20}>
                             {this.props.electricity}
                         </text>

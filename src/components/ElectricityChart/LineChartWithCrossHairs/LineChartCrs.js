@@ -281,25 +281,32 @@ class LineChartCrs extends Component {
   }
 
   componentDidMount() {
-    let width = this.chartArea.current.clientWidth - 2;
-    let height = this.chartArea.current.clientHeight - this.margin.top - this.margin.bottom;
-
-    this.setState({ width, height });
+    this.setState(this.getSvgSize());
 
     d3.select(window).on('resize', this.resize.bind(this));
   }
 
-  resize() {
-    var width = this.chartArea.current.clientWidth - 2,
-      height = this.chartArea.current.clientHeight - this.margin.top - this.margin.bottom;
+  getSvgSize() {
+    const svg = this.chartArea.current;
+    // parentNode is needed for Firefox
+    const w = svg.clientWidth || svg.parentNode.clientWidth;
+    const h = svg.clientHeight || svg.parentNode.clientHeight;
 
-    this.setState({ width, height });
+    let width = w - 2;
+    let height = h - this.margin.top - this.margin.bottom;
+
+    return { width, height };
+  }
+
+  resize() {
+    this.setState(this.getSvgSize());
   };
 
   render() {
 
     //Keep in mind that the <svg> element has a default CSS display property of inline.
     //So you would need to change that to display:block in your CSS.
+    //this fixed a wrong svg height on Safari
 
     return <svg width="100%" height="100%" display='block' ref={this.chartArea}>
       <g transform={`translate(0,${this.margin.top})`}>

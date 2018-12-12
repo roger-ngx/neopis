@@ -17,7 +17,8 @@
   margin-top: 19px;
   display: flex;
   flex-direction: row;
-  justify-content: space-evenly;
+  justify-content: space-around;
+  //space-evently doesn't work on Edge
 }
 
 .db_card_bottom {

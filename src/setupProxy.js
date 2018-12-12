@@ -9,7 +9,7 @@ module.exports = function (app) {
         target: 'https://systemadmin.testnt.thingbine.com',
         changeOrigin: true,
         onProxyReq: (proxyReq) => {
-          proxyReq.setHeader('Cookie', 'dwTPlus=s%3AXf3YUvIMdjiVkuwpqTNiFv1AfuPFrI42.%2B70KarwV1jgzCOlW8GW830dNtxWO%2FimNJZRgDLkIFzk');
+          proxyReq.setHeader('Cookie', 'dwTPlus=s%3AzsSIp-X7MqAhnqluA3kzHnGdZ9AeX8H5.KsT0RuLE56aoHXo3b8sn31V%2BXI%2FHN2t5bDrLuyUMrSU');
         },
         onProxyRes: (proxyRes) => {
           Object.keys(proxyRes.headers).forEach((key) => {
