@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as d3 from 'd3';
-import _ from 'lodash';
 
 import './LineChartCrs.scss';
 import { chartDataSelector } from '../../../store/neopisSelectors';

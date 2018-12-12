@@ -10,6 +10,7 @@ import AppBar from '../../components/AppBar/AppBar';
 import LineChart from '../../components/ElectricityChart/LineChartWithCrossHairs/LineChartCrs';
 import { SOURCE, BATTERY_1, BATTERY_2, ELECTRICITY } from '../../components/CurrentElectricityValue/mobile/CurrentElectricityValueMobile';
 import { MANUAL, AUTOMATIC } from '../../components/BatteryMode/BatteryMode';
+import BrowserSnackbar from '../../components/BrowserSnackbar/BrowserSnackbar'
 
 import battery1 from '../../assets/images/battery-1.svg';
 import battery2 from '../../assets/images/battery-2.svg';
@@ -132,7 +133,7 @@ class Dashboard extends React.Component {
   initAndSubscribeSolarData() {
     const sensors = this.gatewayInfo.sensors;
     const gwId = this.gatewayInfo.gwId;
-    
+
     //subscribe sensors for ws
     const monthlySolarGenEnergy = {
       id: sensors.monthlySolarGenEnergy,
@@ -541,7 +542,7 @@ class Dashboard extends React.Component {
     }
 
     return <div className="np_dashboard">
-      <div className="np_app_bar" onClick={this.props.onUpdateBatteryInfo}>
+      <div className="np_app_bar">
         <AppBar />
       </div>
       <Grid container className={classes.root} spacing={8}>
