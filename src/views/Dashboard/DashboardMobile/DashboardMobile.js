@@ -34,6 +34,7 @@ import _ from 'lodash';
 import socket from '../../../services/wsServices';
 import sensorService from '../../../services/sensorService'
 import { MANUAL, AUTOMATIC } from '../../../components/BatteryMode/BatteryMode';
+import BrowserSnackbar from '../../../components/BrowserSnackbar/BrowserSnackbar'
 
 const styles = {
   root: {
@@ -556,6 +557,8 @@ class DashboardMobile extends React.Component {
       <div className='m_db_chart'>
         <LineChartCrs />
       </div>
+
+      <BrowserSnackbar />
     </div>
   }
 }

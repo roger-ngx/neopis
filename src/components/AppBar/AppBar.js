@@ -11,6 +11,7 @@ import CurrentWeather from '../CurrentWeather/CurrentWeather';
 import CurrentLocation from '../CurrentLocation/CurrentLocation';
 import userService from '../../services/userService';
 import LogoutDialog from './LogoutDialog/LogoutDialog';
+import BrowserSnackbar from '../BrowserSnackbar/BrowserSnackbar';
 
 class AppBar extends Component {
 

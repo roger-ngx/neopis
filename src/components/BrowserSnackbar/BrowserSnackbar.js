@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Button from '@material-ui/core/Button';
 import CloseIcon from '@material-ui/icons/Close';
 import Snackbar from '@material-ui/core/Snackbar';
-import { IconButton } from '@material-ui/core/IconButton';
+import IconButton from '@material-ui/core/IconButton';
 import { withStyles } from '@material-ui/core/styles';
-import { connect } from 'react-redux';
 
 const styles = theme => ({
   close: {
@@ -16,57 +14,51 @@ const styles = theme => ({
 class BrowserSnackbar extends Component {
 
   state = {
-    open: false,
+    open: true,
     messageInfo: {},
   };
 
-  handleClick = message => () => {
-    if (this.state.open) {
-      // immediately begin dismissing current message
-      // to start showing new one
-      this.setState({ open: false });
-    } else {
-      this.processQueue();
-    }
+  handleClose = () => {
+    this.setState({ open: false });
   };
 
   render() {
     const { classes } = this.props;
 
     const messageInfo = {
-      message: 'This is the snackbar',
+      message: 'This is the snackbar. Click here to download Chrome',
       key: new Date().getTime(),
     };
 
     return <div>
-        <Snackbar
-          key={messageInfo.key}
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'left',
-          }}
-          open={true}
-          onClose={this.handleClose}
-          onExited={this.handleExited}
-          ContentProps={{
-            'aria-describedby': 'message-id',
-          }}
-          message={<span id="message-id">{messageInfo.message}</span>}
-          action={[
-            <Button key="undo" color="secondary" size="small" onClick={this.handleClose}>
-              UNDO
-            </Button>,
-            <IconButton
-              key="close"
-              aria-label="Close"
-              className={classes.close}
-              color="inherit"
-              onClick={this.handleClose}>
-              <CloseIcon />
-            </IconButton>,
-          ]}
-        />
-      </div>
+      <Snackbar
+        key={messageInfo.key}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center',
+        }}
+        open={this.state.open}
+        onClose={this.handleClose}
+        onExited={this.handleExited}
+        ContentProps={{
+          'aria-describedby': 'message-id',
+        }}
+        message={<span id="message-id">
+          이 페이지는 chrome에 최적화 되어 있습니다.<br/> 
+          download를 원하시면, chrome 에서  <a style={{ color: 'red' }} href='https://www.google.com/chrome/' target='_blank'>여기</a>를 click 해주세요.
+          </span>}
+        action={[
+          <IconButton
+            key="close"
+            aria-label="Close"
+            className={classes.close}
+            color="inherit"
+            onClick={this.handleClose}>
+            <CloseIcon />
+          </IconButton>,
+        ]}
+      />
+    </div>
   }
 }
 
