@@ -28,7 +28,8 @@ import {
   updateESSDischarge,
   updateESSCharge,
   updateESSStatus,
-  updateBatteryStatus
+  updateBatteryStatus,
+  updateLocation
 } from '../../store/actionCreators';
 
 import socket from '../../services/wsServices';
@@ -449,7 +450,10 @@ class Dashboard extends React.Component {
     ];
 
     this.getSensorSeries(this.gatewayInfo.gwId, sensorIds, startTime, endTime, '5m')
-      .then(res => this.processDataForChart(res.data, sensorIds, startTime, endTime))
+      .then(res => {
+        this.processDataForChart(res.data, sensorIds, startTime, endTime);
+        this.props.onUpdateLocation(_.get(res.data, 'data.location.address'));
+      })
   }
 
   getSensorValues(gwId, sensorIds) {
@@ -642,6 +646,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   onUpdateWeather: ({ temperature, humidity }) => dispatch(updateWeather({ temperature, humidity })),
   onUpdateDateTime: ([date, time]) => date && time && dispatch(updateDateTime({ date, time })),
+  onUpdateLocation: location => dispatch(updateLocation(location)),
   onFetchingCurrentUser: () => dispatch(getUsersMe()),
   onInitialChartData: (sensorData) => dispatch(initialChartData(sensorData)),
   onUpdateChartData: data => dispatch(updateChartData(data)),

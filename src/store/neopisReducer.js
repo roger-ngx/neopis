@@ -24,7 +24,7 @@ const initialState = {
     temperature: 0,
     humidity: 0
   },
-  location: '강원도 고성군 간성읍 금수리 산 40-4',
+  location: '',
   solarEnergy: {
     thisMonth: 0,
     today: 0,
