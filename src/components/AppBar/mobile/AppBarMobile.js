@@ -4,7 +4,7 @@ import IconButton from '@material-ui/core/IconButton';
 import logo from '../../../assets/images/neopis-logo.svg';
 import notification from '../../../assets/images/notification.svg';
 import logout from '../../../assets/images/logout.svg';
-import userService from '../../services/userService';
+import userService from '../../../services/userService';
 
 const AppBarMobile = () => {
 

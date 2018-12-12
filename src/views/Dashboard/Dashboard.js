@@ -34,6 +34,7 @@ import socket from '../../services/wsServices';
 import sensorService from '../../services/sensorService'
 
 //const LineChart = lazy(() => import('../../components/ElectricityChart/LineChartWithCrossHairs/LineChartCrs'));
+import { Redirect } from 'react-router';
 
 const styles = {
   root: {
@@ -61,6 +62,7 @@ class Dashboard extends React.Component {
   constructor(props) {
     super(props);
     this.wsSubscribers = [];
+    this.isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
   }
 
   componentDidMount() {
@@ -540,6 +542,10 @@ class Dashboard extends React.Component {
       return <div className="db_chart_loading">
         Loading...
         </div>
+    }
+
+    if(this.isMobile){
+      return <Redirect to='/m/' />
     }
 
     return <div className="np_dashboard">
