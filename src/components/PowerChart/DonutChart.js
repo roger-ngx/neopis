@@ -57,33 +57,35 @@ class DonutChart extends Component {
         }
 
         return <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <svg width={w} height={h}>
-                <g transform={`translate(${w / 2}, ${h / 2})`}>
-                    {
-                        arcs.map((arc, index) => (
-                            <path
-                                key={index}
-                                d={arc}
-                                fill={this.colors[index]}
-                            />
-                        ))
-                    }
+            <div style={{textAlign: 'center'}}>
+                <svg width={w} height={h}>
+                    <g transform={`translate(${w / 2}, ${h / 2})`}>
+                        {
+                            arcs.map((arc, index) => (
+                                <path
+                                    key={index}
+                                    d={arc}
+                                    fill={this.colors[index]}
+                                />
+                            ))
+                        }
 
-                    <text className='pie_value'
-                        fill='#ffffff'
-                        text-anchor="middle">
-                        {this.props.percentage}%
-                </text>
-
-                    <text className='pie_unit'
-                        fill='#b8b8c2'
-                        text-anchor="middle"
-                        y={20}>
-                        {this.props.electricity}
+                        <text className='pie_value'
+                            fill='#ffffff'
+                            text-anchor="middle">
+                            {this.props.percentage}%
                     </text>
-                </g>
-            </svg>
-            <span style={{ color: '#b8b8c2', marginTop: '6px', textAlign: 'center' }}>
+
+                        <text className='pie_unit'
+                            fill='#b8b8c2'
+                            text-anchor="middle"
+                            y={20}>
+                            {this.props.electricity}
+                        </text>
+                    </g>
+                </svg>
+            </div>
+            <span style={{ color: '#b8b8c2', textAlign: 'center' }}>
                 {this.props.description}
             </span>
         </div>
