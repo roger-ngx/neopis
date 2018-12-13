@@ -209,7 +209,7 @@ const MouseOverEffect = props => {
           }
 
           let yValue = yScale.invert(pos.y);
-          if (yValue <= 0) yValue = 0;
+          //if (yValue <= 0) yValue = 0;
 
           const text = toolTip.select(`.point-value-${i}`)
             .text(yValue.toFixed(1))

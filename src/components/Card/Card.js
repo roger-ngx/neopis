@@ -63,14 +63,14 @@ const Card = props => {
       <CurrentElectricityValue
         type={props.type}
         value={props.data.thisMonth}
-        unit="MWh" description="This month"
+        unit="MWh" description="이번달"
         isActive={props.isActive}
         gwId={props.devices.gwId}
         sensorId={props.devices.sensors[0]} />
       <CurrentElectricityValue
         type={props.type}
         value={props.data.today}
-        unit="kWh" description="Today"
+        unit="kWh" description="오늘"
         isActive={props.isActive}
         gwId={props.devices.gwId}
         sensorId={props.devices.sensors[1]} />
