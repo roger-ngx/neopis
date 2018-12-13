@@ -675,7 +675,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  onUpdateWeather: ({ temperature, humidity, weather }) => dispatch(updateWeather({ temperature, humidity, weather })),
+  onUpdateWeather: data => dispatch(updateWeather(data)),
   onUpdateDateTime: ([date, time]) => date && time && dispatch(updateDateTime({ date, time })),
   onUpdateLocation: location => dispatch(updateLocation(location)),
   onFetchingCurrentUser: () => dispatch(getUsersMe()),

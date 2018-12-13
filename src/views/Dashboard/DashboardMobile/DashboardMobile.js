@@ -62,7 +62,7 @@ class DashboardMobile extends React.Component {
     socket.initSocketChannel();
 
     sensorService.getGatewayInfo().then(res => {
-      this.gatewayInfo = _.pick(_.get(res.data, ['data', '0']), ['name', 'gwId', 'sensors']);
+      this.gatewayInfo = _.pick(_.get(res.data, ['data', '0']), ['name', 'gwId', 'meta', 'sensors']);
       if (!_.isEmpty(this.gatewayInfo)) {
         this.initChartData();
         this.initAndSubscribeWeatherData();
@@ -438,26 +438,45 @@ class DashboardMobile extends React.Component {
   }
 
   initAndSubscribeWeatherData() {
+    const sensors = this.gatewayInfo.sensors;
+    const gwId = this.gatewayInfo.gwId;
+    const weather = this.gatewayInfo.meta.weather;
+
     //subscribe sensors for ws
     const tempSensor = {
-      id: this.gatewayInfo.sensors.temperature,
-      owner: this.gatewayInfo.gwId
+      id: sensors.temperature,
+      owner: gwId
     };
     this.wsSubscribers.push(socket.subscribeSensor(tempSensor, data => this.props.onUpdateWeather({ temperature: data.value })));
 
     const humiditySensor = {
-      id: this.gatewayInfo.sensors.humidity,
-      owner: this.gatewayInfo.gwId
+      id: sensors.humidity,
+      owner: gwId
     }
     this.wsSubscribers.push(socket.subscribeSensor(humiditySensor, data => this.props.onUpdateWeather({ humidity: data.value })));
+
+    const weatherSensor = {
+      id: weather.id,
+      owner: weather.owner
+    }
+    this.wsSubscribers.push(
+      socket.subscribeSensor(weatherSensor,
+        data => this.props.onUpdateWeather({ weather: data.value }))
+    );
 
     //query for the 1st data
     var query = {
       embed: ['series'],
     };
 
-    sensorService.getSensorData(this.gatewayInfo.gwId, this.gatewayInfo.sensors.temperature, query).then(res => this.props.onUpdateWeather({ temperature: +_.get(res.data, 'data.series.value', '') }));
-    sensorService.getSensorData(this.gatewayInfo.gwId, this.gatewayInfo.sensors.humidity, query).then(res => this.props.onUpdateWeather({ humidity: +_.get(res.data, 'data.series.value', '') }));
+    sensorService.getSensorData(gwId, sensors.temperature, query).then(res => this.props.onUpdateWeather({ temperature: +_.get(res.data, 'data.series.value', '') }));
+    sensorService.getSensorData(gwId, sensors.humidity, query).then(res => this.props.onUpdateWeather({ humidity: +_.get(res.data, 'data.series.value', '') }));
+    sensorService.getSensorData(weather.owner, weather.id, query)
+    .then(res =>
+      this.props.onUpdateWeather({
+        weather: _.get(res.data, SERIES_DATA_PATH, '')
+      })
+    );
   }
 
   getSensorSeries(gwId, sensorIds, startTime, endTime, interval = '0m') {
@@ -561,8 +580,6 @@ class DashboardMobile extends React.Component {
       <div className='m_db_chart'>
         <LineChartCrs />
       </div>
-
-      <BrowserSnackbar />
     </div>
   }
 }
@@ -577,7 +594,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  onUpdateWeather: ({ temperature, humidity }) => dispatch(updateWeather({ temperature, humidity })),
+  onUpdateWeather: (data) => dispatch(updateWeather(data)),
   onUpdateDateTime: ([date, time]) => date && time && dispatch(updateDateTime({ date, time })),
   onUpdateLocation: location => dispatch(updateLocation(location)),  
   onFetchingCurrentUser: () => dispatch(getUsersMe()),

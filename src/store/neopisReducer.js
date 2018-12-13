@@ -65,12 +65,7 @@ export function neopisReducer(state = initialState, action) {
       return newState;
 
     case UPDATE_WEATHER:
-      newState.weather = _.cloneDeep(newState.weather);
-
-      const { temperature, humidity, weather } = action.content;
-      temperature && (newState.weather.temperature = temperature);
-      humidity && (newState.weather.humidity = humidity);
-      weather && (newState.weather.weather = weather);
+      newState.weather = { ...newState.weather, ...action.content };
 
       return newState;
 

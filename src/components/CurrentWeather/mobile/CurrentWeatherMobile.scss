@@ -1,5 +1,13 @@
 .m_weather {
   display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.m_weather_values{
+  display: flex;
   flex-direction: column;
   align-items: center;
 }
@@ -8,12 +16,10 @@
   width: 37px;
   height: 32px;
   object-fit: contain;
-  display: none;
 }
 
 .m_weather_temperature {
   line-height: 1;
-  margin-top: 8px;
   font-family: HiraKakuProN-W3;
   font-size: 16px;
   letter-spacing: -0.5px;
