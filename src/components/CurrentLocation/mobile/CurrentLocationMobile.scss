@@ -1,7 +1,9 @@
 .m_location {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
+  height: 100%;
 }
 
 .m_location_icon {
@@ -14,7 +16,6 @@
 .m_location_address {
   font-family: HiraKakuProN-W3;
   font-size: 12px;
-  margin-top: 8px;
   line-height: 1.25;
   letter-spacing: -1px;
   color: #ffffff;
