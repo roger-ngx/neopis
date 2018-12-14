@@ -7,8 +7,10 @@ import BatteryMode from '../../BatteryMode/BatteryMode';
 import { BATTERY_2 } from '../../CurrentElectricityValue/mobile/CurrentElectricityValueMobile';
 import CurrentElectricityValueMobile from '../../CurrentElectricityValue/mobile/CurrentElectricityValueMobile';
 import DonutChart from '../../PowerChart/DonutChart';
+import { injectIntl } from 'react-intl';
 
 const CardMobile = props => {
+  const { intl } = props
 
   let cardRight;
   if (+props.type === BATTERY_2) {
@@ -38,12 +40,12 @@ const CardMobile = props => {
       <div className='m_db_card_body_left'>
         <CurrentElectricityValueMobile
           type={props.type} value={props.data.thisMonth}
-          unit="MWh" description="This month"
+          unit="MWh" description={intl.formatMessage({id: 'neopis.thisMonth'})}
           isActive={props.isActive} />
 
         <CurrentElectricityValueMobile
           type={props.type} value={props.data.today}
-          unit="kWh" description="Today"
+          unit="kWh" description={intl.formatMessage({id: 'neopis.today'})}
           isActive={props.isActive} />
       </div>
       <div className="m_db_card_body_right">
@@ -53,4 +55,4 @@ const CardMobile = props => {
   </div>
 }
 
-export default CardMobile;
+export default injectIntl(CardMobile);

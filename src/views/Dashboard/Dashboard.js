@@ -10,7 +10,6 @@ import AppBar from '../../components/AppBar/AppBar';
 import LineChart from '../../components/ElectricityChart/LineChartWithCrossHairs/LineChartCrs';
 import { SOURCE, BATTERY_1, BATTERY_2, ELECTRICITY } from '../../components/CurrentElectricityValue/mobile/CurrentElectricityValueMobile';
 import { MANUAL, AUTOMATIC } from '../../components/BatteryMode/BatteryMode';
-import BrowserSnackbar from '../../components/BrowserSnackbar/BrowserSnackbar'
 
 import battery1 from '../../assets/images/battery-1.svg';
 import battery2 from '../../assets/images/battery-2.svg';
@@ -34,9 +33,6 @@ import {
 
 import socket from '../../services/wsServices';
 import sensorService from '../../services/sensorService'
-
-//const LineChart = lazy(() => import('../../components/ElectricityChart/LineChartWithCrossHairs/LineChartCrs'));
-import Snackbar from '@material-ui/core/Snackbar';
 
 const styles = {
   root: {
@@ -70,11 +66,12 @@ class Dashboard extends React.Component {
     this.props.onFetchingCurrentUser();
     socket.initSocketChannel();
 
-    this.init();
+    this.init().catch(() => window.location = '/#/login');
   }
 
   async init() {
     const gwInfo = await sensorService.getGatewayInfo();
+
     this.gatewayInfo = _.pick(_.get(gwInfo.data, ['data', '0']), ['name', 'gwId', 'meta', 'sensors']);
 
     if (!_.isEmpty(this.gatewayInfo)) {

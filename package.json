@@ -15,6 +15,7 @@
     "node-sass": "^4.10.0",
     "react": "^16.6.3",
     "react-dom": "^16.6.3",
+    "react-intl": "^2.7.2",
     "react-redux": "^5.1.1",
     "react-router-dom": "^4.3.1",
     "react-scripts": "2.1.1",
@@ -31,7 +32,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "analyze": "source-map-explorer build/static/js/main.*"
+    "analyze": "source-map-explorer build/static/js/main.*",
+    "extract-messages": "NODE_ENV=production babel ./src  --out-file /dev/null"
   },
   "homepage": "https://systemadmin.testnt.thingbine.com/neopis",
   "eslintConfig": {

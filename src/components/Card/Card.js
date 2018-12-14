@@ -1,6 +1,7 @@
 import React from 'react';
 import { PropTypes } from 'prop-types';
 import classnames from 'classnames';
+import { injectIntl } from 'react-intl';
 
 import './Card.scss';
 import CardTitle from '../CardTitle/CardTitle';
@@ -13,6 +14,7 @@ import DonutChart from '../PowerChart/DonutChart';
 
 
 const Card = props => {
+  const { intl } = props
 
   let cardClasses = classnames({
     'db_card': true,
@@ -63,14 +65,14 @@ const Card = props => {
       <CurrentElectricityValue
         type={props.type}
         value={props.data.thisMonth}
-        unit="MWh" description="이번달"
+        unit="MWh" description={intl.formatMessage({id: 'neopis.thisMonth'})}
         isActive={props.isActive}
         gwId={props.devices.gwId}
         sensorId={props.devices.sensors[0]} />
       <CurrentElectricityValue
         type={props.type}
         value={props.data.today}
-        unit="kWh" description="오늘"
+        unit="kWh" description={intl.formatMessage({id: 'neopis.today'})}
         isActive={props.isActive}
         gwId={props.devices.gwId}
         sensorId={props.devices.sensors[1]} />
@@ -97,4 +99,4 @@ Card.defaultProps = {
   isActive: true
 }
 
-export default Card;
+export default injectIntl(Card);

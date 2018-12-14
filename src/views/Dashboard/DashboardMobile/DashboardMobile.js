@@ -35,7 +35,6 @@ import _ from 'lodash';
 import socket from '../../../services/wsServices';
 import sensorService from '../../../services/sensorService'
 import { MANUAL, AUTOMATIC } from '../../../components/BatteryMode/BatteryMode';
-import BrowserSnackbar from '../../../components/BrowserSnackbar/BrowserSnackbar'
 
 const styles = {
   root: {
@@ -61,18 +60,23 @@ class DashboardMobile extends React.Component {
     this.props.onFetchingCurrentUser();
     socket.initSocketChannel();
 
-    sensorService.getGatewayInfo().then(res => {
-      this.gatewayInfo = _.pick(_.get(res.data, ['data', '0']), ['name', 'gwId', 'meta', 'sensors']);
-      if (!_.isEmpty(this.gatewayInfo)) {
-        this.initChartData();
-        this.initAndSubscribeWeatherData();
-        this.initAndSubscribeSolarData();
-        this.initAndSubscribeGridEnergyData();
-        this.initAndSubscribeDischargeESSData();
-        this.initAndSubscribeChargeESSData();
-        this.initAndSubscribeBatteryStatus();
-      }
-    });
+    this.init().catch(() => window.location = '/#/login');
+  }
+
+  async init() {
+    const gwInfo = await sensorService.getGatewayInfo();
+
+    this.gatewayInfo = _.pick(_.get(gwInfo.data, ['data', '0']), ['name', 'gwId', 'meta', 'sensors']);
+
+    if (!_.isEmpty(this.gatewayInfo)) {
+      this.initChartData();
+      this.initAndSubscribeWeatherData();
+      this.initAndSubscribeSolarData();
+      this.initAndSubscribeGridEnergyData();
+      this.initAndSubscribeDischargeESSData();
+      this.initAndSubscribeChargeESSData();
+      this.initAndSubscribeBatteryStatus();
+    }
   }
 
   getSensorValues(gwId, sensorIds) {
@@ -363,9 +367,9 @@ class DashboardMobile extends React.Component {
       embed: ['series'],
     };
 
-    sensorService.getSensorData(this.gatewayInfo.gwId, this.gatewayInfo.sensors.monthlyESSDischargeEnergy, query).then(res => this.props.onUpdateESSDischarge({ thisMonth: +(+_.get(res.data, 'data.series.value', '') / 1000).toFixed(1) }));
-    sensorService.getSensorData(this.gatewayInfo.gwId, this.gatewayInfo.sensors.dailyESSDischargeEnergy, query).then(res => this.props.onUpdateESSDischarge({ today: parseInt(_.get(res.data, 'data.series.value', '')) }));
-    sensorService.getSensorData(this.gatewayInfo.gwId, this.gatewayInfo.sensors.batteryRate, query).then(res => this.props.onUpdateESSDischarge({ batteryRate: parseInt(_.get(res.data, 'data.series.value'), '') }));
+    sensorService.getSensorData(this.gatewayInfo.gwId, this.gatewayInfo.sensors.monthlyESSDischargeEnergy, query).then(res => this.props.onUpdateESSDischarge({ thisMonth: +(+_.get(res.data, SERIES_DATA_PATH, '') / 1000).toFixed(1) }));
+    sensorService.getSensorData(this.gatewayInfo.gwId, this.gatewayInfo.sensors.dailyESSDischargeEnergy, query).then(res => this.props.onUpdateESSDischarge({ today: parseInt(_.get(res.data, SERIES_DATA_PATH, '')) }));
+    sensorService.getSensorData(this.gatewayInfo.gwId, this.gatewayInfo.sensors.batteryRate, query).then(res => this.props.onUpdateESSDischarge({ batteryRate: parseInt(_.get(res.data, SERIES_DATA_PATH), '') }));
   }
 
   initAndSubscribeChargeESSData() {
@@ -469,8 +473,8 @@ class DashboardMobile extends React.Component {
       embed: ['series'],
     };
 
-    sensorService.getSensorData(gwId, sensors.temperature, query).then(res => this.props.onUpdateWeather({ temperature: +_.get(res.data, 'data.series.value', '') }));
-    sensorService.getSensorData(gwId, sensors.humidity, query).then(res => this.props.onUpdateWeather({ humidity: +_.get(res.data, 'data.series.value', '') }));
+    sensorService.getSensorData(gwId, sensors.temperature, query).then(res => this.props.onUpdateWeather({ temperature: +_.get(res.data, SERIES_DATA_PATH, '') }));
+    sensorService.getSensorData(gwId, sensors.humidity, query).then(res => this.props.onUpdateWeather({ humidity: +_.get(res.data, SERIES_DATA_PATH, '') }));
     sensorService.getSensorData(weather.owner, weather.id, query)
     .then(res =>
       this.props.onUpdateWeather({
