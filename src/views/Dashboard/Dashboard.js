@@ -400,7 +400,7 @@ class Dashboard extends React.Component {
     sensorService.getSensorData(gwId, sensors.eSSChargePower, query)
       .then(res => {
         const curPower = +_.get(res.data, SERIES_DATA_PATH, '');
-        this.props.onUpdateESSCharge({ curPower: curPower.toFixed(1) });
+        this.props.onUpdateESSCharge({ curPower: Math.abs(curPower).toFixed(1) });
         this.props.onUpdateESSStatus(curPower < 0);
       });
   }
