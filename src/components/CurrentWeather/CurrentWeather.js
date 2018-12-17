@@ -7,20 +7,18 @@ import './CurrentWeather.scss'
 
 const WeatherImg = React.lazy(() => import('./WeatherImage'));
 
-const CurrentWeather = props => {
-  return <div className='weather'>
-    <React.Suspense fallback={<img src={image} className='weather_icon' alt='weather icon' />}>
-      <WeatherImg {...props} />
-    </React.Suspense>
+const CurrentWeather = props => <div className='weather'>
+  <React.Suspense fallback={<img src={image} className='weather_icon' alt='weather icon' />}>
+    <WeatherImg weather={props.weather} />
+  </React.Suspense>
 
-    <div className='weather_temperature'>
-      {props.temperature}°C
+  <div className='weather_temperature'>
+    {props.temperature}°C
     </div>
-    <div className='weather_humidity'>
-      {props.humidity}%
+  <div className='weather_humidity'>
+    {props.humidity}%
     </div>
-  </div>
-}
+</div>
 
 CurrentWeather.propTypes = {
   temperature: PropTypes.number,

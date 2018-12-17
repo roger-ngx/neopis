@@ -16,25 +16,27 @@ import messages_en from "./assets/i18n/en.json";
 addLocaleData([...locale_en, ...locale_ko]);
 
 const messages = {
-    'ko': messages_ko,
-    'en': messages_en
+  'ko': messages_ko,
+  'en': messages_en
 };
 const language = navigator.language.split(/[-_]/)[0];  // language without region code
 
 ReactDOM.render(
-  <IntlProvider locale={language} messages={messages[language]}>
-    <Provider store={store}>
-      <HashRouter>
-        <Switch>
-          {
-            indexRoutes.map((prop, key) => {
-              return <Route path={prop.path} component={prop.component} key={key} />
-            })
-          }
-        </Switch>
-      </HashRouter>
-    </Provider>
-  </IntlProvider>,
+  <React.StrictMode>
+    <IntlProvider locale={language} messages={messages[language]}>
+      <Provider store={store}>
+        <HashRouter>
+          <Switch>
+            {
+              indexRoutes.map((prop, key) => {
+                return <Route path={prop.path} component={prop.component} key={key} />
+              })
+            }
+          </Switch>
+        </HashRouter>
+      </Provider>
+    </IntlProvider>
+  </React.StrictMode>,
   document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change

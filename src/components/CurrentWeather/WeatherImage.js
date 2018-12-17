@@ -1,8 +1,7 @@
 import React from 'react';
+const images = require.context('../../assets/images/weather');
 
 const WeatherImg = (props) => {
-    const images = require.context('../../assets/images/weather');
-
     function getWeatherIconName() {
         function _isDayTime() {
             const hour = (new Date()).getHours();

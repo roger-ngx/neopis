@@ -208,11 +208,10 @@ const MouseOverEffect = props => {
             else break; //position found
           }
 
-          let yValue = yScale.invert(pos.y);
-          //if (yValue <= 0) yValue = 0;
+          let yValue = yScale.invert(pos.y) || 0;
 
           const text = toolTip.select(`.point-value-${i}`)
-            .text(yValue.toFixed(1))
+            .text(yValue === 0 ? '0' : yValue.toFixed(1))
             .attr('fill', props.gradients[i]);
 
           if (pos.x > props.width / 2) {

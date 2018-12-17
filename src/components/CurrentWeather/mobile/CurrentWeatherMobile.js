@@ -11,7 +11,7 @@ const CurrentWeatherMobile = props => {
 
   return <div className='m_weather'>
     <React.Suspense fallback={<img src={image} className='weather_icon' alt='weather icon' />}>
-      <WeatherImg {...props} />
+      <WeatherImg weather={props.weather} />
     </React.Suspense>
     <div className='m_weather_values'>
       <div className='m_weather_temperature'>
