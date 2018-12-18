@@ -133,37 +133,27 @@ const MouseOverEffect = props => {
     .style("stroke-width", "2px")
     .style("opacity", "0");
 
+  function showCrossHair(isShow) {
+    const opacity = isShow ? "1" : "0"
+    d3.select(".mouse-line")
+      .style("opacity", opacity);
+    d3.select(".time-value")
+      .style("opacity", opacity);
+    d3.selectAll(".mouse-per-line circle")
+      .style("opacity", opacity);
+    d3.select('.tooltip')
+      .style("opacity", opacity);
+  }
 
   d3.select('.mouse_area') // append a rect to catch mouse movements on canvas
     .on('mouseout', function () { // on mouse out hide line, circles and text
-      d3.select(".mouse-line")
-        .style("opacity", "0");
-      d3.select(".time-value")
-        .style("opacity", "0");
-      d3.selectAll(".mouse-per-line circle")
-        .style("opacity", "0");
-      d3.select('.tooltip')
-        .style("opacity", "0");
+      showCrossHair(false);
     })
     .on('mouseover', function () { // on mouse in show line, circles and text
-      d3.select(".mouse-line")
-        .style("opacity", "1");
-      d3.select(".time-value")
-        .style("opacity", "1");
-      d3.selectAll(".mouse-per-line circle")
-        .style("opacity", "1");
-      d3.select('.tooltip')
-        .style("opacity", "1");
+      showCrossHair(true);
     })
     .on('mousemove', function () { // mouse moving over canvas
-      d3.select(".mouse-line")
-        .style("opacity", "1");
-      d3.select(".time-value")
-        .style("opacity", "1");
-      d3.selectAll(".mouse-per-line circle")
-        .style("opacity", "1");
-      d3.select('.tooltip')
-        .style("opacity", "1");
+      showCrossHair(true);
 
       var mouse = d3.mouse(this);
       var pos;

@@ -23,7 +23,7 @@ export function withMoment(Current) {
         }
 
         render() {
-            return <Current data={this.state} />
+            return <Current {...this.state} />
         }
     }
 }

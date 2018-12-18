@@ -8,10 +8,10 @@ import './CurrentMomentMobile.scss';
 const CurrentMomentMobile = (props) => <div className='m_current_moment'>
   <img className='m_current_icon' src={image} alt='time icon' />
   <div className='m_current_time'>
-    {props.data.time}
+    {props.time}
   </div>
   <div className='m_current_date'>
-    {props.data.date}
+    {props.date}
   </div>
 </div>
 

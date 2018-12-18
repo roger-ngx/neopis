@@ -8,10 +8,10 @@ import image from '../../assets/images/time.svg'
 const CurrentMoment = (props) => <div className='current_moment'>
   <img className='current_icon' src={image} alt='time icon' />
   <div className='current_date'>
-    {props.data.date}
+    {props.date}
   </div>
   <div className='current_time'>
-    {props.data.time}
+    {props.time}
   </div>
 </div>
 
