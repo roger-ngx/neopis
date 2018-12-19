@@ -251,7 +251,7 @@ const MouseOverEffect = props => {
       }
     </g>
     <rect className='mouse_area' width={props.width} height={props.height}
-      strokeWidth='0.5px' stroke='#525252'
+      strokeWidth='1.5px' stroke='#525252'
       shapeRendering='crispEdges' fill="none"
       pointerEvents="all"></rect>
   </g>
