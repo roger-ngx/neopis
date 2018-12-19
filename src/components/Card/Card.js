@@ -36,7 +36,7 @@ const Card = props => {
         sensorId={props.devices.sensors[2]} />;
       </>
   } else {
-    if (!!window.chrome && !!window.chrome.webstore) {
+    if (!!window.chrome) {
       cardBottom = <PowerDonutChart
         type={props.type}
         percentage={props.data.percentage}
@@ -78,7 +78,7 @@ const Card = props => {
         sensorId={props.devices.sensors[1]} />
     </div>
     <div className="db_card_bottom">
-      <div className="content">
+      <div className="db_card_bottom_content">
         {cardBottom}
       </div>
     </div>

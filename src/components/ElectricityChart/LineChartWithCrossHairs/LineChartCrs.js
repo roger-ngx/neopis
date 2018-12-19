@@ -97,7 +97,7 @@ const Lines = props => {
 }
 
 const MouseOverEffect = props => {
-  var lines = document.getElementsByClassName('line');
+  const lines = document.getElementsByClassName('line');
 
   const xScale = d3.scaleTime()
     .range([0, props.width]);
@@ -118,7 +118,7 @@ const MouseOverEffect = props => {
     d3.max(props.data, c => d3.max(c.values, v => v.value))
   ]);
 
-  var mousePerLine = d3.select('g').selectAll('.mouse-per-line')
+  const mousePerLine = d3.select('g#linechart').selectAll('.mouse-per-line')
     .data(props.data)
     .enter()
     .append("g")
@@ -155,12 +155,11 @@ const MouseOverEffect = props => {
     .on('mousemove', function () { // mouse moving over canvas
       showCrossHair(true);
 
-      var mouse = d3.mouse(this);
-      var pos;
+      const mouse = d3.mouse(this);
 
       d3.select(".mouse-line")
         .attr("d", function () {
-          var d = "M" + mouse[0] + "," + props.height;
+          let d = "M" + mouse[0] + "," + props.height;
           d += " " + mouse[0] + "," + 0;
           return d;
         });
@@ -169,7 +168,7 @@ const MouseOverEffect = props => {
         .attr('x', mouse[0] - 25)
         .attr('y', props.height + 20);
 
-      var toolTip = d3.select('.tooltip');
+      const toolTip = d3.select('.tooltip');
 
       if (mouse[0] > props.width / 2) {
         timeValue.attr("transform", "translate(-30,0)");
@@ -183,12 +182,23 @@ const MouseOverEffect = props => {
       d3.selectAll(".mouse-per-line")
         .attr("transform", function (d, i) {
 
-          var beginning = 0,
+          let beginning = 0,
             end = lines[i].getTotalLength(),
             target = null;
 
+          let pos = null;
+
           while (true) {
             target = Math.floor((beginning + end) / 2);
+            if (!target) {
+              d3.selectAll(".mouse-per-line circle")
+                .style("opacity", "0");
+              d3.select('.tooltip')
+                .style("opacity", "1");
+
+              return "";
+            }
+
             pos = lines[i].getPointAtLength(target);
             if ((target === end || target === beginning) && pos.x !== mouse[0]) {
               break;
@@ -298,7 +308,7 @@ class LineChartCrs extends Component {
     //this fixed a wrong svg height on Safari
 
     return <svg width="100%" height="100%" display='block' ref={this.chartArea}>
-      <g transform={`translate(0,${this.margin.top})`}>
+      <g id="linechart" transform={`translate(0,${this.margin.top})`}>
         <XAxis width={this.state.width} height={this.state.height} data={this.props.data} />
 
         <YAxis width={this.state.width} height={this.state.height} data={this.props.data} />
