@@ -193,8 +193,6 @@ const MouseOverEffect = props => {
             if (!target) {
               d3.selectAll(".mouse-per-line circle")
                 .style("opacity", "0");
-              d3.select('.tooltip')
-                .style("opacity", "1");
 
               return "";
             }
