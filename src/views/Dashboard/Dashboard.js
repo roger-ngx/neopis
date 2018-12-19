@@ -2,6 +2,7 @@ import React from 'react';
 import _ from 'lodash';
 import withStyles from "@material-ui/core/styles/withStyles";
 import Grid from '@material-ui/core/Grid';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import './Dashboard.scss';
 import Card from '../../components/Card/Card';
@@ -38,9 +39,11 @@ const styles = {
 const Dashboard = (props) => {
   const { classes } = props;
   if (_.isEmpty(props.gatewayInfo)) {
-    return <div className="db_chart_loading">
-      Loading...
-        </div>
+    return <div className="db_loading">
+      <div className="db_progress">
+        <CircularProgress color="secondary" />
+      </div>
+    </div>
   }
 
   return <div className="np_dashboard">
