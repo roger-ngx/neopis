@@ -499,7 +499,7 @@ export const DashboardWrapper = (Dashboard) => {
           const max = seriesData[length - 1];
 
           let index = 0;
-          for (let time = min; time <= max; time += durationInMs) {
+          for (let time = min; time < max; time += durationInMs) {
             if (seriesData[2 * index + 1] === time) {
               index++;
               continue;
@@ -513,7 +513,7 @@ export const DashboardWrapper = (Dashboard) => {
             seriesData.unshift(null, time);
           }
 
-          for (let time = max + durationInMs; time <= endTime; time += durationInMs) {
+          for (let time = max + durationInMs; time < endTime; time += durationInMs) {
             seriesData.push(null, time);
           }
         } else {
