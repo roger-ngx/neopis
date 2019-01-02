@@ -182,16 +182,28 @@ const MouseOverEffect = props => {
       d3.selectAll(".mouse-per-line")
         .attr("transform", function (d, i) {
 
-          let beginning = 0,
-            end = lines[i].getTotalLength(),
-            target = null;
+          let end = lines[i].getTotalLength();
+          if (!end) {
+            d3.selectAll(".mouse-per-line circle")
+              .style("opacity", "0");
 
+            d3.select('.tooltip')
+              .style("opacity", "0");
+
+            return "";
+          }
+
+          let beginning = 0;
+          let target = null;
           let pos = null;
 
           while (true) {
             target = Math.floor((beginning + end) / 2);
             if (!target) {
               d3.selectAll(".mouse-per-line circle")
+                .style("opacity", "0");
+
+              d3.select('.tooltip')
                 .style("opacity", "0");
 
               return "";
@@ -206,7 +218,7 @@ const MouseOverEffect = props => {
             else break; //position found
           }
 
-          let yValue = yScale.invert(pos.y) || 0;
+          let yValue = yScale.invert(pos.y);
 
           const text = toolTip.select(`.point-value-${i}`)
             .text(yValue === 0 ? '0' : yValue.toFixed(1))
@@ -251,7 +263,6 @@ const MouseOverEffect = props => {
       }
     </g>
     <rect className='mouse_area' width={props.width} height={props.height}
-      strokeWidth='1.5px' stroke='#525252'
       shapeRendering='crispEdges' fill="none"
       pointerEvents="all"></rect>
   </g>
@@ -307,6 +318,11 @@ class LineChartCrs extends Component {
 
     return <svg width="100%" height="100%" display='block' ref={this.chartArea}>
       <g id="linechart" transform={`translate(0,${this.margin.top})`}>
+        <rect width={this.state.width} height={this.state.height}
+          strokeWidth='1.5px' stroke='#525252' opacity='0.5'
+          shapeRendering='crispEdges' fill="none"
+          pointerEvents="all"></rect>
+
         <XAxis width={this.state.width} height={this.state.height} data={this.props.data} />
 
         <YAxis width={this.state.width} height={this.state.height} data={this.props.data} />

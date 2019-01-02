@@ -1,3 +1,5 @@
+@import '../../assets/css/_variables.scss';
+
 .location {
   display: flex;
   flex-direction: row;
@@ -13,7 +15,7 @@
 }
 
 .location_address {
-  font-family: HiraKakuProN-W3;
+  font-family: $font-family;
   font-size: 14px;
   letter-spacing: -1.2px;
   color: #ffffff;

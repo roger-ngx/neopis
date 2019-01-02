@@ -1,3 +1,5 @@
+@import '../../assets/css/_variables.scss';
+
 .battery{
   display: flex;
   flex-direction: row;
@@ -42,14 +44,14 @@
 }
 
 .battery_value{
-  font-family: HiraKakuProN-W3;
+  font-family: $font-family;
   font-size: 20px;
   color: #ebecec;
 }
 
 .battery_label{
   margin-top: auto;
-  font-family: HiraKakuProN-W3;
+  font-family: $font-family;
   font-size: 12px;
   letter-spacing: -0.5px;
   color: #b8b8c2;

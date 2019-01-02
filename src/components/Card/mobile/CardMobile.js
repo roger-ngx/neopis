@@ -19,7 +19,7 @@ const CardMobile = props => {
       <CurrentBatteryPercentage value={props.data.batteryRate} mobile={true} />;
     </>
   } else {
-    if (!!window.chrome && !!window.chrome.webstore) {
+    if (!!window.chrome && !!window.chrome.csi) {
       cardRight = <PowerDonutChart type={props.type}
         percentage={props.data.percentage}
         size={112} description={props.description}

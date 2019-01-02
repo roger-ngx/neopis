@@ -1,3 +1,5 @@
+@import '../../assets/css/_variables.scss';
+
 .current_moment{
   display: flex;
   flex-direction: row;
@@ -12,7 +14,7 @@
 }
 
 .current_date{
-  font-family: HiraKakuProN-W3;
+  font-family: $font-family;
   font-size: 16px;
   letter-spacing: -0.5px;
   text-align: center;
@@ -21,7 +23,7 @@
 }
 
 .current_time{
-  font-family: HiraKakuProN-W6;
+  font-family: $font-family;
   font-size: 19px;
   letter-spacing: -0.6px;
   text-align: center;

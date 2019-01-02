@@ -1,3 +1,5 @@
+@import '../../assets/css/_variables.scss';
+
 .weather {
   display: flex;
   flex-direction: row;
@@ -13,8 +15,7 @@
 }
 
 .weather_temperature {
-  width: 30px;
-  font-family: HiraKakuProN-W6;
+  font-family: $font-family;
   font-size: 19px;
   letter-spacing: -0.6px;
   text-align: center;
@@ -23,7 +24,7 @@
 
 .weather_humidity {
   width: 22px;
-  font-family: HiraKakuProN-W3;
+  font-family: $font-family;
   font-size: 16px;
   letter-spacing: -0.5px;
   text-align: center;

@@ -1,3 +1,5 @@
+@import '../../assets/css/_variables.scss';
+
 .bm_container {
   width: 87px;
   height: 30px;
@@ -9,7 +11,7 @@
 }
 
 .bm_content {
-  font-family: HiraKakuProN-W6;
+  font-family: $font-family;
   font-size: 12px;
   line-height: 1.42;
   letter-spacing: -0.5px;

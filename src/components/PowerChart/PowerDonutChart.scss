@@ -1,3 +1,5 @@
+@import '../../assets/css/_variables.scss';
+
 .neopis_pie {
   text-align: center;
 }
@@ -30,7 +32,7 @@
 }
 
 .pie_value {
-  font-family: HiraKakuProN-W3;
+  font-family: $font-family;
   font-size: 26px;
   line-height: 26px;
   text-align: center;
@@ -38,7 +40,7 @@
 }
 
 .pie_unit {
-  font-family: HiraKakuProN-W3;
+  font-family: $font-family;
   font-size: 12px;
   text-align: center;
   color: #b8b8c2;
@@ -47,7 +49,7 @@
 
 
 .pie_description{
-  font-family: HiraKakuProN-W3;
+  font-family: $font-family;
   font-size: 18px;
   line-height: 18px;
   letter-spacing: -0.7px;

@@ -1,3 +1,5 @@
+@import '../../assets/css/_variables.scss';
+
 .electricity_value{
   display: flex;
   flex-direction: column;
@@ -12,7 +14,7 @@
 }
 
 .ev_unit {
-  font-family: HiraKakuProN-W6;
+  font-family: $font-family;
   padding-bottom: 6px;
   font-size: 10px;
   color: #989898;
