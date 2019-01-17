@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Current Moment component test test rendering 1`] = `
+<div
+  className="current_moment"
+>
+  <img
+    alt="time icon"
+    className="current_icon"
+    src={
+      Object {
+        "process": [Function],
+      }
+    }
+  />
+  <div
+    className="current_date"
+  />
+  <div
+    className="current_time"
+  />
+</div>
+`;

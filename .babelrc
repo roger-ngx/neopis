@@ -2,24 +2,25 @@
   "presets": [
     "@babel/env",
     "@babel/react",
-    [
-      "@babel/preset-env",
-      {
-        "targets": {
-          "browsers": [
-            "last 1 version",
-            "ie >= 11"
-          ]
-        }
-      }
-    ]
+    // [
+    //   "@babel/preset-env",
+    //   {
+    //     "targets": {
+    //       "browsers": [
+    //         "last 1 version",
+    //         "ie >= 11"
+    //       ]
+    //     }
+    //   }
+    // ]
   ],
   "plugins": [
-    [
-      "react-intl",
-      {
-        "messagesDir": "build/messages"
-      }
-    ]
+    // [
+    //   "module:react-intl",
+    //   {
+    //     "messagesDir": "build/messages"
+    //   }
+    // ]
+    "@babel/plugin-syntax-dynamic-import"
   ]
 }

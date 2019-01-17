@@ -6,10 +6,10 @@ module.exports = function (app) {
     proxy(
       ['/api', '/asset', '/mqtt', '/socket.io', '/sockjs-node'],
       {
-        target: 'https://systemadmin.testnt.thingbine.com',
+        target: 'https://neopis.thingplus.net',
         changeOrigin: true,
         onProxyReq: (proxyReq) => {
-          proxyReq.setHeader('Cookie', 'dwTPlus=s%3A54_7r848sGYJjLYaafEEBGgqTcvYZGLT.K7SWgofjeVuEr8nxDSGoi%2Fz8A%2BjeJkjH6McVb44U26c');
+          proxyReq.setHeader('Cookie', 'dwTPlus=s%3ANeYkNkXmAu055wx5kA5kvsxPFxMX9v8G.SS4i8pmrYB5VChU5%2B7kFx3CT6COSdDNKpT5BEvkunv0');
         },
         onProxyRes: (proxyRes) => {
           Object.keys(proxyRes.headers).forEach((key) => {

@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CurrentWeather Render without error 1`] = `
+<div
+  className="weather"
+>
+  <img
+    alt="weather icon"
+    className="weather_icon"
+    src={
+      Object {
+        "process": [Function],
+      }
+    }
+  />
+  <div
+    className="weather_temperature"
+  >
+    25
+    °C
+  </div>
+  <div
+    className="weather_humidity"
+  >
+    75
+    %
+  </div>
+</div>
+`;

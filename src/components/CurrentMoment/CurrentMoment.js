@@ -5,7 +5,7 @@ import { PropTypes } from 'prop-types';
 import './CurrentMoment.scss';
 import image from '../../assets/images/time.svg'
 
-const CurrentMoment = (props) => <div className='current_moment'>
+export const CurrentMoment_ = (props) => <div className='current_moment'>
   <img className='current_icon' src={image} alt='time icon' />
   <div className='current_date'>
     {props.date}
@@ -15,8 +15,9 @@ const CurrentMoment = (props) => <div className='current_moment'>
   </div>
 </div>
 
-CurrentMoment.propTypes = {
-  data: PropTypes.object,
+CurrentMoment_.propTypes = {
+  date: PropTypes.string.isRequired,
+  time: PropTypes.string.isRequired
 }
 
-export default withMoment(CurrentMoment);
+export default withMoment(CurrentMoment_);
